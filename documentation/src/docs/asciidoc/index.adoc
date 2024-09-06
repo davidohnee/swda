@@ -1,0 +1,46 @@
+= Modul SWDA Gruppe g09
+Roland Gisler <roland.gisler@hslu.ch>
+V0.0.1, 2023-09-07
+:imagesdir: ./images
+:toc:
+:toc-title: Inhaltsverzeichnis
+:toclevels: 1
+
+== Einführung
+Das ist die Dokumentation (auch als link:index.pdf[PDF]) der Gruppe g09.
+
+== Team
+Das Team besteht aus folgenden Personen:
+
+ * Name, Vorname <vorname.name@stud.hslu.ch>
+ * Name, Vorname <vorname.name@stud.hslu.ch>
+ * Name, Vorname <vorname.name@stud.hslu.ch>
+
+== Thema 1: Projekt für Dokumentation
+Unsere Empfehlung: Schreiben Sie Ihre Dokumentation als https://asciidoc.org/[AsciiDoc] im Verzeichnis src/docs/asciidoc in *.adoc-Dateien.
+Dafür gibt es für viele IDE's Editor-Plugins, die auch ein Preview/Wysiwyg anbieten.
+
+== Thema 2: tbd
+tbd
+
+== Appendix: Beispiele
+Man kann ganz einfach Bilder integrieren:
+
+image::HSLU-Logo-21-klein.png[HSLU-Logo]
+
+Und wichtige Textstellen mit verschiedenen Levels auszeichnen:
+
+WARNING: Das ist eine Warnung!
+
+TIP: Das ist ein Tipp!
+
+IMPORTANT: Das ist wichtig!
+
+CAUTION: Achtung, das ist gefährlich!
+
+NOTE: Das ist ein kleiner Hinweis.
+
+Und man kann auch zitieren:
+
+[quote,Albert Einstein]
+Ein Mensch der keine Fehler macht, hat nie etwas neues ausprobiert.
