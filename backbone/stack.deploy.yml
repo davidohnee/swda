@@ -1,0 +1,150 @@
+version: '3.5'
+
+volumes:
+  traefik-data:
+    driver_opts:
+      type: none
+      device: ${STORAGE_PATH}/traefik
+      o: bind
+  portainer-data:
+    driver_opts:
+      type: none
+      device: ${STORAGE_PATH}/portainer
+      o: bind
+
+networks:
+  ingress:
+    name: traefik-public
+    external: true
+  bus:
+    name: bus
+    external: true
+
+services:
+
+  traefik:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/traefik:v2.11.8
+    command:
+
+      # connect to docker socket in swarm mode
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.swarmMode=true"
+
+      # configure web routing
+      - "--providers.docker.exposedbydefault=true"
+      - "--providers.docker.network=traefik-public"
+      
+      # create public entry points for HTTP 
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entryPoints.streaming.address=:1514/udp"
+      - "--entryPoints.ssh1.address=:2222/tcp"
+      - "--entryPoints.ssh2.address=:2223/tcp"
+      - "--entryPoints.ssh3.address=:2224/tcp"
+
+      # enable auto SSL certs with letsencrypt
+      - "--certificatesResolvers.letsencrypt.acme.httpChallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesResolvers.letsencrypt.acme.httpChallenge.entrypoint=web"
+      - "--certificatesResolvers.letsencrypt.acme.email=roland.christen@hslu.ch"
+      - "--certificatesResolvers.letsencrypt.acme.storage=/storage/acme.json"
+
+      # Backend config (allow self signed certs for internals
+      - "--serversTransport.insecureSkipVerify=true"
+
+      # dev config
+      - "--api=true"
+      - "--api.dashboard=true"   
+      - "--api.insecure=false"   # https://docs.traefik.io/v2.0/operations/dashboard/#secure-mode
+      - "--api.debug=true"       # additional endpoints for debugging and profiling
+      - "--log.level=DEBUG"      # https://docs.traefik.io/observability/logs/
+
+    ports:
+      - 80:80
+      - 443:443
+      - 2222:2222/tcp
+      - 2223:2223/tcp
+      - 2224:2224/tcp
+      - 1514:1514/udp
+
+    volumes:
+
+      # connect to docker socket (in order to react to docker events)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      # persistent data
+      - traefik-data:/storage
+
+    networks:
+      - ingress
+
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager  # must always be on a manager node
+      replicas: 1
+      labels:
+        # configure route for dashboard
+        - 'traefik.http.routers.${CICD_STACK_NAME}Traefik.rule=Host(`traefik.${TLD}`)'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Traefik.service=api@internal'
+        - "traefik.http.services.${CICD_STACK_NAME}Traefik.loadbalancer.server.port=8080"
+        - 'traefik.http.routers.${CICD_STACK_NAME}Traefik.entrypoints=websecure'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Traefik.tls.certresolver=letsencrypt'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Traefik.middlewares=dashboard-auth'
+        - 'traefik.http.middlewares.dashboard-auth.basicauth.users=swda:$$2y$$05$$AfeKVYgMpNXUdSI6fQZQoeCOysxeK7vs7bozkJNBqQYS25fc7kyly'
+
+        # middleware for redirecting from HTTP to HTTPS
+        - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+
+        # set redirect to HTTPS for all incoming request on HTTP entrypoint
+        - 'traefik.http.routers.redirs.rule=hostregexp(`{host:.+}.${TLD}`)'
+        - 'traefik.http.routers.redirs.entrypoints=web'
+        - 'traefik.http.routers.redirs.middlewares=redirect-to-https'
+
+  bus:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/rabbitmq:3.13.7-management-alpine
+    networks:
+      - bus
+      - ingress
+    deploy:
+      replicas: 1
+      labels:
+        - 'traefik.http.routers.${CICD_STACK_NAME}Bus.rule=Host(`bus.${TLD}`)'
+        - 'traefik.http.services.${CICD_STACK_NAME}Bus.loadbalancer.server.port=15672'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Bus.entrypoints=websecure'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Bus.tls.certresolver=letsencrypt'
+
+  portainer:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/portainer-ce:2.21.1-alpine
+    networks:
+      - ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer-data:/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - 'traefik.http.routers.${CICD_STACK_NAME}Portainer.rule=Host(`portainer.${TLD}`)'
+        - 'traefik.http.services.${CICD_STACK_NAME}Portainer.loadbalancer.server.port=9000'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Portainer.entrypoints=websecure'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Portainer.tls.certresolver=letsencrypt'
+
+  visualizer:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/swarm-visualizer/app:0.1.2
+    networks:
+      - ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - 'traefik.http.routers.${CICD_STACK_NAME}Visualizer.rule=Host(`discover.${TLD}`)'
+        - 'traefik.http.services.${CICD_STACK_NAME}Visualizer.loadbalancer.server.port=8090'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Visualizer.entrypoints=websecure'
+        - 'traefik.http.routers.${CICD_STACK_NAME}Visualizer.tls.certresolver=letsencrypt'
