@@ -1,0 +1,97 @@
+<mxfile host="Electron" modified="2024-10-17T09:22:48.536Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="LVbm-ZZjHKSOPGiLS227" version="23.1.5" type="device">
+  <diagram name="Page-1" id="J4cpTlg6xXW0RjKDhTpE">
+    <mxGraphModel dx="1313" dy="776" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="53pIxfF-ds22HI0t3MvC-50" value="Filialbestellsystem" style="swimlane;html=1;startSize=20;fontStyle=0;collapsible=0;horizontal=0;swimlaneLine=1;swimlaneFillColor=#ffffff;strokeWidth=2;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="1380" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-51" value="Nachbestellung im Zentrallager tätigen" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;isLoopSub=1;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="730" y="170" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-52" value="Nachbestellung eingetroffen" style="points=[[0.145,0.145,0],[0.5,0,0],[0.855,0.145,0],[1,0.5,0],[0.855,0.855,0],[0.5,1,0],[0.145,0.855,0],[0,0.5,0]];shape=mxgraph.bpmn.event;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=ellipsePerimeter;outlineConnect=0;aspect=fixed;outline=throwing;symbol=general;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="920" y="185" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-51" target="53pIxfF-ds22HI0t3MvC-52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-54" value="Lokalen Lagerbestand aktualisieren" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="1030" y="170" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-52" target="53pIxfF-ds22HI0t3MvC-54">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-56" value="Lagerbestand" style="shape=datastore;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="273" y="235" width="85" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-57" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endFill=0;startFill=0;endSize=6;startSize=6;dashed=1;dashPattern=1 4;endArrow=none;startArrow=none;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-54" target="53pIxfF-ds22HI0t3MvC-56">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="320" y="160" as="sourcePoint" />
+            <mxPoint x="740" y="330" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="1090" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-58" value="Minimalmenge von Artikeln unterschritten?" style="points=[[0.25,0.25,0],[0.5,0,0],[0.75,0.25,0],[1,0.5,0],[0.75,0.75,0],[0.5,1,0],[0.25,0.75,0],[0,0.5,0]];shape=mxgraph.bpmn.gateway2;html=1;verticalLabelPosition=top;labelBackgroundColor=#ffffff;verticalAlign=bottom;align=center;perimeter=rhombusPerimeter;outlineConnect=0;outline=none;symbol=none;gwType=exclusive;labelPosition=center;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="640" y="85" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-59" value="Ja" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-58" target="53pIxfF-ds22HI0t3MvC-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-60" value="Lokalen Lagerbestand überprüfen" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="410" y="70" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-61" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endFill=0;startFill=0;endSize=6;startSize=6;dashed=1;dashPattern=1 4;endArrow=none;startArrow=none;rounded=0;exitX=1.047;exitY=0.214;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-56" target="53pIxfF-ds22HI0t3MvC-60">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="190" y="269" as="sourcePoint" />
+            <mxPoint x="480" y="220" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="470" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-60" target="53pIxfF-ds22HI0t3MvC-58">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-63" value="" style="points=[[0.25,0.25,0],[0.5,0,0],[0.75,0.25,0],[1,0.5,0],[0.75,0.75,0],[0.5,1,0],[0.25,0.75,0],[0,0.5,0]];shape=mxgraph.bpmn.gateway2;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=rhombusPerimeter;outlineConnect=0;outline=none;symbol=none;gwType=exclusive;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="1160" y="85" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-64" value="Nein" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-58" target="53pIxfF-ds22HI0t3MvC-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-65" value="Lagerbestand aktuell" style="points=[[0.145,0.145,0],[0.5,0,0],[0.855,0.145,0],[1,0.5,0],[0.855,0.855,0],[0.5,1,0],[0.145,0.855,0],[0,0.5,0]];shape=mxgraph.bpmn.event;html=1;verticalLabelPosition=top;labelBackgroundColor=#ffffff;verticalAlign=bottom;align=center;perimeter=ellipsePerimeter;outlineConnect=0;aspect=fixed;outline=end;symbol=terminate2;labelPosition=center;" vertex="1" parent="53pIxfF-ds22HI0t3MvC-50">
+          <mxGeometry x="1270" y="85" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-54" target="53pIxfF-ds22HI0t3MvC-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-67" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="53pIxfF-ds22HI0t3MvC-50" source="53pIxfF-ds22HI0t3MvC-63" target="53pIxfF-ds22HI0t3MvC-65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-68" value="Lagerbestandaktualisierungsanfrage" style="points=[[0.145,0.145,0],[0.5,0,0],[0.855,0.145,0],[1,0.5,0],[0.855,0.855,0],[0.5,1,0],[0.145,0.855,0],[0,0.5,0]];shape=mxgraph.bpmn.event;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=ellipsePerimeter;outlineConnect=0;aspect=fixed;outline=standard;symbol=message;" vertex="1" parent="1">
+          <mxGeometry x="140" y="175" width="50" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-69" value="Lokalen Lagerbestand aktualisieren" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;" vertex="1" parent="1">
+          <mxGeometry x="290" y="160" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-70" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="53pIxfF-ds22HI0t3MvC-68" target="53pIxfF-ds22HI0t3MvC-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-71" value="" style="edgeStyle=elbowEdgeStyle;fontSize=12;html=1;endFill=0;startFill=0;endSize=6;startSize=6;dashed=1;dashPattern=1 4;endArrow=none;startArrow=none;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="53pIxfF-ds22HI0t3MvC-69" target="53pIxfF-ds22HI0t3MvC-56">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="690" y="390" as="sourcePoint" />
+            <mxPoint x="850" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-72" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="53pIxfF-ds22HI0t3MvC-69" target="53pIxfF-ds22HI0t3MvC-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="53pIxfF-ds22HI0t3MvC-73" value="Aktualisierung Lagerbestand" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="360" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
