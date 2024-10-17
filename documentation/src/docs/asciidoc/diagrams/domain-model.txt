@@ -1,0 +1,127 @@
+classDiagram
+    User "1" *-- "1" UserId
+    User "0..*" o-- "0..*" RoleId
+    Role "1" *-- "1" RoleId
+    Product "1" *-- "1" ProductId
+    Item "1" *-- "1" ItemId
+    Item "1" o-- "1" Product
+    ItemRepository "1" o-- "0..*" Item
+    Order "1" o-- "1..*" OrderItem
+    OrderService "1" o-- "1" OrderRepository
+    OrderItem "1" *-- "1" Item
+    Warehouse "1" *-- "1" WarehouseId
+    Warehouse "1" o-- "1" ItemRepository
+    WarehouseRepository "1" o-- "0..*" Warehouse
+    Warehouse "1" o-- "1" WarehouseType
+    OrderService "1" o-- "*" WarehouseRepository
+    UserRepository "1" o.. "0..*" User
+    UserRepository <.. User: use
+    OrderService <.. User: use
+    ProductSearchService <.. User: use
+    WarehouseRepository <.. ProductSearchService: use
+    InvoiceService <.. OrderService: use
+    OrderRepository "1" o-- "0..*" Order
+    
+    class WarehouseType{
+        <<enumeration>>
+        CENTRAL
+        LOCAL
+    }
+    class ProductId{
+        <<Value Object>>
+        -UUID uniqueId
+    }
+    class Product{
+        <<Value Object>>
+        -String name
+        -Number price
+        +getId() ProductId
+        +getName() String
+        +getPrice() Number
+    }
+    class ItemId{
+        <<Value Object>>
+        -UUID uniqueId
+    }
+    class Item{
+        <<Aggregate Root>>
+        +getProduct() Product
+    }
+    class ItemRepository{
+        <<Domain Repository>>
+        +allByProduct(Product product) List~Item~
+        +add(Item)
+        +remove(Item)
+    }
+    class ProductSearchService{
+        <<Domain Repository>>
+        +allByProduct(Product product) List~OrderItem~
+    }
+    class WarehouseRepository{
+        <<Domain Repository>>
+        +take(List~OrderItem~ items): List~OrderItem~
+        +allByProduct(Product product) List~OrderItem~        
+    }
+    class WarehouseId{
+        <<Value Object>>
+        -UUID uniqueId
+    }
+    class Warehouse{
+        <<Aggregate Root>>
+        +take(List~Item~ items)
+        +allByProduct(Product product) List~Item~
+    }
+    class OrderRepository{
+        <<Domain Repository>>
+        +save(Order order)
+        +remove(Order order)
+        +getAll() List~Order~
+    }
+    class OrderItem {
+        <<Value Object>>
+        -item: Item
+        -source: Warehouse
+    }
+    class Order{
+        <<Value Object>>
+        -seller: User
+        -timstamp: DateTime
+        -customer: User
+        -item: OrderItem
+        +getSeller() User
+        +getTimestamp() DateTime
+        +getCustomer() UserId
+        +getTotalPrice() Number
+    }
+    class UserId{
+        <<Value Object>>
+        -UUID uniqueId
+    }
+    class RoleId{
+        <<Value Object>>
+        -UUID uniqueId
+    }
+    class Role{
+        <<Aggregate Root>>
+        -String name
+        getName() String
+    }
+    class UserRepository{
+        <<Domain Repository>>
+        +create(User user)
+        +remove(User user)
+    }
+    class User{
+        <<Aggregate Root>>
+        -String name
+        -String familyName
+        +getName() String
+        +getFamilyName() String
+        +getRoles() List~Role~
+    }
+    class InvoiceService{
+        +send(User user, Order order)
+    }
+    class OrderService{
+        +order(Order order)
+    }
