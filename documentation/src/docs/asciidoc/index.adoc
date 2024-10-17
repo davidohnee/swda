@@ -12,9 +12,10 @@ Das ist die Dokumentation (auch als link:index.pdf[PDF]) der Gruppe g09.
 == Team
 Das Team besteht aus folgenden Personen:
 
- * Name, Vorname <vorname.name@stud.hslu.ch>
- * Name, Vorname <vorname.name@stud.hslu.ch>
- * Name, Vorname <vorname.name@stud.hslu.ch>
+ * Affentranger, Andreas <andreas.affentranger@stud.hslu.ch>
+ * Dias Horta, David <david.diashorta@stud.hslu.ch>
+ * Mösch, Sandro <sandro.moesch@stud.hslu.ch>
+ * Stocker, Sven <sven.stocker@stud.hslu.ch>
 
 == Thema 1: Projekt für Dokumentation
 Unsere Empfehlung: Schreiben Sie Ihre Dokumentation als https://asciidoc.org/[AsciiDoc] im Verzeichnis src/docs/asciidoc in *.adoc-Dateien.
