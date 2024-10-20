@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: ch.hslu.swda.micro
+---
+testFramework: junit
+sourceLanguage: java
