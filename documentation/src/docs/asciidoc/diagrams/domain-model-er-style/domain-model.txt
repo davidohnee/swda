@@ -1,0 +1,60 @@
+classDiagram
+    Employee "0..*" o-- "0..*" Role
+    Item "1" o-- "1" Product
+    Order "1" o-- "1..*" OrderItem
+    OrderItem "1" o-- "1" Item
+    Warehouse "1" o-- "1" WarehouseType: -type
+    Customer "1" *-- "0..*" Order
+    OrderItem "1" o-- "1" Warehouse: -source
+    
+    class WarehouseType{
+        CENTRAL
+        LOCAL
+    }
+    class Product{
+        -String name
+        -Number price
+        +getId() ProductId
+        +getName() String
+        +getPrice() Number
+    }
+    class Item{
+        +getProduct() Product
+    }
+    class Warehouse{
+        +take(List~Item~ items)
+        +allByProduct(Product product) List~Item~
+    }
+    class OrderItem {
+        -item: Item
+    }
+    class Order{
+        -seller: User
+        -timstamp: DateTime
+        -customer: User
+        -items: List~OrderItem~
+        +getSeller() User
+        +getTimestamp() DateTime
+        +getCustomer() UserId
+        +getTotalPrice() Number
+        +getItems(): List~OrderItem~
+    }
+    class Role{
+        -String name
+        getName() String
+    }
+    class Customer{
+        -UUID id
+        -String firstName
+        -String familyName
+        +getFirstName() String
+        +getFamilyName() String
+    }
+    class Employee{
+        -UUID id
+        -String firstName
+        -String familyName
+        +getFirstName() String
+        +getFamilyName() String
+        +getRoles() List~Role~
+    }
