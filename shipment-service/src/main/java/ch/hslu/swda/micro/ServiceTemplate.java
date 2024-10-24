@@ -65,7 +65,7 @@ public final class ServiceTemplate implements AutoCloseable {
     public void registerStudent() throws IOException, InterruptedException {
 
         // create new student
-        final Student student = new Student(1, "Jane", "Doe", ThreadLocalRandom.current().nextInt(1, 13));
+        final Student student = new Student(1, "Mike", "Oxlong", ThreadLocalRandom.current().nextInt(1, 13));
         ObjectMapper mapper = new ObjectMapper();
         String data = mapper.writeValueAsString(student);
 
