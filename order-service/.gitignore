@@ -8,3 +8,5 @@
 *.log
 /nbproject/
 /dependency-reduced-pom.xml
+.envrc
+*.nix
