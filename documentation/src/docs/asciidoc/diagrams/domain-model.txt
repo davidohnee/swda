@@ -1,127 +1,119 @@
 classDiagram
-    User "1" *-- "1" UserId
-    User "0..*" o-- "0..*" RoleId
-    Role "1" *-- "1" RoleId
-    Product "1" *-- "1" ProductId
-    Item "1" *-- "1" ItemId
-    Item "1" o-- "1" Product
-    ItemRepository "1" o-- "0..*" Item
-    Order "1" o-- "1..*" OrderItem
-    OrderService "1" o-- "1" OrderRepository
-    OrderItem "1" *-- "1" Item
-    Warehouse "1" *-- "1" WarehouseId
-    Warehouse "1" o-- "1" ItemRepository
-    WarehouseRepository "1" o-- "0..*" Warehouse
-    Warehouse "1" o-- "1" WarehouseType
-    OrderService "1" o-- "*" WarehouseRepository
-    UserRepository "1" o.. "0..*" User
-    UserRepository <.. User: use
-    OrderService <.. User: use
-    ProductSearchService <.. User: use
-    WarehouseRepository <.. ProductSearchService: use
-    InvoiceService <.. OrderService: use
-    OrderRepository "1" o-- "0..*" Order
+    Employee "0..*" o-- "1" Role: has
+    Item "1" o-- "1" Product: is of type
+    Order "1" o-- "1..*" OrderItem: consists of
+    OrderItem "1" o-- "1" Item: is
+    Warehouse "1" o-- "1" WarehouseType: type
+    Customer "1" --> "0..*" CustomerOrder: places
+    OrderItem "1" o-- "1" Warehouse: is from
+    Employee "1" --> "0..*" Customer: manages
+    Invoice "1" *-- "1" CustomerOrder: generates
+    Customer "1" --> "0..*" Invoice: receives
+    Employee "1" --> "0..*" CustomerOrder: processes
+    Employee "1" --> "0..*" ReplenishmentOrder: places
+    Role "1" o-- "1" RoleName: is called
+    Warehouse "1" *-- "0..*" Item: stores
+    Customer "1" --> "0..*" Reminder: receives
+    Reminder "0..*" *-- "1" Invoice: for
+    ReplenishmentOrder "1" o-- "1" Warehouse: for
+    Shipment "1" --> "1" Customer: notify
+    CustomerOrder "1" --> "1" Shipment: initiates
+    Order "0..*" o-- "1" OrderStatus: has
+
+    Employee --|> Person: inherits
+    Customer --|> Person: inherits
+
+    ReplenishmentOrder --|> Order: inherits
+    CustomerOrder --|> Order: inherits
     
     class WarehouseType{
         <<enumeration>>
         CENTRAL
         LOCAL
     }
-    class ProductId{
-        <<Value Object>>
-        -UUID uniqueId
+    class OrderStatus{
+        <<enumeration>>
+        PENDING
+        CONFIRMED
+        AWAITING_PAYMENT
+        DONE
+    }
+    class Shipment{
+        -CustomerOrder order
+    }
+    class Reminder{
+        -Invoice invoice
+    }
+    class Person{
+        -UUID id
+        -String firstName
+        -String familyName
+        +getFirstName() String
+        +getFamilyName() String
     }
     class Product{
-        <<Value Object>>
+        -UUID id
         -String name
         -Number price
-        +getId() ProductId
+        +getId() UUID
         +getName() String
         +getPrice() Number
     }
-    class ItemId{
-        <<Value Object>>
-        -UUID uniqueId
-    }
     class Item{
-        <<Aggregate Root>>
-        +getProduct() Product
-    }
-    class ItemRepository{
-        <<Domain Repository>>
-        +allByProduct(Product product) List~Item~
-        +add(Item)
-        +remove(Item)
-    }
-    class ProductSearchService{
-        <<Domain Repository>>
-        +allByProduct(Product product) List~OrderItem~
-    }
-    class WarehouseRepository{
-        <<Domain Repository>>
-        +take(List~OrderItem~ items): List~OrderItem~
-        +allByProduct(Product product) List~OrderItem~        
-    }
-    class WarehouseId{
-        <<Value Object>>
-        -UUID uniqueId
+        -UUID id
+        -Product product
     }
     class Warehouse{
-        <<Aggregate Root>>
         +take(List~Item~ items)
         +allByProduct(Product product) List~Item~
     }
-    class OrderRepository{
-        <<Domain Repository>>
-        +save(Order order)
-        +remove(Order order)
-        +getAll() List~Order~
-    }
     class OrderItem {
-        <<Value Object>>
-        -item: Item
-        -source: Warehouse
+        -Item item
+        -Warehouse source
     }
     class Order{
-        <<Value Object>>
-        -seller: User
         -timstamp: DateTime
-        -customer: User
-        -item: OrderItem
-        +getSeller() User
+        -items: List~OrderItem~
+        -status: OrderStatus
         +getTimestamp() DateTime
-        +getCustomer() UserId
         +getTotalPrice() Number
+        +getItems() List~OrderItem~
+        +getStatus() OrderStatus
     }
-    class UserId{
-        <<Value Object>>
-        -UUID uniqueId
+    class ReplenishmentOrder{
+        -destination: Warehouse
+        +getWarehouse() Warehouse
     }
-    class RoleId{
-        <<Value Object>>
-        -UUID uniqueId
+    class CustomerOrder{
+        -seller: Employee
+        -customer: Customer
+        +getSeller() Employee
     }
     class Role{
-        <<Aggregate Root>>
-        -String name
+        -RoleName name
         getName() String
     }
-    class UserRepository{
-        <<Domain Repository>>
-        +create(User user)
-        +remove(User user)
+    class Customer{
+        -address: Address
+        -contactInfo: ContactInfo
+        +getCustomer() Customer
+        +getAddress() Address
+        +contact()
     }
-    class User{
-        <<Aggregate Root>>
-        -String name
-        -String familyName
-        +getName() String
-        +getFamilyName() String
-        +getRoles() List~Role~
+    class Employee{
+        -Role role
+        +getRole() Role
     }
-    class InvoiceService{
-        +send(User user, Order order)
+    class RoleName{
+        <<enumeration>>
+        SALES
+        MANAGER
+        DATA_TYPIST
+        SYSTEM_ADMIN
     }
-    class OrderService{
-        +order(Order order)
+    class Invoice{
+        -Order order
+        -Date dueDate
+        +getTotalPrice() Number
+        +getDueDate() Date
     }
