@@ -23,6 +23,6 @@ public class MonthStatTest {
 
     @Test
     public void testEqualsContract() {
-        EqualsVerifier.forClass(MonthStat.class).suppress(Warning.NONFINAL_FIELDS).verify();
+        EqualsVerifier.forClass(InventoryItem.class).suppress(Warning.NONFINAL_FIELDS).verify();
     }
 }

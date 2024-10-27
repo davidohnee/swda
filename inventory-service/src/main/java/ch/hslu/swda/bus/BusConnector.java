@@ -56,6 +56,7 @@ public final class BusConnector implements AutoCloseable {
      */
     public void talkAsync(final String exchange, final String route, final String message) throws IOException {
         AMQP.BasicProperties props = new AMQP.BasicProperties();
+        LOG.debug("Sending message to exchange [{}] with route [{}]", exchange, route);
         channelTalk.basicPublish(exchange, route, props, message.getBytes(StandardCharsets.UTF_8));
     }
 

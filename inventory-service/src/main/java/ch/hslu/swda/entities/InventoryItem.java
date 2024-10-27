@@ -20,15 +20,15 @@ import java.util.Objects;
 /**
  * Tuple for Month and Number of students.
  */
-public final class MonthStat {
+public final class InventoryItem {
 
-    private int month;
-    private int studentCount;
+    private long productId;
+    private int quantity;
 
     /**
      * Default Constructor.
      */
-    public MonthStat() {
+    public InventoryItem() {
         this(0, 0);
     }
 
@@ -39,37 +39,37 @@ public final class MonthStat {
      * @param month        month number, zero-based.
      * @param studentCount number of students born in this month.
      */
-    public MonthStat(final int month, final int studentCount) {
-        this.month = month;
-        this.studentCount = studentCount;
+    public InventoryItem(final long productId, final int quantity) {
+        this.productId = productId;
+        this.quantity = quantity;
     }
 
     /**
-     * @return month
+     * @return product id
      */
-    public int getMonth() {
-        return month;
+    public long getProductId() {
+        return productId;
     }
 
     /**
-     * @param month the month to set
+     * @param productId the product id to set
      */
-    public void setMonth(final int month) {
-        this.month = month;
+    public void setProductId(final long productId) {
+        this.productId = productId;
     }
 
     /**
-     * @return the number of students
+     * @return the quantity
      */
-    public int getStudentCount() {
-        return studentCount;
+    public int getQuantity() {
+        return quantity;
     }
 
     /**
-     * @param studentCount the number of students to set
+     * @param quantity the quantity to set
      */
-    public void setStudentCount(final int studentCount) {
-        this.studentCount = studentCount;
+    public void setQuantity(final int quantity) {
+        this.quantity = quantity;
     }
 
     /**
@@ -80,9 +80,9 @@ public final class MonthStat {
         if (this == obj) {
             return true;
         }
-        return obj instanceof MonthStat other
-                && other.month == this.month
-                && other.studentCount == this.studentCount;
+        return obj instanceof InventoryItem other
+                && other.productId == this.productId
+                && other.quantity == this.quantity;
     }
 
     /**
@@ -90,7 +90,7 @@ public final class MonthStat {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.month, this.studentCount);
+        return Objects.hash(this.productId, this.quantity);
     }
 
     /**
@@ -98,6 +98,6 @@ public final class MonthStat {
      */
     @Override
     public String toString() {
-        return "Month Stat[month=" + this.month + ", studentCount='" + this.studentCount + "]";
+        return "Inventory Item[productId=" + this.productId + ", quantity='" + this.quantity + "]";
     }
 }

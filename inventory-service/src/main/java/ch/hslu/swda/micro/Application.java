@@ -36,11 +36,11 @@ public final class Application {
 
         private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
 
-        private ServiceTemplate service;
+            private InventoryService service;
 
         HeartBeat() {
             try {
-                this.service = new ServiceTemplate();
+                this.service = new InventoryService();
             } catch (IOException | TimeoutException e) {
                 LOG.error(e.getMessage(), e);
             }
@@ -49,9 +49,8 @@ public final class Application {
         @Override
         public void run() {
             try {
-                service.registerStudent();
-                service.askAboutUniverse();
-            } catch (IOException | InterruptedException e) {
+                this.service.heartbeat();
+            } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
             }
         }

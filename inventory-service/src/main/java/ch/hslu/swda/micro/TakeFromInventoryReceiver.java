@@ -17,20 +17,28 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-
-import java.io.IOException;
+import ch.hslu.swda.entities.InventoryItem;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ChatReceiver implements MessageReceiver {
+import java.io.IOException;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChatReceiver.class);
+public final class TakeFromInventoryReceiver implements MessageReceiver {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TakeFromInventoryReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final Inventory inventory;
 
-    public ChatReceiver(final String exchangeName, final BusConnector bus) {
+    public TakeFromInventoryReceiver(
+            final String exchangeName,
+            final BusConnector bus,
+            final Inventory inventory
+    ) {
         this.exchangeName = exchangeName;
         this.bus = bus;
+        this.inventory = inventory;
     }
 
     /**
@@ -38,16 +46,22 @@ public final class ChatReceiver implements MessageReceiver {
      */
     @Override
     public void onMessageReceived(final String route, final String replyTo, final String corrId, final String message) {
-
         // receive message and reply
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            InventoryItem item = mapper.readValue(message, InventoryItem.class);
+            LOG.debug("requested to take {} items of type {}", item.getQuantity(), item.getProductId());
+
+            TakeFromInventoryResult result = this.inventory.take(item.getProductId(), item.getQuantity());
+            String data = mapper.writeValueAsString(result);
+
+            LOG.debug("result: {}", result);
+
             LOG.debug("received chat message with replyTo property [{}]: [{}]", replyTo, message);
             LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
-            bus.reply(exchangeName, replyTo, corrId, "Hello there. This is the service template.");
+            bus.reply(exchangeName, replyTo, corrId, data);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
-
     }
-
 }
