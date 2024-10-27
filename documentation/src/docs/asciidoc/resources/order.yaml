@@ -1,0 +1,604 @@
+openapi: 3.1.0
+info:
+  title: Order Service G09
+  version: 1.0.0
+  description: API designed by team G09 for the HS24 SWDA course at HSLU
+servers:
+  - url: /api/v1
+paths:
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Get list of orders
+      responses:
+        '200':
+          description: A list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      tags:
+        - Orders
+      summary: Create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{orderId}:
+    get:
+      tags:
+        - Orders
+      summary: Get an order by ID
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+    put:
+      tags:
+        - Orders
+      summary: Update an order
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderUpdate'
+      responses:
+        '200':
+          description: Order updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+
+  /inventory:
+    get:
+      tags:
+        - Inventory
+      summary: Get inventory
+      responses:
+        '200':
+          description: Inventory details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inventory'
+  /inventory/{productId}:
+    patch:
+      tags:
+        - Inventory
+      summary: Update product count in inventory
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+              required:
+                - count
+      responses:
+        '200':
+          description: Inventory updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+        '404':
+          description: Product not found
+
+  /shipments:
+    get:
+      tags:
+        - Shipments
+      summary: Get all shipments
+      responses:
+        '200':
+          description: List of shipments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Shipment'
+  /shipments/{shipmentId}:
+    get:
+      tags:
+        - Shipments
+      summary: Get a specific shipment
+      parameters:
+        - in: path
+          name: shipmentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Shipment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shipment'
+        '404':
+          description: Shipment not found
+
+  /replenishments:
+    get:
+      tags:
+        - Replenishments
+      summary: Get all replenishments
+      responses:
+        '200':
+          description: List of replenishments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Replenishment'
+  /replenishments/{replenishmentId}:
+    get:
+      tags:
+        - Replenishments
+      summary: Get a specific replenishment
+      parameters:
+        - in: path
+          name: replenishmentId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Replenishment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Replenishment'
+        '404':
+          description: Replenishment not found
+
+  /customers:
+    get:
+      tags:
+        - Customers
+      summary: Get all customers
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+  /customers/{customerId}:
+    get:
+      tags:
+        - Customers
+      summary: Get a specific customer
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          description: Customer not found
+
+components:
+  schemas:
+    Person:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        familyName:
+          type: string
+      required:
+        - id
+        - firstName
+        - familyName
+
+    Employee:
+      allOf:
+        - $ref: '#/components/schemas/Person'
+        - type: object
+          properties:
+            role:
+              type: string
+              enum:
+                - SALES
+                - MANAGER
+                - DATA_TYPIST
+                - SYSTEM_ADMIN
+          required:
+            - role
+
+    Address:
+      type: object
+      properties:
+        streetName:
+          type: string
+        streetNumber:
+          type: string
+        plz:
+          type: string
+        townName:
+          type: string
+      required:
+        - streetName
+        - streetNumber
+        - plz
+        - townName
+
+    ContactInfo:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+      description: Contact information (to be defined)
+      required: []
+
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/Person'
+        - type: object
+          properties:
+            address:
+              $ref: '#/components/schemas/Address'
+            contactInfo:
+              $ref: '#/components/schemas/ContactInfo'
+          required:
+            - address
+            - contactInfo
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        price:
+          type: number
+          format: decimal
+      required:
+        - id
+        - name
+        - price
+
+    Warehouse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+            - central
+            - local
+      required:
+        - id
+        - type
+
+    OrderItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        quantity:
+          type: integer
+      required:
+        - product
+        - quantity
+
+    Order:
+      oneOf:
+        - $ref: '#/components/schemas/CustomerOrder'
+        - $ref: '#/components/schemas/ReplenishmentOrder'
+      discriminator:
+        propertyName: orderType
+        mapping:
+          customerOrder: '#/components/schemas/CustomerOrder'
+          replenishmentOrder: '#/components/schemas/ReplenishmentOrder'
+
+    CustomerOrder:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrder'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [customerOrder]
+            customer:
+              $ref: '#/components/schemas/Customer'
+            seller:
+              $ref: '#/components/schemas/Employee'
+          required:
+            - orderType
+            - customer
+            - seller
+
+    ReplenishmentOrder:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrder'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [replenishmentOrder]
+            destination:
+              $ref: '#/components/schemas/Warehouse'
+          required:
+            - orderType
+            - destination
+
+    BaseOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        dateTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - AWAITING_PAYMENT
+            - DONE
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        price:
+          type: number
+          format: decimal
+      required:
+        - id
+        - dateTime
+        - status
+        - orderItems
+        - price
+
+    Shipment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerOrder:
+          $ref: '#/components/schemas/CustomerOrder'
+      required:
+        - id
+        - customerOrder
+
+    Replenishment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        replenishmentOrder:
+          $ref: '#/components/schemas/ReplenishmentOrder'
+      required:
+        - id
+        - replenishmentOrder
+
+    InventoryItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/Product'
+        count:
+          type: integer
+      required:
+        - product
+        - count
+
+    Inventory:
+      type: array
+      items:
+        $ref: '#/components/schemas/InventoryItem'
+
+    OrderCreate:
+      oneOf:
+        - $ref: '#/components/schemas/CustomerOrderCreate'
+        - $ref: '#/components/schemas/ReplenishmentOrderCreate'
+      discriminator:
+        propertyName: orderType
+        mapping:
+          customerOrder: '#/components/schemas/CustomerOrderCreate'
+          replenishmentOrder: '#/components/schemas/ReplenishmentOrderCreate'
+
+    CustomerOrderCreate:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrderCreate'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [customerOrder]
+            customerId:
+              type: string
+              format: uuid
+            sellerId:
+              type: string
+              format: uuid
+          required:
+            - orderType
+            - customerId
+            - sellerId
+
+    ReplenishmentOrderCreate:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrderCreate'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [replenishmentOrder]
+            destinationId:
+              type: string
+              format: uuid
+          required:
+            - orderType
+            - destinationId
+
+    BaseOrderCreate:
+      type: object
+      properties:
+        dateTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - AWAITING_PAYMENT
+            - DONE
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemCreate'
+      required:
+        - dateTime
+        - status
+        - orderItems
+
+    OrderItemCreate:
+      type: object
+      properties:
+        productId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+      required:
+        - productId
+        - quantity
+
+    OrderUpdate:
+      description: Schema for updating an order
+      oneOf:
+        - $ref: '#/components/schemas/CustomerOrderUpdate'
+        - $ref: '#/components/schemas/ReplenishmentOrderUpdate'
+      discriminator:
+        propertyName: orderType
+        mapping:
+          customerOrder: '#/components/schemas/CustomerOrderUpdate'
+          replenishmentOrder: '#/components/schemas/ReplenishmentOrderUpdate'
+
+    CustomerOrderUpdate:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrderUpdate'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [customerOrder]
+            customerId:
+              type: string
+              format: uuid
+            sellerId:
+              type: string
+              format: uuid
+          required:
+            - orderType
+
+    ReplenishmentOrderUpdate:
+      allOf:
+        - $ref: '#/components/schemas/BaseOrderUpdate'
+        - type: object
+          properties:
+            orderType:
+              type: string
+              enum: [replenishmentOrder]
+            destinationId:
+              type: string
+              format: uuid
+          required:
+            - orderType
+
+    BaseOrderUpdate:
+      type: object
+      properties:
+        dateTime:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - AWAITING_PAYMENT
+            - DONE
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemCreate'
+      required: []
