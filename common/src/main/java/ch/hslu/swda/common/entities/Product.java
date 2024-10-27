@@ -1,4 +1,4 @@
-package ch.hslu.swda.entities;
+package ch.hslu.swda.common.entities;
 
 import java.math.BigDecimal;
 import java.util.Objects;

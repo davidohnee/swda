@@ -1,4 +1,4 @@
-package ch.hslu.swda.entities;
+package ch.hslu.swda.common.entities;
 
 public final class Customer extends Person {
     private final Address address;

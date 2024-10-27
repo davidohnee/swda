@@ -1,5 +1,7 @@
-package ch.hslu.swda.entities;
+package ch.hslu.swda.common.entities;
 
+import ch.hslu.swda.common.entities.Address;
+import ch.hslu.swda.common.entities.Customer;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
