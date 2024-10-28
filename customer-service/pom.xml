@@ -54,8 +54,11 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://${scm.developer.uid}@gitlab.switch.ch/hslu/${scm.group.name}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.switch.ch/${scm.group.name}/${project.artifactId}.git</developerConnection>
+        <connection>
+            scm:git:https://${scm.developer.uid}@gitlab.switch.ch/hslu/${scm.group.name}/${project.artifactId}.git
+        </connection>
+        <developerConnection>scm:git:ssh://git@gitlab.switch.ch/${scm.group.name}/${project.artifactId}.git
+        </developerConnection>
         <url>https://gitlab.switch.ch/hslu-i1/${scm.group.name}/${project.artifactId}/tree/develop</url>
         <tag>HEAD</tag>
     </scm>
@@ -75,7 +78,7 @@
         <argLine>-Xms512m -Xmx1g -Xss10m</argLine>
 
         <!-- Hier ggf. andere Startklasse anpassen! -->
-        <jar.start.class>ch.hslu.swda.micro.Application</jar.start.class>
+        <jar.start.class>ch.hslu.swda.micro.Application2</jar.start.class>
         <exec.mainClass>${jar.start.class}</exec.mainClass>
 
         <scm.group.name>hslu/edu/bachelor-computer-science/swda/24hs01</scm.group.name>
@@ -136,6 +139,11 @@
                 <artifactId>swda_stock</artifactId>
                 <version>9.0.1</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.hslu.swda24hs.g09</groupId>
+                <artifactId>g09-common</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -216,7 +224,7 @@
                 <artifactId>consolecaptor</artifactId>
                 <version>1.0.3</version>
                 <scope>test</scope>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
@@ -279,6 +287,11 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.hslu.swda24hs.g09</groupId>
+            <artifactId>g09-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -391,8 +404,8 @@
                             <groupId>net.sourceforge.pmd</groupId>
                             <artifactId>pmd-jsp</artifactId>
                             <version>${pmd.version}</version>
-                        </dependency>                    
-                    </dependencies>                
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -571,10 +584,12 @@
                         <configuration>
                             <outputFile>${project.build.directory}/service.jar</outputFile>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${exec.mainClass}</mainClass>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                             <filters>
                                 <filter>
@@ -683,9 +698,9 @@
                             <backend>pdf</backend>
                             <attributes>
                                 <icons>font</icons>
-                                <pagenums />
-                                <toc />
-                                <idprefix />
+                                <pagenums/>
+                                <toc/>
+                                <idprefix/>
                                 <idseparator>-</idseparator>
                             </attributes>
                         </configuration>
@@ -899,6 +914,10 @@
             <id>gitlab-maven-swda-stock</id>
             <url>https://gitlab.com/api/v4/projects/39090453/packages/maven</url>
         </repository>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
@@ -906,5 +925,13 @@
             <id>gitlab-site</id>
             <url>https://hslu.pages.switch.ch/edu/bachelor-computer-science/somewhere/${project.artifactId}</url>
         </site>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
