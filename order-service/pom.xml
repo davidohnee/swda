@@ -54,8 +54,11 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://${scm.developer.uid}@gitlab.switch.ch/hslu/${scm.group.name}/${project.artifactId}.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.switch.ch/${scm.group.name}/${project.artifactId}.git</developerConnection>
+        <connection>
+            scm:git:https://${scm.developer.uid}@gitlab.switch.ch/hslu/${scm.group.name}/${project.artifactId}.git
+        </connection>
+        <developerConnection>scm:git:ssh://git@gitlab.switch.ch/${scm.group.name}/${project.artifactId}.git
+        </developerConnection>
         <url>https://gitlab.switch.ch/hslu-i1/${scm.group.name}/${project.artifactId}/tree/develop</url>
         <tag>HEAD</tag>
     </scm>
@@ -117,13 +120,13 @@
         <pmd.version>7.6.0</pmd.version>
 
         <slf4j.version>2.0.16</slf4j.version>
-        <logback.version>1.5.8</logback.version>
+        <logback.version>1.4.14</logback.version>
 
         <junit5.version>5.11.2</junit5.version>
         <junit5.plattform.version>1.11.2</junit5.plattform.version>
 
         <micronaut.version>4.6.2</micronaut.version>
-        <jackson.version>2.18.0</jackson.version>
+        <jackson.version>2.17.2</jackson.version>
         <micrometer.version>4.8.1</micrometer.version>
         <rabbitmq.version>5.22.0</rabbitmq.version>
         <testcontainers.version>1.20.2</testcontainers.version>
@@ -132,20 +135,16 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>ch.hslu.swda</groupId>
-                <artifactId>swda_stock</artifactId>
-                <version>9.0.1</version>
-                <scope>compile</scope>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>ch.hslu.swda24hs.g09</groupId>-->
-<!--                <artifactId>g09-common</artifactId>-->
-<!--                <version>1.0.0-SNAPSHOT</version>-->
-<!--            </dependency>-->
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${rabbitmq.version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -155,16 +154,10 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>com.rabbitmq</groupId>
-                <artifactId>amqp-client</artifactId>
-                <version>${rabbitmq.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-                <scope>compile</scope>
+                <groupId>io.micronaut.test</groupId>
+                <artifactId>micronaut-test-junit5</artifactId>
+                <version>4.5.0</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -221,7 +214,7 @@
                 <artifactId>consolecaptor</artifactId>
                 <version>1.0.3</version>
                 <scope>test</scope>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
@@ -234,24 +227,104 @@
                 <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.konghq</groupId>
+                <artifactId>unirest-java</artifactId>
+                <version>3.14.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+                <scope>compile</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-java</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-server-netty</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-tracing</artifactId>
+            <version>3.2.7</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.serde</groupId>
+            <artifactId>micronaut-serde-jackson</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.micrometer</groupId>
+            <artifactId>micronaut-micrometer-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.micrometer</groupId>
+            <artifactId>micronaut-micrometer-registry-jmx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-management</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject-java</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -266,6 +339,10 @@
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
         </dependency>
@@ -278,12 +355,34 @@
             <artifactId>equalsverifier</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.github.hakky54</groupId>
+            <artifactId>consolecaptor</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.5.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.17.0</version>
         </dependency>
     </dependencies>
 
@@ -396,8 +495,8 @@
                             <groupId>net.sourceforge.pmd</groupId>
                             <artifactId>pmd-jsp</artifactId>
                             <version>${pmd.version}</version>
-                        </dependency>                    
-                    </dependencies>                
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -576,10 +675,12 @@
                         <configuration>
                             <outputFile>${project.build.directory}/service.jar</outputFile>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${exec.mainClass}</mainClass>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
                             <filters>
                                 <filter>
@@ -688,9 +789,9 @@
                             <backend>pdf</backend>
                             <attributes>
                                 <icons>font</icons>
-                                <pagenums />
-                                <toc />
-                                <idprefix />
+                                <pagenums/>
+                                <toc/>
+                                <idprefix/>
                                 <idseparator>-</idseparator>
                             </attributes>
                         </configuration>
@@ -904,10 +1005,10 @@
             <id>gitlab-maven-swda-stock</id>
             <url>https://gitlab.com/api/v4/projects/39090453/packages/maven</url>
         </repository>
-<!--        <repository>-->
-<!--            <id>gitlab-maven</id>-->
-<!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
-<!--        </repository>-->
+        <!--        <repository>-->
+        <!--            <id>gitlab-maven</id>-->
+        <!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
+        <!--        </repository>-->
     </repositories>
 
     <distributionManagement>
@@ -915,13 +1016,13 @@
             <id>gitlab-site</id>
             <url>https://hslu.pages.switch.ch/edu/bachelor-computer-science/somewhere/${project.artifactId}</url>
         </site>
-<!--        <repository>-->
-<!--            <id>gitlab-maven</id>-->
-<!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
-<!--        </repository>-->
-<!--        <snapshotRepository>-->
-<!--            <id>gitlab-maven</id>-->
-<!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
-<!--        </snapshotRepository>-->
+        <!--        <repository>-->
+        <!--            <id>gitlab-maven</id>-->
+        <!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
+        <!--        </repository>-->
+        <!--        <snapshotRepository>-->
+        <!--            <id>gitlab-maven</id>-->
+        <!--            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>-->
+        <!--        </snapshotRepository>-->
     </distributionManagement>
 </project>

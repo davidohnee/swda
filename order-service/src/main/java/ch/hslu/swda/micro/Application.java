@@ -102,7 +102,7 @@ public final class Application {
         @Override
         public void run() {
             try {
-                service.createOrder();
+//                service.createOrder();
                 service.readOrder();
             } catch (IOException e) {
                 LOG.error(e.getMessage(), e);
