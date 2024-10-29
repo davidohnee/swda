@@ -117,7 +117,8 @@ public class Order {
      * Gets or Sets orderType
      */
     public enum OrderTypeEnum {
-        REPLENISHMENT_ORDER("replenishmentOrder");
+        CUSTOMER_ORDER("CUSTOMER_ORDER"),
+        REPLENISHMENT_ORDER("REPLENISHMENT_ORDER");
 
         private String value;
 

@@ -7,17 +7,21 @@
 
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.model.*;
 import io.micronaut.http.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
-import ch.hslu.swda.model.Order;
-import ch.hslu.swda.model.OrderCreate;
-import ch.hslu.swda.model.OrderUpdate;
+
+import java.io.IOException;
 import java.util.UUID;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +30,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import reactor.core.scheduler.Schedulers;
 
 @Controller("/api/v1")
 @Tag(name = "Orders", description = "The Orders API")
@@ -141,8 +148,68 @@ public class OrdersController {
     public Mono<Order> ordersPost(
         @Body @NotNull @Valid OrderCreate orderCreate
     ) {
-        // TODO implement ordersPost();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
-    }
 
+        // TODO implement ordersPost();
+        String message = orderCreate.toString();
+        LOG.info(message);
+
+        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+
+/*
+        return Mono.fromCallable(() -> {
+            try (BusConnector busConnector = new BusConnector()) {
+
+                // Connect to RabbitMQ
+                try {
+                    busConnector.connect();
+                } catch (IOException | TimeoutException e) {
+                    LOG.error("Failed to connect to RabbitMQ: {}", e.getMessage(), e);
+                    throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Order service is not available");
+                }
+
+                // Serialize the OrderCreate object to JSON
+                ObjectMapper objectMapper = new ObjectMapper();
+                String message = objectMapper.writeValueAsString(orderCreate);
+
+                LOG.info(message);
+
+                // Get exchange and route
+                RabbitMqConfig config = new RabbitMqConfig();
+                String exchange = config.getExchange();
+                String route = "order.create"; // "order.create"
+
+                LOG.info(exchange + "." + route);
+
+                // Send message synchronously and receive response
+                String responseMessage;
+                try {
+                    responseMessage = busConnector.talkSync(exchange, route, message);
+                } catch (IOException | InterruptedException e) {
+                    LOG.error("Error during talkSync: {}", e.getMessage(), e);
+                    throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error communicating with Order service");
+                }
+
+                // Check if response is null (timeout)
+                if (responseMessage == null) {
+                    throw new HttpStatusException(HttpStatus.REQUEST_TIMEOUT, "Order service did not respond in time");
+                }
+
+                // Deserialize response to Order
+                Order order;
+                try {
+                    order = objectMapper.readValue(responseMessage, Order.class);
+                } catch (IOException e) {
+                    LOG.error("Error parsing response: {}", e.getMessage(), e);
+                    throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid response from Order service");
+                }
+
+                return order;
+
+            } catch (Exception e) {
+                LOG.error("Unexpected error in ordersPost: {}", e.getMessage(), e);
+                throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
+        */
+    }
 }

@@ -89,7 +89,7 @@ public class CustomerOrderCreate {
      * Gets or Sets orderType
      */
     public enum OrderTypeEnum {
-        CUSTOMER_ORDER("customerOrder");
+        CUSTOMER_ORDER("CUSTOMER_ORDER");
 
         private String value;
 

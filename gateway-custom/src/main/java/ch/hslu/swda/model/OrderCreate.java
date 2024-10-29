@@ -69,7 +69,7 @@ public class OrderCreate {
         AWAITING_PAYMENT("AWAITING_PAYMENT"),
         DONE("DONE");
 
-        private String value;
+        private final String value;
 
         StatusEnum(String value) {
             this.value = value;
@@ -105,9 +105,10 @@ public class OrderCreate {
      * Gets or Sets orderType
      */
     public enum OrderTypeEnum {
-        REPLENISHMENT_ORDER("replenishmentOrder");
+        CUSTOMER_ORDER("CUSTOMER_ORDER"),
+        REPLENISHMENT_ORDER("REPLENISHMENT_ORDER");
 
-        private String value;
+        private final String value;
 
         OrderTypeEnum(String value) {
             this.value = value;
