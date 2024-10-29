@@ -73,6 +73,7 @@ public final class Application {
     public static void main(final String[] args) throws InterruptedException {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
+        LOG.info("Version 1.0.0");
         if (!"OFF".equals(System.getenv("RABBIT"))) {
             final Timer timer = new Timer();
             timer.schedule(new HeartBeat(), 0, 10000);
