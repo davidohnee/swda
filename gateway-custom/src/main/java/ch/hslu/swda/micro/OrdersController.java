@@ -10,6 +10,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.model.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import io.micronaut.http.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +58,38 @@ public class OrdersController {
     @Get(uri="/orders")
     @Produces(value = {"application/json"})
     public Mono<List<Order>> ordersGet() {
+        /*
         // TODO implement ordersGet();
         return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+         */
+
+        try {
+            String route = MessageRoutes.ORDER_GET_ENTITYSET;
+            String message = "";
+
+            LOG.info("Sending message to route {}", route);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve orders"));
+            }
+
+            LOG.info("Received response: {}", response);
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Order> orders = objectMapper.readValue(response, new TypeReference<List<Order>>() {});
+
+            return Mono.just(orders);
+        } catch (Exception e) {
+            LOG.error("Error retrieving orders", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
@@ -86,8 +117,39 @@ public class OrdersController {
     public Mono<Order> ordersOrderIdGet(
         @PathVariable(value="orderId") @NotNull UUID orderId
     ) {
+        /*
         // TODO implement ordersOrderIdGet();
         return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+         */
+
+        try {
+            String route = MessageRoutes.ORDER_GET_ENTITY;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String message = objectMapper.writeValueAsString(orderId);
+
+            LOG.info("Sending message to route {} with orderId {}", route, orderId);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+            }
+
+            LOG.info("Received response: {}", response);
+            Order order = objectMapper.readValue(response, Order.class);
+
+            return Mono.just(order);
+        } catch (Exception e) {
+            LOG.error("Error retrieving order", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
@@ -148,12 +210,13 @@ public class OrdersController {
     public Mono<Order> ordersPost(
         @Body @NotNull @Valid OrderCreate orderCreate
     ) {
-
+        
         // TODO implement ordersPost();
         String message = orderCreate.toString();
         LOG.info(message);
 
         return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+
 
 /*
         return Mono.fromCallable(() -> {
@@ -210,6 +273,6 @@ public class OrdersController {
                 throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
             }
         }).subscribeOn(Schedulers.boundedElastic());
-        */
+ */
     }
 }
