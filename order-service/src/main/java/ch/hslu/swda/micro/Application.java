@@ -36,11 +36,11 @@ public final class Application {
 
         private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
 
-        private OrderService service;
+        private ServiceTemplate service;
 
         HeartBeat() {
             try {
-                this.service = new OrderService();
+                this.service = new ServiceTemplate();
             } catch (IOException | TimeoutException e) {
                 LOG.error(e.getMessage(), e);
             }
@@ -49,8 +49,10 @@ public final class Application {
         @Override
         public void run() {
             try {
-                service.createOrder();
-                service.getOrderStatus(1L);
+                LOG.debug("In HeartBeat.run() before service.registerStudent()");
+                service.registerStudent();
+                LOG.debug("In HeartBeat.run() before service.askAboutUniverse()");
+                service.askAboutUniverse();
             } catch (IOException | InterruptedException e) {
                 LOG.error(e.getMessage(), e);
             }
