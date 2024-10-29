@@ -1,15 +1,14 @@
 include:
   - project: hslu/shared/devops/cicd
     ref: v5-stable
-    file: 
+    file:
       - edu/swarm.cd.yml
       - edu/config/swda.yml
 
   - project: hslu/edu/bachelor-computer-science/swda/shared/swda-ci
     ref: main
-    file: 
+    file:
       - swda/java.ci.yml
 
 variables:
-    MAVEN_CLI_OPTS: "-s .mvn/settings.xml --batch-mode"
-    MAVEN_OPTS: "-s .mvn/settings.xml -Dmaven.repo.local=.m2/repository"
+  MAVEN_CLI_OPTS: "-s .mvn/settings.xml --batch-mode"
