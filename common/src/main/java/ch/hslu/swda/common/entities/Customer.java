@@ -1,8 +1,11 @@
 package ch.hslu.swda.common.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public final class Customer extends Person {
     private final Address address;
 
+    @JsonCreator
     public Customer(long id, String firstName, String lastName, Address address) {
         super(id, firstName, lastName);
         this.address = address;

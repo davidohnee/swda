@@ -1,5 +1,7 @@
 package ch.hslu.swda.common.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
 
 public class Address {
@@ -8,6 +10,7 @@ public class Address {
     private final String city;
     private final int postcode;
 
+    @JsonCreator
     public Address(String street, String houseNumber, String city, int postcode) {
         this.street = street;
         this.houseNumber = houseNumber;
