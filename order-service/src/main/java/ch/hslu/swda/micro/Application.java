@@ -15,16 +15,14 @@
  */
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.bus.BusConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
-
-import ch.hslu.swda.bus.BusConnector;
-import ch.hslu.swda.bus.RabbitMqConfig;
-import com.rabbitmq.client.ConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Demo für Applikationsstart.
@@ -34,35 +32,6 @@ public final class Application {
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static final int RETRY_DELAY_MS = 2000;
     private static final int MAX_RETRIES = 60; // 2 minutes of retries
-    /**
-     * TimerTask für periodische Ausführung.
-     */
-    private static final class HeartBeat extends TimerTask {
-
-        private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
-
-        private ServiceTemplate service;
-
-        HeartBeat() {
-            try {
-                this.service = new ServiceTemplate();
-            } catch (IOException | TimeoutException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        public void run() {
-            try {
-                LOG.debug("In HeartBeat.run() before service.registerStudent()");
-                service.registerStudent();
-                LOG.debug("In HeartBeat.run() before service.askAboutUniverse()");
-                service.askAboutUniverse();
-            } catch (IOException | InterruptedException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-    }
 
     /**
      * Privater Konstruktor.
@@ -71,7 +40,7 @@ public final class Application {
     }
 
     private static boolean waitForRabbitMQ() {
-        for(int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try (BusConnector connector = new BusConnector()) {
                 connector.connect();
                 LOG.info("RabbitMQ available on attempt {}/{}.", attempt, MAX_RETRIES);
@@ -99,7 +68,6 @@ public final class Application {
     public static void main(final String[] args) throws InterruptedException {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
-        LOG.info("Version 1.0.1");
         if (!"OFF".equals(System.getenv("RABBIT"))) {
             if (waitForRabbitMQ()) {
                 final Timer timer = new Timer();
@@ -112,5 +80,33 @@ public final class Application {
         }
         LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
         Thread.sleep(60_000);
+    }
+
+    /**
+     * TimerTask für periodische Ausführung.
+     */
+    private static final class HeartBeat extends TimerTask {
+
+        private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
+
+        private OrderService service;
+
+        HeartBeat() {
+            try {
+                this.service = new OrderService();
+            } catch (IOException | TimeoutException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void run() {
+            try {
+                service.createOrder();
+                service.readOrder();
+            } catch (IOException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
     }
 }

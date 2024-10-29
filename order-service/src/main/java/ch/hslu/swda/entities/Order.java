@@ -1,5 +1,8 @@
 package ch.hslu.swda.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +14,13 @@ public class Order {
     private OrderStatus status;
     private final List<OrderItem> items;
 
-    public Order(long id, Date timestamp, OrderStatus status, List<OrderItem> items) {
+    @JsonCreator
+    public Order(
+            @JsonProperty("id") long id,
+            @JsonProperty("timestamp") Date timestamp,
+            @JsonProperty("status") OrderStatus status,
+            @JsonProperty("items") List<OrderItem> items
+    ) {
         this.id = id;
         this.timestamp = timestamp;
         this.status = status;
