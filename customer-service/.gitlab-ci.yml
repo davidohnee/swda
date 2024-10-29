@@ -12,3 +12,4 @@ include:
 
 variables:
     MAVEN_CLI_OPTS: "-s .mvn/settings.xml --batch-mode"
+    MAVEN_OPTS: "-s .mvn/settings.xml -Dmaven.repo.local=.m2/repository"
