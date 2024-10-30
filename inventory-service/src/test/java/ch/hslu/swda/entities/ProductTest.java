@@ -11,8 +11,9 @@ class ProductTest {
 
     @Test
     void testCreateProduct() {
-        Product product = new Product(UUID.randomUUID(), "Product 1", new BigDecimal("100.0"));
-        Assertions.assertThat(product.getId()).isEqualTo(1);
+        UUID id = UUID.randomUUID();
+        Product product = new Product(id, "Product 1", new BigDecimal("100.0"));
+        Assertions.assertThat(product.getId()).isEqualTo(id);
         Assertions.assertThat(product.getName()).isEqualTo("Product 1");
         Assertions.assertThat(product.getPrice()).isEqualTo(new BigDecimal("100.0"));
     }

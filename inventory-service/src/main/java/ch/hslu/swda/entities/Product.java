@@ -37,8 +37,7 @@ public final class Product {
             return true;
         }
         return (object instanceof Product product)
-                &&
-                (product.id == this.id);
+                && Objects.equals(product.id, this.id);
     }
 
     @Override
