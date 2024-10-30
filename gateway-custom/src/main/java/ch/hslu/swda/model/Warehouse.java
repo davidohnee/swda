@@ -76,6 +76,8 @@ public class Warehouse {
         this.type = type;
     }
 
+    public Warehouse() {}
+
     public Warehouse id(UUID id) {
         this.id = id;
         return this;

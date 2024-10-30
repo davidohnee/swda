@@ -60,6 +60,8 @@ public class Customer {
         this.contactInfo = contactInfo;
     }
 
+    public Customer() {}
+
     public Customer id(UUID id) {
         this.id = id;
         return this;

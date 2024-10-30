@@ -51,6 +51,8 @@ public class Address {
         this.townName = townName;
     }
 
+    public Address() {}
+
     public Address streetName(String streetName) {
         this.streetName = streetName;
         return this;

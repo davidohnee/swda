@@ -11,6 +11,7 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micronaut.http.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,11 +59,6 @@ public class OrdersController {
     @Get(uri="/orders")
     @Produces(value = {"application/json"})
     public Mono<List<Order>> ordersGet() {
-        /*
-        // TODO implement ordersGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
-         */
-
         try {
             String route = MessageRoutes.ORDER_GET_ENTITYSET;
             String message = "";
@@ -83,6 +79,7 @@ public class OrdersController {
 
             LOG.info("Received response: {}", response);
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             List<Order> orders = objectMapper.readValue(response, new TypeReference<List<Order>>() {});
 
             return Mono.just(orders);
@@ -117,11 +114,6 @@ public class OrdersController {
     public Mono<Order> ordersOrderIdGet(
         @PathVariable(value="orderId") @NotNull UUID orderId
     ) {
-        /*
-        // TODO implement ordersOrderIdGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
-         */
-
         try {
             String route = MessageRoutes.ORDER_GET_ENTITY;
 

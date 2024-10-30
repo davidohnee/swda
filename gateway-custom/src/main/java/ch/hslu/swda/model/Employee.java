@@ -88,6 +88,8 @@ public class Employee {
         this.role = role;
     }
 
+    public Employee() {}
+
     public Employee id(UUID id) {
         this.id = id;
         return this;
