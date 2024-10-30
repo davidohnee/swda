@@ -2,6 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.db.CustomerDBQuery;
 import ch.hslu.swda.db.DBConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,18 +31,18 @@ public final class CustomerService implements AutoCloseable {
         this.db.connect();
 
         //start msg receiver
-        this.receiveValidationRequest(); //asynchronous requests handler to validate Customers
-        this.receiveGetRequest(); //synchronous request handler to get customers by API
+        this.receiveEntitysetRequest();
+        this.receiveEntityRequest();
     }
 
-    private void receiveValidationRequest() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", CustomerRoutes.CUSTOMER_VALIDATE);
-        bus.listenFor(exchangeName, "customer-validate-queue", CustomerRoutes.CUSTOMER_VALIDATE, new CustomerValidationReceiver(exchangeName, bus, db));
+    private void receiveEntitysetRequest() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.CUSTOMER_GET_ENTITYSET);
+        bus.listenFor(exchangeName, "CustomerService <- customer.get.entityset", MessageRoutes.CUSTOMER_GET_ENTITYSET, new CustomerGetReceiver(exchangeName, bus, new CustomerDBQuery(db)));
     }
 
-    private void receiveGetRequest() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", CustomerRoutes.CUSTOMER_GET);
-        bus.listenFor(exchangeName, "customer-get-queue", CustomerRoutes.CUSTOMER_GET, new CustomerGetReceiver(exchangeName, bus, db));
+    private void receiveEntityRequest() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.CUSTOMER_GET_ENTITY);
+        bus.listenFor(exchangeName, "CustomerService <- customer.get.entity", MessageRoutes.CUSTOMER_GET_ENTITY, new CustomerGetReceiver(exchangeName, bus, new CustomerDBQuery(db)));
     }
 
     @Override

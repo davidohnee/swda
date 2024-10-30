@@ -2,16 +2,15 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.common.entities.Customer;
 import ch.hslu.swda.db.CustomerDBQuery;
-import ch.hslu.swda.db.DBConnector;
+import ch.hslu.swda.entities.Customer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.UUID;
 
 public class CustomerGetReceiver implements MessageReceiver {
 
@@ -19,12 +18,12 @@ public class CustomerGetReceiver implements MessageReceiver {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final String exchangeName;
     private final BusConnector bus;
-    private final DBConnector db;
+    private final CustomerDBQuery dbQuery;
 
-    public CustomerGetReceiver(final String exchangeName, final BusConnector bus, final DBConnector db) {
+    public CustomerGetReceiver(final String exchangeName, final BusConnector bus, final CustomerDBQuery dbQuery) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.db = db;
+        this.dbQuery = dbQuery;
     }
 
     @Override
@@ -35,40 +34,40 @@ public class CustomerGetReceiver implements MessageReceiver {
         LOG.debug("[Thread: {}] Begin message processing", threadName);
         LOG.debug("Received message with routing [{}]", route);
 
-        //send synchronously
         try {
-            //deserialize msg
-            Customer customer = deserialize(message);
-            long id = customer.getId();
-
-            //query the db
-            CustomerDBQuery dbQuery = new CustomerDBQuery(db);
-
-            ArrayList<Customer> customers = new ArrayList<Customer>();
-            if (id == -1) {
-                customers = dbQuery.getAllCustomer();
-            } else {
-                customers = dbQuery.getCustomerById(id);
-            }
-
-            //serialize msg
-            String msg = serialize(customers);
+            String msg = switch (route) {
+                case MessageRoutes.CUSTOMER_GET_ENTITY -> {
+                    var customerId = deserializeUUID(message);
+                    Customer customer = dbQuery.getCustomerById(customerId);
+                    yield (customer != null) ? MAPPER.writeValueAsString(customer) : null;
+                }
+                case MessageRoutes.CUSTOMER_GET_ENTITYSET -> {
+                    var customers = dbQuery.getAllCustomer();
+                    yield MAPPER.writeValueAsString(customers);
+                }
+                default -> {
+                    LOG.warn("Unknown route: {}", route);
+                    yield "Route unknown";
+                }
+            };
 
             LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
             bus.reply(exchangeName, replyTo, corrId, msg);
+        } catch (JsonProcessingException e) {
+            LOG.error("Could not process message. Cause: {}", e.getMessage(), e);
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error("Unable to communicate over bus. Cause: {}", e.getMessage(), e);
         }
     }
 
-    private Customer deserialize(final String msg) throws JsonProcessingException {
-        Customer customer = MAPPER.readValue(msg, Customer.class);
-        return customer;
+    private UUID deserializeUUID(final String msg) throws JsonProcessingException {
+        return MAPPER.readValue(msg, UUID.class);
     }
 
-    private String serialize(final ArrayList<Customer> customers) throws JsonProcessingException {
-        String msg = MAPPER.writeValueAsString(customers);
-        return msg;
+    private String serializeCustomer(final Customer customer) throws JsonProcessingException {
+        if (customer == null) {
+            return "Customer not found";
+        }
+        return MAPPER.writeValueAsString(customer);
     }
-
 }
