@@ -22,7 +22,7 @@ import java.util.Objects;
  */
 public final class InventoryItem {
 
-    private Product product;
+    final private Product product;
     private int count;
 
     /**
@@ -41,13 +41,6 @@ public final class InventoryItem {
      */
     public Product getProduct() {
         return product;
-    }
-
-    /**
-     * @param product the product to set
-     */
-    public void setProduct(final Product product) {
-        this.product = product;
     }
 
     /**
@@ -73,8 +66,7 @@ public final class InventoryItem {
             return true;
         }
         return obj instanceof InventoryItem other
-                && Objects.equals(other.product, this.product)
-                && other.count == this.count;
+                && Objects.equals(other.product, this.product);
     }
 
     /**
@@ -82,7 +74,7 @@ public final class InventoryItem {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.product, this.count);
+        return Objects.hash(this.product);
     }
 
     /**
