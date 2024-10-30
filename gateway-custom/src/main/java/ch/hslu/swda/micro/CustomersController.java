@@ -7,6 +7,12 @@
 
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.model.Order;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -55,8 +61,34 @@ public class CustomersController {
     public Mono<Customer> customersCustomerIdGet(
         @PathVariable(value="customerId") @NotNull UUID customerId
     ) {
-        // TODO implement customersCustomerIdGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.CUSTOMER_GET_ENTITY;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String message = objectMapper.writeValueAsString(customerId);
+
+            LOG.info("Sending message to route {} with customerId {}", route, customerId);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+            }
+
+            LOG.info("Received response: {}", response);
+            Customer customer = objectMapper.readValue(response, Customer.class);
+
+            return Mono.just(customer);
+        } catch (Exception e) {
+            LOG.error("Error retrieving customer", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
@@ -77,8 +109,34 @@ public class CustomersController {
     @Get(uri="/customers")
     @Produces(value = {"application/json"})
     public Mono<List<Customer>> customersGet() {
-        // TODO implement customersGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.CUSTOMER_GET_ENTITYSET;
+            String message = "";
+
+            LOG.info("Sending message to route {}", route);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve customers"));
+            }
+
+            LOG.info("Received response: {}", response);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            List<Customer> customers = objectMapper.readValue(response, new TypeReference<List<Customer>>() {});
+
+            return Mono.just(customers);
+        } catch (Exception e) {
+            LOG.error("Error retrieving customers", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 }

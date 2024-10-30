@@ -7,6 +7,12 @@
 
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.model.Order;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micronaut.http.annotation.*;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -50,8 +56,34 @@ public class InventoryController {
     @Get(uri="/inventory")
     @Produces(value = {"application/json"})
     public Mono<List<InventoryItem>> inventoryGet() {
-        // TODO implement inventoryGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.INVENTORY_GET_ENTITYSET;
+            String message = "";
+
+            LOG.info("Sending message to route {}", route);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve inventory"));
+            }
+
+            LOG.info("Received response: {}", response);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            List<InventoryItem> inventory = objectMapper.readValue(response, new TypeReference<List<InventoryItem>>() {});
+
+            return Mono.just(inventory);
+        } catch (Exception e) {
+            LOG.error("Error retrieving inventory", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
