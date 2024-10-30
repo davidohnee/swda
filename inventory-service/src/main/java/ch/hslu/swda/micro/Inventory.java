@@ -11,8 +11,8 @@ import java.util.UUID;
 public class Inventory {
     public static final int REPLENISHMENT_THRESHOLD = 10;
 
-    private final List<InventoryItem> inventory = new ArrayList();
-    private final List<Product> productRange = new ArrayList();
+    private final List<InventoryItem> inventory = new ArrayList<>();
+    private final List<Product> productRange = new ArrayList<>();
 
     public Inventory() {
         for (int i = 0; i < 5; i++) {

@@ -16,7 +16,6 @@
 package ch.hslu.swda.entities;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Tuple for Month and Number of students.
