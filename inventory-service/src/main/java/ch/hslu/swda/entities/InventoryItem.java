@@ -16,46 +16,39 @@
 package ch.hslu.swda.entities;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Tuple for Month and Number of students.
  */
 public final class InventoryItem {
 
-    private long productId;
+    private Product product;
     private int quantity;
-
-    /**
-     * Default Constructor.
-     */
-    public InventoryItem() {
-        this(0, 0);
-    }
-
 
     /**
      * Constructor.
      *
-     * @param month        month number, zero-based.
-     * @param studentCount number of students born in this month.
+     * @param product    product
+     * @param quantity     quantity
      */
-    public InventoryItem(final long productId, final int quantity) {
-        this.productId = productId;
+    public InventoryItem(final Product product, final int quantity) {
+        this.product = product;
         this.quantity = quantity;
     }
 
     /**
-     * @return product id
+     * @return product
      */
-    public long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     /**
-     * @param productId the product id to set
+     * @param product the product to set
      */
-    public void setProductId(final long productId) {
-        this.productId = productId;
+    public void setProduct(final Product product) {
+        this.product = product;
     }
 
     /**
@@ -81,7 +74,7 @@ public final class InventoryItem {
             return true;
         }
         return obj instanceof InventoryItem other
-                && other.productId == this.productId
+                && other.product.equals(this.product)
                 && other.quantity == this.quantity;
     }
 
@@ -90,7 +83,7 @@ public final class InventoryItem {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.productId, this.quantity);
+        return Objects.hash(this.product, this.quantity);
     }
 
     /**
@@ -98,6 +91,6 @@ public final class InventoryItem {
      */
     @Override
     public String toString() {
-        return "Inventory Item[productId=" + this.productId + ", quantity='" + this.quantity + "]";
+        return "Inventory Item[productId=" + this.product + ", quantity='" + this.quantity + "]";
     }
 }

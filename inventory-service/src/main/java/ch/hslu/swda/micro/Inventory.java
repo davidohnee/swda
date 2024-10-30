@@ -1,38 +1,46 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.entities.InventoryItem;
+import ch.hslu.swda.entities.Product;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Inventory {
     public static final int REPLENISHMENT_THRESHOLD = 10;
+
     private final List<InventoryItem> inventory = new ArrayList();
+    private final List<Product> productRange = new ArrayList();
 
     public Inventory() {
-        inventory.add(new InventoryItem(1, 100));
-        inventory.add(new InventoryItem(2, 100));
-        inventory.add(new InventoryItem(3, 100));
-        inventory.add(new InventoryItem(4, 100));
-        inventory.add(new InventoryItem(5, 100));
+        for (int i = 0; i < 5; i++) {
+            var product = new Product(
+                    UUID.randomUUID(),
+                    "Product " + i,
+                    BigDecimal.valueOf(10 + i));
+            productRange.add(product);
+            inventory.add(new InventoryItem(product, 100));
+        }
     }
 
     public List<InventoryItem> getAll() {
         return inventory;
     }
 
-    public InventoryItem getQuantity(long productId) {
+    public InventoryItem getQuantity(UUID productId) {
         for (InventoryItem i : inventory) {
-            if (i.getProductId() == productId) {
+            if (i.getProduct().getId().equals(productId)) {
                 return i;
             }
         }
         return null;
     }
 
-    public TakeFromInventoryResult take(long ProductId, int quantity) {
+    public TakeFromInventoryResult take(UUID productId, int quantity) {
         for (InventoryItem p : inventory) {
-            if (p.getProductId() == ProductId) {
+            if (p.getProduct().getId().equals(productId)) {
                 if (p.getQuantity() < quantity) {
                     return TakeFromInventoryResult.NOT_ENOUGH_QUANTITY;
                 }
