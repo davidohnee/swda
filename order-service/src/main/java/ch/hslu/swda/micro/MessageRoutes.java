@@ -1,6 +1,6 @@
 package ch.hslu.swda.micro;
 
-public class MessageRoutes {
+public final class MessageRoutes {
 
     static final String ORDER_GET_ENTITY = "order.entity";
     static final String ORDER_GET_ENTITYSET = "order.entityset";
@@ -17,6 +17,7 @@ public class MessageRoutes {
     /**
      * No instance allowed.
      */
-    private MessageRoutes() {}
+    private MessageRoutes() {
+    }
 
 }
