@@ -118,6 +118,7 @@ public class OrdersController {
             String route = MessageRoutes.ORDER_GET_ENTITY;
 
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             String message = objectMapper.writeValueAsString(orderId);
 
             LOG.info("Sending message to route {} with orderId {}", route, orderId);
