@@ -85,7 +85,7 @@
         <scm.developer.uid>${user.name}</scm.developer.uid>
         <docker.user>${scm.developer.uid}</docker.user>
         <docker.base.image>amazoncorretto:21.0.4-alpine</docker.base.image>
-        <docker.image>swda-24hs/service-sample</docker.image>
+        <docker.image>swda-24hs/order-service</docker.image>
         <docker.port>8090</docker.port>
 
         <project.build.targetJdk>21</project.build.targetJdk>

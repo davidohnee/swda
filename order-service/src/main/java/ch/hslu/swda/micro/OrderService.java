@@ -3,8 +3,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.entities.*;
-import ch.hslu.swda.model.ContactInfo;
+import ch.hslu.swda.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -14,8 +13,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
@@ -38,14 +35,35 @@ public final class OrderService implements AutoCloseable {
         this.ordersMemory = new OrdersMemory();
     }
 
+    // only for testing purposes
     public void createOrder() throws IOException {
-        Order order = new OrderBuilder()
-                .setId(this.orderId++)
-                .setTimestamp(new Date())
-                .setStatus(OrderStatus.NEW)
-                .setItems(Collections.emptyList())
-                .build();
-        ObjectMapper mapper = new ObjectMapper();
+        Order order = new Order(
+                UUID.randomUUID(),
+                OffsetDateTime.now().minusDays(7),
+                Order.StatusEnum.PENDING,
+                Collections.emptyList(),
+                new BigDecimal(1200),
+                Order.OrderTypeEnum.CUSTOMER_ORDER,
+                new Customer(
+                        UUID.randomUUID(),
+                        "Kelly",
+                        "Clark",
+                        new Address("Seventh Street", "7D", "8901", "Pinewood"),
+                        new ContactInfo()
+                ),
+                new Employee(
+                        UUID.randomUUID(),
+                        "Leo",
+                        "Red",
+                        Employee.RoleEnum.MANAGER
+                ),
+                new Warehouse(
+                        UUID.randomUUID(),
+                        Warehouse.TypeEnum.LOCAL
+                )
+        );
+        ObjectMapper mapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule());
         String data = mapper.writeValueAsString(order);
 
         LOG.debug("Sending asynchronous message to broker with routing [{}]", OrderRoutes.ORDER_CREATE);

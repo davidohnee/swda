@@ -2,7 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.entities.CustomerOrder;
+import ch.hslu.swda.model.Order;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class OrderUpdateReceiver implements MessageReceiver {
     public void receive(String message) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            CustomerOrder order = mapper.readValue(message, CustomerOrder.class);
+            Order order = mapper.readValue(message, Order.class);
             LOG.debug("Received order update: {}", order);
             // Process the order update
         } catch (IOException e) {

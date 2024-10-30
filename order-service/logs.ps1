@@ -1,0 +1,1 @@
+docker logs -f g09-order-service-app-1
