@@ -50,42 +50,27 @@ public final class InventoryService implements AutoCloseable {
         this.bus.connect();
 
         // start message receivers
-        this.receiveTakeFromInventoryMessages();
         this.receiveGetInventoryMessages();
         this.receiveUpdateInventoryMessages();
     }
 
-    public void heartbeat() throws IOException {
-        bus.talkAsync(exchangeName, InventoryRoutes.HEARTBEAT, "ping");
-    }
-
     private void receiveUpdateInventoryMessages() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", InventoryRoutes.UPDATE);
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_PATCH);
         bus.listenFor(
                 exchangeName,
-                "InventoryService <- " + InventoryRoutes.UPDATE,
-                InventoryRoutes.UPDATE,
+                "InventoryService <- " + MessageRoutes.INVENTORY_PATCH,
+                MessageRoutes.INVENTORY_PATCH,
                 new UpdateInventoryReceiver(exchangeName, bus)
         );
     }
 
     private void receiveGetInventoryMessages() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", InventoryRoutes.GET);
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_GET_ENTITYSET);
         bus.listenFor(
                 exchangeName,
-                "InventoryService <- " + InventoryRoutes.GET,
-                InventoryRoutes.GET,
+                "InventoryService <- " + MessageRoutes.INVENTORY_GET_ENTITYSET,
+                MessageRoutes.INVENTORY_GET_ENTITYSET,
                 new GetInventoryReceiver(exchangeName, bus, this.inventory)
-        );
-    }
-
-    private void receiveTakeFromInventoryMessages() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", InventoryRoutes.TAKE_FROM);
-        bus.listenFor(
-                exchangeName,
-                "InventoryService <- " + InventoryRoutes.TAKE_FROM,
-                InventoryRoutes.TAKE_FROM,
-                new TakeFromInventoryReceiver(exchangeName, bus, this.inventory)
         );
     }
 
