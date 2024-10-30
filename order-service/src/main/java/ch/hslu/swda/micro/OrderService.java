@@ -85,8 +85,10 @@ public final class OrderService implements AutoCloseable {
             try {
                 LOG.debug("Received message: {}", message);
                 // Create a list of orders and send it back to the sender
-                List<ch.hslu.swda.model.CustomerOrder> orders = createOrderList();
+                List<ch.hslu.swda.model.Order> orders = createOrderList();
                 String data = mapper.writeValueAsString(orders);
+
+                LOG.debug(data);
 
                 this.bus.reply(this.exchangeName, replyTo, corrId, data);
             } catch (IOException e) {
@@ -94,14 +96,14 @@ public final class OrderService implements AutoCloseable {
             }
         }
 
-        private List<ch.hslu.swda.model.CustomerOrder> createOrderList() {
+        private List<ch.hslu.swda.model.Order> createOrderList() {
             return List.of(
-                new ch.hslu.swda.model.CustomerOrder(
+                new ch.hslu.swda.model.Order(
                     new UUID(0, 0),
                     OffsetDateTime.now(),
                     ch.hslu.swda.model.Order.StatusEnum.PENDING,
                     Collections.emptyList(),
-                    new BigDecimal("100.0"),
+                    new BigDecimal(100),
                     ch.hslu.swda.model.Order.OrderTypeEnum.CUSTOMER_ORDER,
                     new ch.hslu.swda.model.Customer(
                         new UUID(0, 0),
@@ -115,12 +117,15 @@ public final class OrderService implements AutoCloseable {
                         ),
                         new ContactInfo()
                     ),
-
                     new ch.hslu.swda.model.Employee(
                         new UUID(0, 0),
                         "Jane",
                         "Doe",
                         ch.hslu.swda.model.Employee.RoleEnum.SALES
+                    ),
+                    new ch.hslu.swda.model.Warehouse(
+                        new UUID(0, 0),
+                        ch.hslu.swda.model.Warehouse.TypeEnum.LOCAL
                     )
                 )
             );

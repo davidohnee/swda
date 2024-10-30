@@ -40,7 +40,7 @@ import java.util.UUID;
 })
 @JsonTypeName("CustomerOrder")
 @Introspected
-public class CustomerOrder extends Order{
+public class CustomerOrder extends Order {
     public static final String JSON_PROPERTY_ID = "id";
     private UUID id;
 
@@ -95,7 +95,7 @@ public class CustomerOrder extends Order{
      * Gets or Sets orderType
      */
     public enum OrderTypeEnum {
-        CUSTOMER_ORDER("customerOrder");
+        CUSTOMER_ORDER("CUSTOMER_ORDER");
 
         private String value;
 
