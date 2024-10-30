@@ -9,6 +9,3 @@ include:
     ref: main
     file:
       - swda/java.ci.yml
-
-variables:
-  MAVEN_CLI_OPTS: "-s .mvn/settings.xml --batch-mode"
