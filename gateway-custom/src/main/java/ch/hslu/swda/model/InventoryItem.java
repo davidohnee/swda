@@ -43,6 +43,8 @@ public class InventoryItem {
         this.count = count;
     }
 
+    public InventoryItem() {}
+
     public InventoryItem product(Product product) {
         this.product = product;
         return this;

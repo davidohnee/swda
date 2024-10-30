@@ -49,6 +49,8 @@ public class Product {
         this.price = price;
     }
 
+    public Product() {}
+
     public Product id(UUID id) {
         this.id = id;
         return this;
