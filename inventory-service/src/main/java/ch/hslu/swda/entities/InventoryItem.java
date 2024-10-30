@@ -23,17 +23,17 @@ import java.util.Objects;
 public final class InventoryItem {
 
     private Product product;
-    private int quantity;
+    private int count;
 
     /**
      * Constructor.
      *
      * @param product    product
-     * @param quantity     quantity
+     * @param count     quantity
      */
-    public InventoryItem(final Product product, final int quantity) {
+    public InventoryItem(final Product product, final int count) {
         this.product = product;
-        this.quantity = quantity;
+        this.count = count;
     }
 
     /**
@@ -53,15 +53,15 @@ public final class InventoryItem {
     /**
      * @return the quantity
      */
-    public int getQuantity() {
-        return quantity;
+    public int getCount() {
+        return count;
     }
 
     /**
-     * @param quantity the quantity to set
+     * @param count the quantity to set
      */
-    public void setQuantity(final int quantity) {
-        this.quantity = quantity;
+    public void setCount(final int count) {
+        this.count = count;
     }
 
     /**
@@ -74,7 +74,7 @@ public final class InventoryItem {
         }
         return obj instanceof InventoryItem other
                 && Objects.equals(other.product, this.product)
-                && other.quantity == this.quantity;
+                && other.count == this.count;
     }
 
     /**
@@ -82,7 +82,7 @@ public final class InventoryItem {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.product, this.quantity);
+        return Objects.hash(this.product, this.count);
     }
 
     /**
@@ -90,6 +90,6 @@ public final class InventoryItem {
      */
     @Override
     public String toString() {
-        return "Inventory Item[productId=" + this.product + ", quantity='" + this.quantity + "]";
+        return "Inventory Item[productId=" + this.product + ", quantity='" + this.count + "]";
     }
 }

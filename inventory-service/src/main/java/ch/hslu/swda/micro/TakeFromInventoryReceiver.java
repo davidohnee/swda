@@ -50,9 +50,9 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
         try {
             ObjectMapper mapper = new ObjectMapper();
             InventoryItem item = mapper.readValue(message, InventoryItem.class);
-            LOG.debug("requested to take {} items of type {}", item.getQuantity(), item.getProduct());
+            LOG.debug("requested to take {} items of type {}", item.getCount(), item.getProduct());
 
-            TakeFromInventoryResult result = this.inventory.take(item.getProduct().getId(), item.getQuantity());
+            TakeFromInventoryResult result = this.inventory.take(item.getProduct().getId(), item.getCount());
             String data = mapper.writeValueAsString(result);
 
             LOG.debug("result: {}", result);

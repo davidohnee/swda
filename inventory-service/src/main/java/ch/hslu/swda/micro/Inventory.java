@@ -41,13 +41,13 @@ public class Inventory {
     public TakeFromInventoryResult take(UUID productId, int quantity) {
         for (InventoryItem p : inventory) {
             if (p.getProduct().getId().equals(productId)) {
-                if (p.getQuantity() < quantity) {
+                if (p.getCount() < quantity) {
                     return TakeFromInventoryResult.NOT_ENOUGH_QUANTITY;
                 }
 
-                p.setQuantity(p.getQuantity() - quantity);
+                p.setCount(p.getCount() - quantity);
 
-                if (p.getQuantity() < REPLENISHMENT_THRESHOLD) {
+                if (p.getCount() < REPLENISHMENT_THRESHOLD) {
                     return TakeFromInventoryResult.REPLENISH_REQUIRED;
                 }
 
