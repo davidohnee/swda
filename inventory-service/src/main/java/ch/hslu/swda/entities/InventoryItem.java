@@ -73,7 +73,7 @@ public final class InventoryItem {
             return true;
         }
         return obj instanceof InventoryItem other
-                && other.product.equals(this.product)
+                && Objects.equals(other.product, this.product)
                 && other.quantity == this.quantity;
     }
 
