@@ -49,6 +49,14 @@ public final class OrderService implements AutoCloseable {
                 MessageRoutes.ORDER_GET_ENTITY,
                 new GetOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
         );
+
+        LOG.debug("Listening for messages on routing [{}]", MessageRoutes.ORDER_CREATE);
+        bus.listenFor(
+                exchangeName,
+                "OrderService <- order.create",
+                MessageRoutes.ORDER_CREATE,
+                new CreateOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
+        );
     }
 
     // only for testing purposes

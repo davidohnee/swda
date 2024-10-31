@@ -44,6 +44,8 @@ public class OrderItemCreate {
         this.quantity = quantity;
     }
 
+    public OrderItemCreate() {}
+
     public OrderItemCreate productId(UUID productId) {
         this.productId = productId;
         return this;
