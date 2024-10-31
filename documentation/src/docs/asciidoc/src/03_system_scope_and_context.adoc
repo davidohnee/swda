@@ -37,6 +37,11 @@ Das Filalbestellsystem verwendet verschiedene technische Schnittstellen, um die 
 | Kommunikationsbeziehung | Kanal/Protokoll | Beschreibung
 |===
 
+=== OpenAPI Spezifikation
+Die OpenAPI-Spezifikation für die API des Filialbestellsystems ist unter folgendem Link verfügbar:
+
+link:../resources/index.html[OpenAPI-Spezifikation]
+
 === Externe Schnittstellen
 
 Das Filialbestellsystem interagiert mit externen Schnittstellen. Folgend sind die wichtigsten Schnittstellen aufgeführt:
