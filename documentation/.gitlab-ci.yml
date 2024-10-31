@@ -46,6 +46,7 @@ pages:
         - mvn $MAVEN_CLI_OPTS site:stage $MAVEN_OPTS
         - mv target/staging public
         - mv target/generated-docs public/asciidoc
+        - cp src/docs/asciidoc/resources/index.html public/asciidoc/order.html
     artifacts:
         paths:
             - public

@@ -41,7 +41,7 @@ Das Filalbestellsystem verwendet verschiedene technische Schnittstellen, um die 
 === OpenAPI Spezifikation
 Die OpenAPI-Spezifikation für die API des Filialbestellsystems ist unter folgendem Link verfügbar:
 
-link:../resources/index.html[OpenAPI-Spezifikation]
+link:order.html[OpenAPI-Spezifikation]
 
 === Externe Schnittstellen
 
