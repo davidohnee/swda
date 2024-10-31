@@ -1,0 +1,16 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-building-block-view]]
+== Bausteinsicht
+=== Microservice Modell
+image::microservice-diagram.png[title="Microservice Modell"]
+
+=== Ebene 1
+
+=== Ebene 2
+
+=== Ebene 3
+
+=== Ebene 4
+
+

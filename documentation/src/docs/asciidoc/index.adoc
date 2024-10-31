@@ -17,31 +17,51 @@ Das Team besteht aus folgenden Personen:
  * Mösch, Sandro <sandro.moesch@stud.hslu.ch>
  * Stocker, Sven <sven.stocker@stud.hslu.ch>
 
-== Thema 1: Projekt für Dokumentation
-Unsere Empfehlung: Schreiben Sie Ihre Dokumentation als https://asciidoc.org/[AsciiDoc] im Verzeichnis src/docs/asciidoc in *.adoc-Dateien.
-Dafür gibt es für viele IDE's Editor-Plugins, die auch ein Preview/Wysiwyg anbieten.
+// numbering from here on
+:numbered:
 
-== Thema 2: tbd
-tbd
+<<<
+// 1. Anforderungen und Ziele
+include::src/01_introduction_and_goals.adoc[]
 
-== Appendix: Beispiele
-Man kann ganz einfach Bilder integrieren:
+<<<
+// 2. Randbedingungen
+include::src/02_architecture_constraints.adoc[]
 
-image::HSLU-Logo-21-klein.png[HSLU-Logo]
+<<<
+// 3. Kontextabgrenzung
+include::src/03_system_scope_and_context.adoc[]
 
-Und wichtige Textstellen mit verschiedenen Levels auszeichnen:
+<<<
+// 4. Lösungsstrategie
+include::src/04_solution_strategy.adoc[]
 
-WARNING: Das ist eine Warnung!
+<<<
+// 5. Bausteinsicht
+include::src/05_building_block_view.adoc[]
 
-TIP: Das ist ein Tipp!
+<<<
+// 6. Laufzeitsicht
+include::src/06_runtime_view.adoc[]
 
-IMPORTANT: Das ist wichtig!
+<<<
+// 7. Verteilungssicht
+include::src/07_deployment_view.adoc[]
 
-CAUTION: Achtung, das ist gefährlich!
+<<<
+// 8. Querschnittliche Konzepte
+include::src/08_concepts.adoc[]
 
-NOTE: Das ist ein kleiner Hinweis.
+<<<
+// 9. Entscheidungen
+include::src/09_architecture_decisions.adoc[]
 
-Und man kann auch zitieren:
+<<<
+// 10. Qualitätsanforderungen
+include::src/10_quality_requirements.adoc[]
 
-[quote,Albert Einstein]
-Ein Mensch der keine Fehler macht, hat nie etwas neues ausprobiert.
+<<<
+// 11. Risiken
+include::src/11_technical_risks.adoc[]
+
+image::HSLU-Logo-21-klein.png[Hochschule Luzern]
