@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
 import ch.hslu.swda.model.InventoryItem;
+import ch.hslu.swda.model.InventoryItemUpdate;
 import ch.hslu.swda.model.InventoryProductIdPatchRequest;
 import java.util.UUID;
 import java.util.List;
@@ -115,8 +116,37 @@ public class InventoryController {
         @PathVariable(value="productId") @NotNull UUID productId, 
         @Body @NotNull @Valid InventoryProductIdPatchRequest inventoryProductIdPatchRequest
     ) {
-        // TODO implement inventoryProductIdPatch();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
-    }
+        try {
+            String route = MessageRoutes.INVENTORY_PATCH;
 
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+
+            InventoryItemUpdate inventoryItemUpdate = new InventoryItemUpdate(productId, inventoryProductIdPatchRequest.getCount());
+
+            String message = objectMapper.writeValueAsString(inventoryItemUpdate);
+
+            LOG.info("Sending message to route {} with productId {}", route, productId);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null || response.isEmpty()) {
+                return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+            }
+
+            LOG.info("Received response: {}", response);
+            InventoryItem item = objectMapper.readValue(response, InventoryItem.class);
+
+            return Mono.just(item);
+        } catch (Exception e) {
+            LOG.error("Error retrieving order", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
+    }
 }
