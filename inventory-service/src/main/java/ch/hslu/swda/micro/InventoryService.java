@@ -60,7 +60,7 @@ public final class InventoryService implements AutoCloseable {
                 exchangeName,
                 "InventoryService <- " + MessageRoutes.INVENTORY_PATCH,
                 MessageRoutes.INVENTORY_PATCH,
-                new UpdateInventoryReceiver(exchangeName, bus)
+                new UpdateInventoryReceiver(exchangeName, bus, this.inventory)
         );
     }
 

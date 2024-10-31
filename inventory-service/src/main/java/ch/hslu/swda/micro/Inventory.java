@@ -38,23 +38,19 @@ public class Inventory {
         return null;
     }
 
-    public TakeFromInventoryResult take(UUID productId, int quantity) {
-        for (InventoryItem p : inventory) {
-            if (p.getProduct().getId().equals(productId)) {
-                if (p.getCount() < quantity) {
-                    return TakeFromInventoryResult.NOT_ENOUGH_QUANTITY;
+    public InventoryItem update(UUID productId, int newCount) {
+        for (InventoryItem item : inventory) {
+            if (item.getProduct().getId().equals(productId)) {
+                item.setCount(newCount);
+
+                if (item.getCount() < REPLENISHMENT_THRESHOLD) {
+                    // replenish
                 }
 
-                p.setCount(p.getCount() - quantity);
-
-                if (p.getCount() < REPLENISHMENT_THRESHOLD) {
-                    return TakeFromInventoryResult.REPLENISH_REQUIRED;
-                }
-
-                return TakeFromInventoryResult.SUCCESS;
+                return item;
             }
         }
 
-        return TakeFromInventoryResult.NOT_FOUND;
+        return null;
     }
 }

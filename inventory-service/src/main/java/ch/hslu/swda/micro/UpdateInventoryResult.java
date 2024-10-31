@@ -1,8 +1,7 @@
 package ch.hslu.swda.micro;
 
-public enum TakeFromInventoryResult {
+public enum UpdateInventoryResult {
     SUCCESS,
-    NOT_ENOUGH_QUANTITY,
     REPLENISH_REQUIRED,
     NOT_FOUND
 }
