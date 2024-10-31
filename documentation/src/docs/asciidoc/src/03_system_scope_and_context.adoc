@@ -4,6 +4,18 @@ ifndef::imagesdir[:imagesdir: ../images]
 == Kontextabgrenzung
 
 === Fachlicher Kontext
+==== Bestellprozess
+Nachfolgend wird der Bestellprozess für das Filialbestellsystem beschrieben mit Hilfe mehrerer BPMN-Diagramme beschrieben:
+
+image::order_process_bpmn.png[title="Order process"]
+
+image::check_customers_bpmn.png[title="Check customer"]
+
+image::update_inventory_bpmn.png[title="Update inventory"]
+
+image::order_replenishment_bpmn.png[title="Order replenishment"]
+
+
 
 Das Filialbestellsystem interagiert mit verschiedenen Benutzer:innen. Hier sind die Hauptkommunikationsbeziehungen:
 
