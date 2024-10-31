@@ -15,12 +15,13 @@ image::update_inventory_bpmn.png[title="Update inventory"]
 
 image::order_replenishment_bpmn.png[title="Order replenishment"]
 
+
 ==== Domänenmodell
 
 image::domain-model.png[title="Domain model"]
 
 
-
+==== Kommunikationsbeziehungen
 Das Filialbestellsystem interagiert mit verschiedenen Benutzer:innen. Hier sind die Hauptkommunikationsbeziehungen:
 
 [cols="3,2,2",options="header"]
