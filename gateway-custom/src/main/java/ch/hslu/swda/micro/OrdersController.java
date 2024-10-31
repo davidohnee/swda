@@ -203,69 +203,34 @@ public class OrdersController {
     public Mono<Order> ordersPost(
         @Body @NotNull @Valid OrderCreate orderCreate
     ) {
-        
-        // TODO implement ordersPost();
-        String message = orderCreate.toString();
-        LOG.info(message);
+        try {
+            String route = MessageRoutes.ORDER_CREATE;
 
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String message = objectMapper.writeValueAsString(orderCreate);
 
+            LOG.info("Sending message to route {} with orderCreate {}", route, orderCreate);
 
-/*
-        return Mono.fromCallable(() -> {
-            try (BusConnector busConnector = new BusConnector()) {
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
 
-                // Connect to RabbitMQ
-                try {
-                    busConnector.connect();
-                } catch (IOException | TimeoutException e) {
-                    LOG.error("Failed to connect to RabbitMQ: {}", e.getMessage(), e);
-                    throw new HttpStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Order service is not available");
-                }
+            BusConnector bus = new BusConnector();
+            bus.connect();
 
-                // Serialize the OrderCreate object to JSON
-                ObjectMapper objectMapper = new ObjectMapper();
-                String message = objectMapper.writeValueAsString(orderCreate);
+            String response = bus.talkSync(exchange, route, message);
 
-                LOG.info(message);
-
-                // Get exchange and route
-                RabbitMqConfig config = new RabbitMqConfig();
-                String exchange = config.getExchange();
-                String route = "order.create"; // "order.create"
-
-                LOG.info(exchange + "." + route);
-
-                // Send message synchronously and receive response
-                String responseMessage;
-                try {
-                    responseMessage = busConnector.talkSync(exchange, route, message);
-                } catch (IOException | InterruptedException e) {
-                    LOG.error("Error during talkSync: {}", e.getMessage(), e);
-                    throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error communicating with Order service");
-                }
-
-                // Check if response is null (timeout)
-                if (responseMessage == null) {
-                    throw new HttpStatusException(HttpStatus.REQUEST_TIMEOUT, "Order service did not respond in time");
-                }
-
-                // Deserialize response to Order
-                Order order;
-                try {
-                    order = objectMapper.readValue(responseMessage, Order.class);
-                } catch (IOException e) {
-                    LOG.error("Error parsing response: {}", e.getMessage(), e);
-                    throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid response from Order service");
-                }
-
-                return order;
-
-            } catch (Exception e) {
-                LOG.error("Unexpected error in ordersPost: {}", e.getMessage(), e);
-                throw new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+            if (response == null || response.equals("Error processing request")) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create order"));
             }
-        }).subscribeOn(Schedulers.boundedElastic());
- */
+
+            LOG.info("Received response: {}", response);
+            Order order = objectMapper.readValue(response, Order.class);
+
+            return Mono.just(order);
+        } catch (Exception e) {
+            LOG.error("Error creating order", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 }

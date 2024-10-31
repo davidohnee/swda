@@ -43,6 +43,8 @@ public class OrderItem {
         this.quantity = quantity;
     }
 
+    public OrderItem() {}
+
     public OrderItem product(Product product) {
         this.product = product;
         return this;
