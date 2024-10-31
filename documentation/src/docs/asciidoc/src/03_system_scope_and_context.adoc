@@ -41,7 +41,7 @@ Das Filalbestellsystem verwendet verschiedene technische Schnittstellen, um die 
 === OpenAPI Spezifikation
 Die OpenAPI-Spezifikation für die API des Filialbestellsystems ist unter folgendem Link verfügbar:
 
-link:order.html[OpenAPI-Spezifikation]
+link:https://hslu.pages.switch.ch/edu/bachelor-computer-science/swda/24hs01/g09/g09-documentation/asciidoc/order.html[OpenAPI-Spezifikation]
 
 === Externe Schnittstellen
 
