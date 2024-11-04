@@ -28,6 +28,8 @@ public class MessageRoutes {
 
     static final String CUSTOMER_GET_ENTITY = "customer.entity";
     static final String CUSTOMER_GET_ENTITYSET = "customer.entityset";
+    static final String CUSTOMER_CREATE = "customer.create";
+    static final String CUSTOMER_VALIDATE = "customer.validate";
 
     static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
     static final String INVENTORY_PATCH = "inventory.patch";

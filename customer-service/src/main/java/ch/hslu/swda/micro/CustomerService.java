@@ -13,9 +13,10 @@ import java.util.concurrent.TimeoutException;
 public final class CustomerService implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);
-    private String exchangeName;
-    private BusConnector bus;
-    private DBConnector db;
+    private static final String RECEIVER_START_MSG = "Starting listening for message with routing [{}]" ;
+    private final String exchangeName;
+    private final BusConnector bus;
+    private final DBConnector db;
 
     public CustomerService() throws IOException, TimeoutException {
         String threadName = Thread.currentThread().getName();
@@ -33,16 +34,28 @@ public final class CustomerService implements AutoCloseable {
         //start msg receiver
         this.receiveEntitysetRequest();
         this.receiveEntityRequest();
+        this.receiveCreateRequest();
+        this.receiveValidationRequest();
     }
 
     private void receiveEntitysetRequest() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.CUSTOMER_GET_ENTITYSET);
+        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_GET_ENTITYSET);
         bus.listenFor(exchangeName, "CustomerService <- customer.get.entityset", MessageRoutes.CUSTOMER_GET_ENTITYSET, new CustomerGetReceiver(exchangeName, bus, new CustomerDBQuery(db)));
     }
 
     private void receiveEntityRequest() throws IOException {
-        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.CUSTOMER_GET_ENTITY);
+        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_GET_ENTITY);
         bus.listenFor(exchangeName, "CustomerService <- customer.get.entity", MessageRoutes.CUSTOMER_GET_ENTITY, new CustomerGetReceiver(exchangeName, bus, new CustomerDBQuery(db)));
+    }
+
+    private void receiveCreateRequest() throws IOException {
+        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_CREATE);
+        bus.listenFor(exchangeName, "CustomerService <- customer.create", MessageRoutes.CUSTOMER_CREATE, new CustomerCreateReceiver(exchangeName, bus, new CustomerDBQuery(db)));
+    }
+
+    private void receiveValidationRequest() throws IOException {
+        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_VALIDATE);
+        bus.listenFor(exchangeName, "CustomerService <- customer.validate", MessageRoutes.CUSTOMER_CREATE, new CustomerCreateReceiver(exchangeName, bus, new CustomerDBQuery(db)));
     }
 
     @Override
