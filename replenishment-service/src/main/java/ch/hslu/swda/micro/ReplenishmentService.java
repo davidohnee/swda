@@ -17,7 +17,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ch.hslu.swda.stock.api.StockFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +33,7 @@ public final class ReplenishmentService implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(ReplenishmentService.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final Replenisher replenisher = new Replenisher(StockFactory.getStock());
 
     /**
      * @throws IOException      IO-Fehler.
@@ -58,7 +59,7 @@ public final class ReplenishmentService implements AutoCloseable {
      */
     private void receiveCreateReplenishmentOrderMessages() throws IOException {
         LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
-        bus.listenFor(exchangeName, "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_CREATE, MessageRoutes.REPLENISHMENT_CREATE, new CreateReplenishmentOrderReceiver(exchangeName, bus));
+        bus.listenFor(exchangeName, "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_CREATE, MessageRoutes.REPLENISHMENT_CREATE, new CreateReplenishmentOrderReceiver(exchangeName, bus, replenisher));
     }
 
     /**

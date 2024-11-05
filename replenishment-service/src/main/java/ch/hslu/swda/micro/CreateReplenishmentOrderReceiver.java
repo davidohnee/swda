@@ -17,8 +17,13 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.entities.ReplenishmentOrder;
+import ch.hslu.swda.entities.ReplenishmentStatus;
+import ch.hslu.swda.stock.local.StockLocal;
 
 import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +32,13 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(CreateReplenishmentOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final Replenisher replenisher;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public CreateReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus) {
+    public CreateReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus, Replenisher replenisher) {
         this.exchangeName = exchangeName;
         this.bus = bus;
+        this.replenisher = replenisher;
     }
 
     /**
@@ -42,8 +50,14 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
         // receive message and reply
         try {
             LOG.debug("received chat message with replyTo property [{}]: [{}]", replyTo, message);
+
+            ReplenishmentOrder request = mapper.readValue(message, ReplenishmentOrder.class);
+
+            ReplenishmentStatus status = replenisher.replenish(request.getProductId(), request.getCount());
+            String data = (status != null) ? mapper.writeValueAsString(status) : "";
+
             LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
-            bus.reply(exchangeName, replyTo, corrId, "Hello there. This is the service template.");
+            bus.reply(exchangeName, replyTo, corrId, data);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }

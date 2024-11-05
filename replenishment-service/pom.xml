@@ -233,6 +233,10 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>ch.hslu.swda</groupId>
+            <artifactId>swda_stock</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
         </dependency>
