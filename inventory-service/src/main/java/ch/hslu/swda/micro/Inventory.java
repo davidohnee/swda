@@ -2,6 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.entities.InventoryItem;
 import ch.hslu.swda.entities.Product;
+import ch.hslu.swda.entities.ReplenishmentOrder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 public class Inventory {
     public static final int REPLENISHMENT_THRESHOLD = 10;
+    public static final int REPLENISHMENT_AMOUNT = 100;
 
     private final List<InventoryItem> inventory = new ArrayList<>();
     private final List<Product> productRange = new ArrayList<>();
@@ -52,7 +54,12 @@ public class Inventory {
 
                 if (item.getCount() < REPLENISHMENT_THRESHOLD) {
                     try {
-                        replenishmentClientService.replenish();
+                        replenishmentClientService.replenish(
+                                new ReplenishmentOrder(
+                                    item.getProduct().getId().hashCode(), // FIXME: This is terrible design
+                                    REPLENISHMENT_AMOUNT
+                                )
+                        );
                     } catch (IOException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }

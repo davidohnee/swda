@@ -17,6 +17,9 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.entities.ReplenishmentOrder;
+import ch.hslu.swda.entities.ReplenishmentStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,7 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
     private final String exchangeName;
     private final BusConnector bus;
     private final Inventory inventory = new Inventory(this);
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * @throws IOException      IO-Fehler.
@@ -74,21 +78,23 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
         );
     }
 
-    public String replenish() throws IOException, InterruptedException {
+    public ReplenishmentStatus replenish(ReplenishmentOrder order) throws IOException, InterruptedException {
         // create question
-        final String question = "What is the answer to the Ultimate Question of Life, the Universe, and Everything?";
+        final String message = mapper.writeValueAsString(order);
 
         // send question to deep thought
         LOG.debug("Sending synchronous message to broker with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
-        String response = bus.talkSync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, question);
+        String response = bus.talkSync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, message);
 
         // receive answer
         if (response == null) {
             LOG.debug("Received no response. Timeout occurred. Will retry later");
             return null;
         }
-        LOG.debug("Received response to question \"{}\": {}", question, response);
-        return response;
+
+        ReplenishmentStatus status = mapper.readValue(response, ReplenishmentStatus.class);
+        LOG.debug("Received response: [{}]", status);
+        return status;
     }
 
     /**
