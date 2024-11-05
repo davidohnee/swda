@@ -22,13 +22,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ChatReceiver implements MessageReceiver {
+public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChatReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateReplenishmentOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
 
-    public ChatReceiver(final String exchangeName, final BusConnector bus) {
+    public CreateReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus) {
         this.exchangeName = exchangeName;
         this.bus = bus;
     }
@@ -47,7 +47,5 @@ public final class ChatReceiver implements MessageReceiver {
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }
-
     }
-
 }

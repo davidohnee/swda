@@ -15,12 +15,14 @@
  */
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.bus.BusConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Demo für Applikationsstart.
@@ -28,39 +30,34 @@ import org.slf4j.LoggerFactory;
 public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-
-    /**
-     * TimerTask für periodische Ausführung.
-     */
-    private static final class HeartBeat extends TimerTask {
-
-        private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
-
-        private ServiceTemplate service;
-
-        HeartBeat() {
-            try {
-                this.service = new ServiceTemplate();
-            } catch (IOException | TimeoutException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-
-        @Override
-        public void run() {
-            try {
-                service.registerStudent();
-                service.askAboutUniverse();
-            } catch (IOException | InterruptedException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-    }
+    private static final int RETRY_DELAY_MS = 2000;
+    private static final int MAX_RETRIES = 60; // 2 minutes of retries
 
     /**
      * Privater Konstruktor.
      */
     private Application() {
+    }
+
+    private static boolean waitForRabbitMQ() {
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try (BusConnector connector = new BusConnector()) {
+                connector.connect();
+                LOG.info("RabbitMQ available on attempt {}/{}.", attempt, MAX_RETRIES);
+                return true;
+            } catch (IOException | TimeoutException e) {
+                LOG.error("Failed to connect to RabbitMQ. Retrying in {}ms. Attempt {}/{}.", RETRY_DELAY_MS, attempt, MAX_RETRIES);
+                try {
+                    Thread.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    LOG.error("Interrupted while waiting for RabbitMQ.", ex);
+                    return false;
+                }
+            }
+        }
+        LOG.error("Failed to connect to RabbitMQ after {} attempts.", MAX_RETRIES);
+        return false;
     }
 
     /**
@@ -72,12 +69,38 @@ public final class Application {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
         if (!"OFF".equals(System.getenv("RABBIT"))) {
-            final Timer timer = new Timer();
-            timer.schedule(new HeartBeat(), 0, 10000);
+            if (waitForRabbitMQ()) {
+                final Timer timer = new Timer();
+                timer.schedule(new HeartBeat(), 0, 10000);
+            } else {
+                LOG.error("RabbitMQ not available, exiting application.");
+            }
         } else {
             LOG.atWarn().log("RabbitMQ disabled for testing.");
         }
         LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
         Thread.sleep(60_000);
+    }
+
+    /**
+     * TimerTask für periodische Ausführung.
+     */
+    private static final class HeartBeat extends TimerTask {
+
+        private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
+
+        private ReplenishmentService service;
+
+        HeartBeat() {
+            try {
+                this.service = new ReplenishmentService();
+            } catch (IOException | TimeoutException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+
+        @Override
+        public void run() {
+        }
     }
 }
