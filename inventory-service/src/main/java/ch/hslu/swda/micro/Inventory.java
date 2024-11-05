@@ -3,6 +3,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.entities.InventoryItem;
 import ch.hslu.swda.entities.Product;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,14 @@ public class Inventory {
 
     private final List<InventoryItem> inventory = new ArrayList<>();
     private final List<Product> productRange = new ArrayList<>();
+    private final ReplenishmentClientService replenishmentClientService;
 
-    public Inventory() {
+    public Inventory(ReplenishmentClientService replenishmentClientService) {
+        this.replenishmentClientService = replenishmentClientService;
+        this.addSampleData();
+    }
+
+    private void addSampleData() {
         for (int i = 0; i < 5; i++) {
             var product = new Product(
                     UUID.randomUUID(),
@@ -44,7 +51,11 @@ public class Inventory {
                 item.setCount(newCount);
 
                 if (item.getCount() < REPLENISHMENT_THRESHOLD) {
-                    // replenish
+                    try {
+                        replenishmentClientService.replenish();
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
                 return item;

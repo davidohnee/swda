@@ -27,12 +27,12 @@ import java.util.concurrent.TimeoutException;
 /**
  * Beispielcode für Implementation eines Servcies mit RabbitMQ.
  */
-public final class InventoryService implements AutoCloseable {
+public final class InventoryService implements AutoCloseable, ReplenishmentClientService {
 
     private static final Logger LOG = LoggerFactory.getLogger(InventoryService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final Inventory inventory = new Inventory();
+    private final Inventory inventory = new Inventory(this);
 
     /**
      * @throws IOException      IO-Fehler.
@@ -72,6 +72,23 @@ public final class InventoryService implements AutoCloseable {
                 MessageRoutes.INVENTORY_GET_ENTITYSET,
                 new GetInventoryReceiver(exchangeName, bus, this.inventory)
         );
+    }
+
+    public String replenish() throws IOException, InterruptedException {
+        // create question
+        final String question = "What is the answer to the Ultimate Question of Life, the Universe, and Everything?";
+
+        // send question to deep thought
+        LOG.debug("Sending synchronous message to broker with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
+        String response = bus.talkSync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, question);
+
+        // receive answer
+        if (response == null) {
+            LOG.debug("Received no response. Timeout occurred. Will retry later");
+            return null;
+        }
+        LOG.debug("Received response to question \"{}\": {}", question, response);
+        return response;
     }
 
     /**
