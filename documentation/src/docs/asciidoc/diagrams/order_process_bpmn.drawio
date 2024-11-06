@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-11-06T14:58:21.373Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="Mr4c8MBg6Dstj1Bm2hEI" version="23.1.5" type="device">
+<mxfile host="Electron" modified="2024-11-06T15:41:58.069Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="LAgDcACjRiNRLm-cYXkm" version="23.1.5" type="device">
   <diagram name="Page-1" id="hzpra2lofDzAdFRERjlR">
-    <mxGraphModel dx="1313" dy="776" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1500" dy="887" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -42,7 +42,7 @@
         <mxCell id="yxxhoaD4eO6ZaPYa3Uak-1" value="notification service" style="swimlane;html=1;startSize=40;fontStyle=0;collapsible=0;horizontal=0;swimlaneLine=1;swimlaneFillColor=#ffffff;strokeWidth=2;whiteSpace=wrap;" parent="1" vertex="1">
           <mxGeometry x="30" y="430" width="1760" height="110" as="geometry" />
         </mxCell>
-        <mxCell id="qseJRWOYaKlsRWUmHyyh-61" value="send &quot;Item not in item catalog&quot; notification" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;" parent="yxxhoaD4eO6ZaPYa3Uak-1" vertex="1">
+        <mxCell id="qseJRWOYaKlsRWUmHyyh-61" value="send &quot;Item not in product catalog&quot; notification" style="points=[[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0.25,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0],[0,0.25,0]];shape=mxgraph.bpmn.task;whiteSpace=wrap;rectStyle=rounded;size=10;html=1;container=1;expand=0;collapsible=0;taskMarker=abstract;" parent="yxxhoaD4eO6ZaPYa3Uak-1" vertex="1">
           <mxGeometry x="565" y="15" width="120" height="80" as="geometry" />
         </mxCell>
         <mxCell id="qseJRWOYaKlsRWUmHyyh-46" value="send order confirmation" style="shape=ext;rounded=1;html=1;whiteSpace=wrap;" parent="yxxhoaD4eO6ZaPYa3Uak-1" vertex="1">
@@ -69,16 +69,16 @@
         <mxCell id="yxxhoaD4eO6ZaPYa3Uak-12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="qseJRWOYaKlsRWUmHyyh-8" source="qseJRWOYaKlsRWUmHyyh-14" target="qseJRWOYaKlsRWUmHyyh-16" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qseJRWOYaKlsRWUmHyyh-14" value="check item catalog" style="shape=ext;rounded=1;html=1;whiteSpace=wrap;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
+        <mxCell id="qseJRWOYaKlsRWUmHyyh-14" value="check product catalog" style="shape=ext;rounded=1;html=1;whiteSpace=wrap;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
           <mxGeometry x="410" y="35" width="120" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="qseJRWOYaKlsRWUmHyyh-15" value="item catalog" style="shape=datastore;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
+        <mxCell id="qseJRWOYaKlsRWUmHyyh-15" value="product catalog" style="shape=datastore;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
           <mxGeometry x="300" y="50" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="yxxhoaD4eO6ZaPYa3Uak-14" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="qseJRWOYaKlsRWUmHyyh-8" source="qseJRWOYaKlsRWUmHyyh-16" target="qseJRWOYaKlsRWUmHyyh-10" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="qseJRWOYaKlsRWUmHyyh-16" value="items in catalog?" style="points=[[0.25,0.25,0],[0.5,0,0],[0.75,0.25,0],[1,0.5,0],[0.75,0.75,0],[0.5,1,0],[0.25,0.75,0],[0,0.5,0]];shape=mxgraph.bpmn.gateway2;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=rhombusPerimeter;outlineConnect=0;outline=none;symbol=none;gwType=exclusive;labelPosition=center;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
+        <mxCell id="qseJRWOYaKlsRWUmHyyh-16" value="items in product catalog?" style="points=[[0.25,0.25,0],[0.5,0,0],[0.75,0.25,0],[1,0.5,0],[0.75,0.75,0],[0.5,1,0],[0.25,0.75,0],[0,0.5,0]];shape=mxgraph.bpmn.gateway2;html=1;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;verticalAlign=top;align=center;perimeter=rhombusPerimeter;outlineConnect=0;outline=none;symbol=none;gwType=exclusive;labelPosition=center;" parent="qseJRWOYaKlsRWUmHyyh-8" vertex="1">
           <mxGeometry x="600" y="50" width="50" height="50" as="geometry" />
         </mxCell>
         <mxCell id="_lNKXiJvBvEVK6ei5fl--1" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" parent="qseJRWOYaKlsRWUmHyyh-8" source="qseJRWOYaKlsRWUmHyyh-21" target="qseJRWOYaKlsRWUmHyyh-23" edge="1">
@@ -242,7 +242,7 @@
             <mxPoint x="423" y="310" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="qseJRWOYaKlsRWUmHyyh-74" value="&quot;Item not in catalog&quot; notification" style="shape=message;html=1;outlineConnect=0;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingRight=5;labelBackgroundColor=#ffffff;" parent="qseJRWOYaKlsRWUmHyyh-73" vertex="1">
+        <mxCell id="qseJRWOYaKlsRWUmHyyh-74" value="&quot;Item not in product catalog&quot; notification" style="shape=message;html=1;outlineConnect=0;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;spacingRight=5;labelBackgroundColor=#ffffff;" parent="qseJRWOYaKlsRWUmHyyh-73" vertex="1">
           <mxGeometry width="24" height="16" relative="1" as="geometry">
             <mxPoint x="8" y="-8" as="offset" />
           </mxGeometry>
