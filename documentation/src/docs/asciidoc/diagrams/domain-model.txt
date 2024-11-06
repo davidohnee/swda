@@ -1,8 +1,8 @@
 classDiagram
     Employee "0..*" o-- "1" Role: has
-    Item "1" o-- "1" Product: is of type
+    InventoryItem "1" o-- "1" Product: is of type
     Order "1" o-- "1..*" OrderItem: consists of
-    OrderItem "1" o-- "1" Item: is
+    OrderItem "1" o-- "1" InventoryItem: is
     Warehouse "1" o-- "1" WarehouseType: type
     Customer "1" --> "0..*" CustomerOrder: places
     OrderItem "1" o-- "1" Warehouse: is from
@@ -12,7 +12,7 @@ classDiagram
     Employee "1" --> "0..*" CustomerOrder: processes
     Employee "1" --> "0..*" ReplenishmentOrder: places
     Role "1" o-- "1" RoleName: is called
-    Warehouse "1" *-- "0..*" Item: stores
+    Warehouse "1" *-- "0..*" InventoryItem: stores
     Customer "1" --> "0..*" Reminder: receives
     Reminder "0..*" *-- "1" Invoice: for
     ReplenishmentOrder "1" o-- "1" Warehouse: for
@@ -59,16 +59,15 @@ classDiagram
         +getName() String
         +getPrice() Number
     }
-    class Item{
-        -UUID id
+    class InventoryItem{
         -Product product
+        -Number count
     }
     class Warehouse{
-        +take(List~Item~ items)
-        +allByProduct(Product product) List~Item~
+        +take(List~InventoryItem~ items)
     }
     class OrderItem {
-        -Item item
+        -InventoryItem item
         -Warehouse source
     }
     class Order{
