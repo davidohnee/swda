@@ -11,24 +11,22 @@ import java.util.Objects;
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.micronaut.core.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * Customer
+ * Employee
  */
 @JsonPropertyOrder({
-    Customer.JSON_PROPERTY_ID,
-    Customer.JSON_PROPERTY_FIRST_NAME,
-    Customer.JSON_PROPERTY_FAMILY_NAME,
-    Customer.JSON_PROPERTY_ADDRESS,
-    Customer.JSON_PROPERTY_CONTACT_INFO
+    Employee.JSON_PROPERTY_ID,
+    Employee.JSON_PROPERTY_FIRST_NAME,
+    Employee.JSON_PROPERTY_FAMILY_NAME,
+    Employee.JSON_PROPERTY_ROLE
 })
-@JsonTypeName("Customer")
+@JsonTypeName("Employee")
 @Introspected
-public class Customer {
+public class Employee {
     public static final String JSON_PROPERTY_ID = "id";
     private UUID id;
 
@@ -38,23 +36,54 @@ public class Customer {
     public static final String JSON_PROPERTY_FAMILY_NAME = "familyName";
     private String familyName;
 
-    public static final String JSON_PROPERTY_ADDRESS = "address";
-    private Address address;
+    /**
+     * Gets or Sets role
+     */
+    public enum RoleEnum {
+        SALES("SALES"),
+        MANAGER("MANAGER"),
+        DATA_TYPIST("DATA_TYPIST"),
+        SYSTEM_ADMIN("SYSTEM_ADMIN");
 
-    public static final String JSON_PROPERTY_CONTACT_INFO = "contactInfo";
-    private ContactInfo contactInfo;
+        private String value;
 
-    public Customer(UUID id, String firstName, String familyName, Address address, ContactInfo contactInfo) {
+        RoleEnum(String value) {
+            this.value = value;
+        }
+
+        @JsonValue
+        public String getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+
+        @JsonCreator
+        public static RoleEnum fromValue(String value) {
+            for (RoleEnum b : RoleEnum.values()) {
+                if (b.value.equals(value)) {
+                    return b;
+                }
+            }
+            throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        }
+    }
+    public static final String JSON_PROPERTY_ROLE = "role";
+    private RoleEnum role;
+
+    public Employee(UUID id, String firstName, String familyName, RoleEnum role) {
         this.id = id;
         this.firstName = firstName;
         this.familyName = familyName;
-        this.address = address;
-        this.contactInfo = contactInfo;
+        this.role = role;
     }
 
-    public Customer() {}
+    public Employee() {}
 
-    public Customer id(UUID id) {
+    public Employee id(UUID id) {
         this.id = id;
         return this;
     }
@@ -77,7 +106,7 @@ public class Customer {
         this.id = id;
     }
 
-    public Customer firstName(String firstName) {
+    public Employee firstName(String firstName) {
         this.firstName = firstName;
         return this;
     }
@@ -100,7 +129,7 @@ public class Customer {
         this.firstName = firstName;
     }
 
-    public Customer familyName(String familyName) {
+    public Employee familyName(String familyName) {
         this.familyName = familyName;
         return this;
     }
@@ -123,52 +152,27 @@ public class Customer {
         this.familyName = familyName;
     }
 
-    public Customer address(Address address) {
-        this.address = address;
+    public Employee role(RoleEnum role) {
+        this.role = role;
         return this;
     }
 
     /**
-     * Get address
-     * @return address
+     * Get role
+     * @return role
      */
-    @Valid
     @NotNull
-    @Schema(name = "address", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_ADDRESS)
+    @Schema(name = "role", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_ROLE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public Address getAddress() {
-        return address;
+    public RoleEnum getRole() {
+        return role;
     }
 
-    @JsonProperty(JSON_PROPERTY_ADDRESS)
+    @JsonProperty(JSON_PROPERTY_ROLE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public Customer contactInfo(ContactInfo contactInfo) {
-        this.contactInfo = contactInfo;
-        return this;
-    }
-
-    /**
-     * Get contactInfo
-     * @return contactInfo
-     */
-    @Valid
-    @NotNull
-    @Schema(name = "contactInfo", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_CONTACT_INFO)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public ContactInfo getContactInfo() {
-        return contactInfo;
-    }
-
-    @JsonProperty(JSON_PROPERTY_CONTACT_INFO)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setContactInfo(ContactInfo contactInfo) {
-        this.contactInfo = contactInfo;
+    public void setRole(RoleEnum role) {
+        this.role = role;
     }
 
     @Override
@@ -179,28 +183,26 @@ public class Customer {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Customer customer = (Customer) o;
-        return Objects.equals(this.id, customer.id) &&
-                Objects.equals(this.firstName, customer.firstName) &&
-                Objects.equals(this.familyName, customer.familyName) &&
-                Objects.equals(this.address, customer.address) &&
-                Objects.equals(this.contactInfo, customer.contactInfo);
+        Employee employee = (Employee) o;
+        return Objects.equals(this.id, employee.id) &&
+                Objects.equals(this.firstName, employee.firstName) &&
+                Objects.equals(this.familyName, employee.familyName) &&
+                Objects.equals(this.role, employee.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, familyName, address, contactInfo);
+        return Objects.hash(id, firstName, familyName, role);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Customer {\n");
+        sb.append("class Employee {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
         sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
-        sb.append("    address: ").append(toIndentedString(address)).append("\n");
-        sb.append("    contactInfo: ").append(toIndentedString(contactInfo)).append("\n");
+        sb.append("    role: ").append(toIndentedString(role)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -217,4 +219,3 @@ public class Customer {
     }
 
 }
-
