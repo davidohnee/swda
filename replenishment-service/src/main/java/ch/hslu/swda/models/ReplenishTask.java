@@ -1,33 +1,40 @@
 package ch.hslu.swda.models;
 
-import java.time.Instant;
-import java.time.LocalDate;
+import java.util.Objects;
+import java.util.UUID;
 
 public class ReplenishTask {
+    private final UUID trackingId;
     private final int productId;
     private final int count;
-    private final int reservedCount;
-    private final String reservationTicket;
-    private final LocalDate deliveryDate;
+    private final ReplenishTaskReservation reservation;
 
-    public ReplenishTask(int productId, int count, int reservedCount, String reservationTicket, LocalDate deliveryDate) {
+    public ReplenishTask(
+        int productId,
+        int count,
+        ReplenishTaskReservation reservation,
+        UUID orderId
+    ) {
+        this.trackingId = orderId;
         this.productId = productId;
         this.count = count;
-        this.reservedCount = reservedCount;
-        this.reservationTicket = reservationTicket;
-        this.deliveryDate = deliveryDate;
+        this.reservation = reservation;
     }
 
-    public LocalDate getDeliveryDate() {
-        return deliveryDate;
+    public ReplenishTask(
+            int productId,
+            int count,
+            ReplenishTaskReservation reservation
+    ) {
+        this(productId, count, reservation, UUID.randomUUID());
     }
 
-    public String getReservationTicket() {
-        return reservationTicket;
+    public UUID getTrackingId() {
+        return trackingId;
     }
 
-    public int getReservedCount() {
-        return reservedCount;
+    public ReplenishTaskReservation getReservation() {
+        return reservation;
     }
 
     public int getCount() {
@@ -39,13 +46,18 @@ public class ReplenishTask {
     }
 
     public boolean completed() {
-        return count == reservedCount;
+        return count == this.reservation.getReservedCount();
     }
 
-    public boolean shouldHaveArrived() {
-        if (deliveryDate == null) {
-            return true;
-        }
-        return deliveryDate.isBefore(LocalDate.now());
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReplenishTask that)) return false;
+        return productId == that.productId && count == that.count && Objects.equals(trackingId, that.trackingId) && Objects.equals(reservation, that.reservation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(trackingId, productId, count, reservation);
     }
 }

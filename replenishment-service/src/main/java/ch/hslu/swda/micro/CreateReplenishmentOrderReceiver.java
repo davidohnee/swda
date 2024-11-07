@@ -18,6 +18,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.entities.ReplenishmentOrder;
+import ch.hslu.swda.entities.ReplenishmentOrderResponse;
 import ch.hslu.swda.entities.ReplenishmentStatus;
 import ch.hslu.swda.stock.local.StockLocal;
 
@@ -53,10 +54,10 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
 
             ReplenishmentOrder request = mapper.readValue(message, ReplenishmentOrder.class);
 
-            ReplenishmentStatus status = replenisher.replenish(request.getProductId(), request.getCount());
-            String data = (status != null) ? mapper.writeValueAsString(status) : "";
+            ReplenishmentOrderResponse response = replenisher.replenish(request.getProductId(), request.getCount());
+            String data = (response != null) ? mapper.writeValueAsString(response) : "";
 
-            LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
+            LOG.debug("sending answer [{}] with topic [{}] according to replyTo-property", data, replyTo);
             bus.reply(exchangeName, replyTo, corrId, data);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
