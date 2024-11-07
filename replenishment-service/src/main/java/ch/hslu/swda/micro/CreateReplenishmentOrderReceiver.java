@@ -19,8 +19,6 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.entities.ReplenishmentOrder;
 import ch.hslu.swda.entities.ReplenishmentOrderResponse;
-import ch.hslu.swda.entities.ReplenishmentStatus;
-import ch.hslu.swda.stock.local.StockLocal;
 
 import java.io.IOException;
 
@@ -54,7 +52,7 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
 
             ReplenishmentOrder request = mapper.readValue(message, ReplenishmentOrder.class);
 
-            ReplenishmentOrderResponse response = replenisher.replenish(request.getProductId(), request.getCount());
+            ReplenishmentOrderResponse response = replenisher.replenish(request.getProductId(), request.getQuantity());
             String data = (response != null) ? mapper.writeValueAsString(response) : "";
 
             LOG.debug("sending answer [{}] with topic [{}] according to replyTo-property", data, replyTo);
