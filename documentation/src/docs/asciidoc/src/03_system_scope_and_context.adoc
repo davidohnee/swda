@@ -31,7 +31,7 @@ Das Filialbestellsystem interagiert mit verschiedenen Benutzer:innen. Hier sind 
 
 === Technischer Kontext
 
-Das Filalbestellsystem verwendet verschiedene technische Schnittstellen, um die Kommunikation zwischen den Services zu gewährleisten:
+Das Filialbestellsystem verwendet verschiedene technische Schnittstellen, um die Kommunikation zwischen den Services zu gewährleisten:
 
 [cols="3,2,2",options="header"]
 |===
