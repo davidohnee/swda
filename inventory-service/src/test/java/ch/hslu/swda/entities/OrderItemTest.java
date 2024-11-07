@@ -6,17 +6,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class InventoryItemUpdateRequestTest {
+public class OrderItemTest {
     @Test
     void testCreateInventoryItemUpdateRequest() {
         UUID productId = UUID.randomUUID();
-        InventoryItemUpdateRequest request = new InventoryItemUpdateRequest(productId, 10);
-        Assertions.assertThat(request.getCount()).isEqualTo(10);
+        OrderItem request = new OrderItem(productId, 10);
+        Assertions.assertThat(request.getQuantity()).isEqualTo(10);
     }
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(InventoryItemUpdateRequest.class)
+        EqualsVerifier.forClass(OrderItem.class)
                 .verify();
     }
 }

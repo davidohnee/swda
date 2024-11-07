@@ -45,14 +45,14 @@ public class Inventory {
         return null;
     }
 
-    public OrderInfo take(UUID productId, int amount) {
-        InventoryItem item = this.get(productId);
+    public OrderInfo take(OrderItem orderItem) {
+        InventoryItem item = this.get(orderItem.getProductId());
         if (item == null) {
             return null;
         }
 
-        if (amount <= item.getCount()) {
-            this.update(productId, item.getCount() - amount);
+        if (orderItem.getQuantity() <= item.getQuantity()) {
+            this.update(orderItem.getProductId(), item.getQuantity() - orderItem.getQuantity());
             return new OrderInfo(
                     item.getProduct().getId().hashCode(),
                     ReplenishmentStatus.DONE
@@ -65,19 +65,19 @@ public class Inventory {
         );
     }
 
-    public InventoryItem update(UUID productId, int newCount) {
+    public InventoryItem update(UUID productId, int newQuantity) {
         InventoryItem item = this.get(productId);
         if (item == null) {
             return null;
         }
 
-        if (newCount < 0) {
-            throw new IllegalArgumentException("Count must be positive");
+        if (newQuantity < 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
         }
 
-        item.setCount(newCount);
+        item.setQuantity(newQuantity);
 
-        if (newCount < REPLENISHMENT_THRESHOLD) {
+        if (newQuantity < REPLENISHMENT_THRESHOLD) {
             try {
                 replenishmentClientService.replenish(
                         new ReplenishmentOrder(

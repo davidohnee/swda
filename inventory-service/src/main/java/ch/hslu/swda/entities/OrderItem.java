@@ -21,23 +21,23 @@ import java.util.UUID;
 /**
  * Tuple for Month and Number of students.
  */
-public final class InventoryItemUpdateRequest {
+public final class OrderItem {
 
     final private UUID productId;
-    final private int count;
+    final private int quantity;
 
     /**
      * Constructor.
      *
      * @param productId    product id
-     * @param count     quantity
+     * @param quantity     quantity
      */
-    public InventoryItemUpdateRequest(final UUID productId, final int count) {
+    public OrderItem(final UUID productId, final int quantity) {
         this.productId = productId;
-        this.count = count;
+        this.quantity = quantity;
     }
 
-    public InventoryItemUpdateRequest() {
+    public OrderItem() {
         this(UUID.randomUUID(), 0);
     }
 
@@ -51,21 +51,21 @@ public final class InventoryItemUpdateRequest {
     /**
      * @return the quantity
      */
-    public int getCount() {
-        return count;
+    public int getQuantity() {
+        return quantity;
     }
 
 
     /**
-     * identical if same product id and count {@inheritDoc}.
+     * identical if same product id and quantity {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        return obj instanceof InventoryItemUpdateRequest other
-                && this.count == other.count
+        return obj instanceof OrderItem other
+                && this.quantity == other.quantity
                 && Objects.equals(other.productId, this.productId);
     }
 
@@ -74,7 +74,7 @@ public final class InventoryItemUpdateRequest {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.productId, this.count);
+        return Objects.hash(this.productId, this.quantity);
     }
 
     /**
@@ -82,6 +82,6 @@ public final class InventoryItemUpdateRequest {
      */
     @Override
     public String toString() {
-        return "Inventory Item[productId=" + this.productId + ", quantity='" + this.count + "]";
+        return "Inventory Item[productId=" + this.productId + ", quantity='" + this.quantity + "]";
     }
 }

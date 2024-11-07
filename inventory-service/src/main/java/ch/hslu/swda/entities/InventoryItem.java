@@ -23,17 +23,17 @@ import java.util.Objects;
 public final class InventoryItem {
 
     final private Product product;
-    private int count;
+    private int quantity;
 
     /**
      * Constructor.
      *
      * @param product    product
-     * @param count     quantity
+     * @param quantity     quantity
      */
-    public InventoryItem(final Product product, final int count) {
+    public InventoryItem(final Product product, final int quantity) {
         this.product = product;
-        this.count = count;
+        this.quantity = quantity;
     }
 
     /**
@@ -46,15 +46,15 @@ public final class InventoryItem {
     /**
      * @return the quantity
      */
-    public int getCount() {
-        return count;
+    public int getQuantity() {
+        return quantity;
     }
 
     /**
-     * @param count the quantity to set
+     * @param quantity the quantity to set
      */
-    public void setCount(final int count) {
-        this.count = count;
+    public void setQuantity(final int quantity) {
+        this.quantity = quantity;
     }
 
     /**
@@ -82,6 +82,6 @@ public final class InventoryItem {
      */
     @Override
     public String toString() {
-        return "Inventory Item[product=" + this.product + ", quantity='" + this.count + "]";
+        return "Inventory Item[product=" + this.product + ", quantity='" + this.quantity + "]";
     }
 }

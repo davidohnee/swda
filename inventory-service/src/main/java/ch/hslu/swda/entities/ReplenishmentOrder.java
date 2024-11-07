@@ -2,15 +2,15 @@ package ch.hslu.swda.entities;
 
 public class ReplenishmentOrder {
     private final int productId;
-    private final int count;
+    private final int quantity;
 
-    public ReplenishmentOrder(int productId, int count) {
+    public ReplenishmentOrder(int productId, int quantity) {
         this.productId = productId;
-        this.count = count;
+        this.quantity = quantity;
     }
 
-    public int getCount() {
-        return count;
+    public int getQuantity() {
+        return quantity;
     }
 
     public int getProductId() {

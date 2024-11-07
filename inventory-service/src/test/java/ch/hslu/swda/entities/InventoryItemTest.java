@@ -19,22 +19,22 @@ class InventoryItemTest {
         InventoryItem item = new InventoryItem(product, 10);
 
         Assertions.assertThat(item.getProduct()).isEqualTo(product);
-        Assertions.assertThat(item.getCount()).isEqualTo(10);
+        Assertions.assertThat(item.getQuantity()).isEqualTo(10);
     }
 
     @Test
-    void testSetCount() {
+    void testSetQuantity() {
         Product product = this.randomProduct();
         InventoryItem item = new InventoryItem(product, 10);
 
-        item.setCount(20);
-        Assertions.assertThat(item.getCount()).isEqualTo(20);
+        item.setQuantity(20);
+        Assertions.assertThat(item.getQuantity()).isEqualTo(20);
     }
 
     @Test
     void testEqualsContract() {
         EqualsVerifier.forClass(InventoryItem.class)
-                .withIgnoredFields("count")
+                .withIgnoredFields("quantity")
                 .verify();
     }
 }

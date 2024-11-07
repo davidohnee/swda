@@ -18,13 +18,12 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.entities.InventoryItem;
-import ch.hslu.swda.entities.InventoryItemUpdateRequest;
+import ch.hslu.swda.entities.OrderItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public final class UpdateInventoryReceiver implements MessageReceiver {
 
@@ -50,9 +49,9 @@ public final class UpdateInventoryReceiver implements MessageReceiver {
         try {
             LOG.debug("Received message: {}", message);
 
-            InventoryItemUpdateRequest request = mapper.readValue(message, InventoryItemUpdateRequest.class);
+            OrderItem request = mapper.readValue(message, OrderItem.class);
 
-            InventoryItem item = this.inventory.update(request.getProductId(), request.getCount());
+            InventoryItem item = this.inventory.update(request.getProductId(), request.getQuantity());
 
             String data = (item != null) ? mapper.writeValueAsString(item) : "";
 

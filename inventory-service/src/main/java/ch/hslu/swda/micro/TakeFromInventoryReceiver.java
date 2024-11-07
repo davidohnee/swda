@@ -17,14 +17,15 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.entities.InventoryItem;
-import ch.hslu.swda.entities.InventoryItemUpdateRequest;
+import ch.hslu.swda.entities.InventoryTakeItemsRequest;
+import ch.hslu.swda.entities.OrderItem;
 import ch.hslu.swda.entities.OrderInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 public final class TakeFromInventoryReceiver implements MessageReceiver {
 
@@ -50,11 +51,12 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
         try {
             LOG.debug("Received message: {}", message);
 
-            InventoryItemUpdateRequest[] request = mapper.readValue(message, InventoryItemUpdateRequest[].class);
-            OrderInfo[] orderInfo = new OrderInfo[request.length];
+            InventoryTakeItemsRequest request = mapper.readValue(message, InventoryTakeItemsRequest.class);
+            OrderInfo[] orderInfo = new OrderInfo[request.getItems().size()];
+            List<OrderItem> items = request.getItems();
 
-            for (int i = 0; i < request.length; i++) {
-                orderInfo[i] = this.inventory.take(request[i].getProductId(), request[i].getCount());
+            for (int i = 0; i < items.size(); i++) {
+                orderInfo[i] = this.inventory.take(items.get(i));
             }
 
             String data = (orderInfo != null) ? mapper.writeValueAsString(orderInfo) : "";
