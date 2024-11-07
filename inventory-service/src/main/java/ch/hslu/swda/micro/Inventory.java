@@ -1,8 +1,6 @@
 package ch.hslu.swda.micro;
 
-import ch.hslu.swda.entities.InventoryItem;
-import ch.hslu.swda.entities.Product;
-import ch.hslu.swda.entities.ReplenishmentOrder;
+import ch.hslu.swda.entities.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -38,7 +36,7 @@ public class Inventory {
         return inventory;
     }
 
-    public InventoryItem getQuantity(UUID productId) {
+    public InventoryItem get(UUID productId) {
         for (InventoryItem i : inventory) {
             if (i.getProduct().getId().equals(productId)) {
                 return i;
@@ -47,28 +45,51 @@ public class Inventory {
         return null;
     }
 
+    public OrderInfo take(UUID productId, int amount) {
+        InventoryItem item = this.get(productId);
+        if (item == null) {
+            return null;
+        }
+
+        if (amount <= item.getCount()) {
+            this.update(productId, item.getCount() - amount);
+            return new OrderInfo(
+                    item.getProduct().getId().hashCode(),
+                    ReplenishmentStatus.DONE
+            );
+        }
+
+        return new OrderInfo(
+                item.getProduct().getId().hashCode(),
+                ReplenishmentStatus.CONFIRMED
+        );
+    }
+
     public InventoryItem update(UUID productId, int newCount) {
-        for (InventoryItem item : inventory) {
-            if (item.getProduct().getId().equals(productId)) {
-                item.setCount(newCount);
+        InventoryItem item = this.get(productId);
+        if (item == null) {
+            return null;
+        }
 
-                if (item.getCount() < REPLENISHMENT_THRESHOLD) {
-                    try {
-                        replenishmentClientService.replenish(
-                                new ReplenishmentOrder(
-                                    item.getProduct().getId().hashCode(), // FIXME: This is terrible design
-                                    REPLENISHMENT_AMOUNT
-                                )
-                        );
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
+        if (newCount < 0) {
+            throw new IllegalArgumentException("Count must be positive");
+        }
 
-                return item;
+        item.setCount(newCount);
+
+        if (newCount < REPLENISHMENT_THRESHOLD) {
+            try {
+                replenishmentClientService.replenish(
+                        new ReplenishmentOrder(
+                            item.getProduct().getId().hashCode(), // FIXME: This is terrible design
+                            REPLENISHMENT_AMOUNT
+                        )
+                );
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        return null;
+        return item;
     }
 }

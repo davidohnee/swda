@@ -1,10 +1,10 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.entities.ReplenishmentOrder;
-import ch.hslu.swda.entities.ReplenishmentStatus;
+import ch.hslu.swda.entities.OrderInfo;
 
 import java.io.IOException;
 
 public interface ReplenishmentClientService {
-    ReplenishmentStatus replenish(ReplenishmentOrder order) throws IOException, InterruptedException;
+    OrderInfo replenish(ReplenishmentOrder order) throws IOException, InterruptedException;
 }

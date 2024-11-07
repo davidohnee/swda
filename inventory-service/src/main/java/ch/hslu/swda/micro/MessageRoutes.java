@@ -13,6 +13,7 @@ public class MessageRoutes {
 
     static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
     static final String INVENTORY_PATCH = "inventory.patch";
+    static final String INVENTORY_TAKE = "inventory.take";
 
     static final String REPLENISHMENT_CREATE = "replenishment.create";
     static final String REPLENISHMENT_GET_ENTITYSET = "replenishment.entityset";

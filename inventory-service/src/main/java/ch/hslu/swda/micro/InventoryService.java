@@ -18,7 +18,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.entities.ReplenishmentOrder;
-import ch.hslu.swda.entities.ReplenishmentStatus;
+import ch.hslu.swda.entities.OrderInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +56,17 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
         // start message receivers
         this.receiveGetInventoryMessages();
         this.receiveUpdateInventoryMessages();
+        receiveTakeFromInventoryMessages();
+    }
+
+    private void receiveTakeFromInventoryMessages() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_TAKE);
+        bus.listenFor(
+                exchangeName,
+                "InventoryService <- " + MessageRoutes.INVENTORY_TAKE,
+                MessageRoutes.INVENTORY_TAKE,
+                new TakeFromInventoryReceiver(exchangeName, bus, this.inventory)
+        );
     }
 
     private void receiveUpdateInventoryMessages() throws IOException {
@@ -78,23 +89,20 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
         );
     }
 
-    public ReplenishmentStatus replenish(ReplenishmentOrder order) throws IOException, InterruptedException {
-        // create question
+    public OrderInfo replenish(ReplenishmentOrder order) throws IOException, InterruptedException {
         final String message = mapper.writeValueAsString(order);
 
-        // send question to deep thought
         LOG.debug("Sending synchronous message to broker with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
         String response = bus.talkSync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, message);
 
-        // receive answer
         if (response == null) {
             LOG.debug("Received no response. Timeout occurred. Will retry later");
             return null;
         }
 
-        ReplenishmentStatus status = mapper.readValue(response, ReplenishmentStatus.class);
-        LOG.debug("Received response: [{}]", status);
-        return status;
+        OrderInfo orderResponse = mapper.readValue(response, OrderInfo.class);
+        LOG.debug("Received response: [{}]", orderResponse);
+        return orderResponse;
     }
 
     /**
