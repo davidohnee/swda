@@ -9,7 +9,6 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.model.Order;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,7 +22,6 @@ import io.micronaut.http.exceptions.HttpStatusException;
 import ch.hslu.swda.model.InventoryItem;
 import ch.hslu.swda.model.InventoryItemUpdate;
 import ch.hslu.swda.model.InventoryProductIdPatchRequest;
-import java.util.UUID;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -89,7 +87,7 @@ public class InventoryController {
 
 
     /**
-     * Update product count in inventory
+     * Update product quantity in inventory
      *
      * @param productId  (required)
      * @param inventoryProductIdPatchRequest  (required)
@@ -97,7 +95,7 @@ public class InventoryController {
      */
     @Operation(
         operationId = "inventoryProductIdPatch",
-        summary = "Update product count in inventory",
+        summary = "Update product quantity in inventory",
         responses = {
             @ApiResponse(responseCode = "200", description = "Inventory updated", content = {
                 @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))
@@ -113,7 +111,7 @@ public class InventoryController {
     @Produces(value = {"application/json"})
     @Consumes(value = {"application/json"})
     public Mono<InventoryItem> inventoryProductIdPatch(
-        @PathVariable(value="productId") @NotNull UUID productId, 
+        @PathVariable(value="productId") @NotNull int productId,
         @Body @NotNull @Valid InventoryProductIdPatchRequest inventoryProductIdPatchRequest
     ) {
         try {
@@ -122,7 +120,7 @@ public class InventoryController {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
 
-            InventoryItemUpdate inventoryItemUpdate = new InventoryItemUpdate(productId, inventoryProductIdPatchRequest.getCount());
+            InventoryItemUpdate inventoryItemUpdate = new InventoryItemUpdate(productId, inventoryProductIdPatchRequest.getQuantity());
 
             String message = objectMapper.writeValueAsString(inventoryItemUpdate);
 

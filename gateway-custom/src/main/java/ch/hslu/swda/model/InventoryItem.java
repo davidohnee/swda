@@ -13,8 +13,7 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.Arrays;
-import ch.hslu.swda.model.Product;
+
 import com.fasterxml.jackson.annotation.*;
 
 import jakarta.validation.Valid;
@@ -27,7 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @JsonPropertyOrder({
   InventoryItem.JSON_PROPERTY_PRODUCT,
-  InventoryItem.JSON_PROPERTY_COUNT
+  InventoryItem.JSON_PROPERTY_QUANTITY
 })
 @JsonTypeName("InventoryItem")
 @Introspected
@@ -35,12 +34,12 @@ public class InventoryItem {
     public static final String JSON_PROPERTY_PRODUCT = "product";
     private Product product;
 
-    public static final String JSON_PROPERTY_COUNT = "count";
-    private Integer count;
+    public static final String JSON_PROPERTY_QUANTITY = "quantity";
+    private Integer quantity;
 
-    public InventoryItem(Product product, Integer count) {
+    public InventoryItem(Product product, Integer quantity) {
         this.product = product;
-        this.count = count;
+        this.quantity = quantity;
     }
 
     public InventoryItem() {}
@@ -69,27 +68,27 @@ public class InventoryItem {
         this.product = product;
     }
 
-    public InventoryItem count(Integer count) {
-        this.count = count;
+    public InventoryItem quantity(Integer quantity) {
+        this.quantity = quantity;
         return this;
     }
 
     /**
-     * Get count
-     * @return count
+     * Get quantity
+     * @return quantity
      */
     @NotNull
-    @Schema(name = "count", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @Schema(name = "quantity", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public Integer getCount() {
-        return count;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override
@@ -102,12 +101,12 @@ public class InventoryItem {
         }
         InventoryItem inventoryItem = (InventoryItem) o;
         return Objects.equals(this.product, inventoryItem.product) &&
-            Objects.equals(this.count, inventoryItem.count);
+            Objects.equals(this.quantity, inventoryItem.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, count);
+        return Objects.hash(product, quantity);
     }
 
     @Override
@@ -115,7 +114,7 @@ public class InventoryItem {
         StringBuilder sb = new StringBuilder();
         sb.append("class InventoryItem {\n");
         sb.append("    product: ").append(toIndentedString(product)).append("\n");
-        sb.append("    count: ").append(toIndentedString(count)).append("\n");
+        sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("}");
         return sb.toString();
     }

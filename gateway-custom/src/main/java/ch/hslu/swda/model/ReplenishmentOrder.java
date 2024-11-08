@@ -13,18 +13,10 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.Arrays;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
-import ch.hslu.swda.model.OrderItem;
-import ch.hslu.swda.model.Warehouse;
+
 import com.fasterxml.jackson.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.micronaut.core.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,22 +25,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * ReplenishmentOrder
  */
 @JsonPropertyOrder({
-  ReplenishmentOrder.JSON_PROPERTY_ID,
-  ReplenishmentOrder.JSON_PROPERTY_DATE_TIME,
+  ReplenishmentOrder.JSON_PROPERTY_TRACKING_ID,
   ReplenishmentOrder.JSON_PROPERTY_STATUS,
-  ReplenishmentOrder.JSON_PROPERTY_ORDER_ITEMS,
-  ReplenishmentOrder.JSON_PROPERTY_PRICE,
-  ReplenishmentOrder.JSON_PROPERTY_ORDER_TYPE,
-  ReplenishmentOrder.JSON_PROPERTY_DESTINATION
+  ReplenishmentOrder.JSON_PROPERTY_PRODUCT,
+  ReplenishmentOrder.JSON_PROPERTY_QUANTITY
 })
 @JsonTypeName("ReplenishmentOrder")
 @Introspected
 public class ReplenishmentOrder {
-    public static final String JSON_PROPERTY_ID = "id";
-    private UUID id;
-
-    public static final String JSON_PROPERTY_DATE_TIME = "dateTime";
-    private OffsetDateTime dateTime;
+    public static final String JSON_PROPERTY_TRACKING_ID = "trackingId";
+    private UUID trackingId;
 
     /**
      * Gets or Sets status
@@ -56,7 +42,6 @@ public class ReplenishmentOrder {
     public enum StatusEnum {
         PENDING("PENDING"),
         CONFIRMED("CONFIRMED"),
-        AWAITING_PAYMENT("AWAITING_PAYMENT"),
         DONE("DONE");
 
         private String value;
@@ -88,62 +73,23 @@ public class ReplenishmentOrder {
     public static final String JSON_PROPERTY_STATUS = "status";
     private StatusEnum status;
 
-    public static final String JSON_PROPERTY_ORDER_ITEMS = "orderItems";
-    private List<@Valid OrderItem> orderItems = new ArrayList<>();
+    public static final String JSON_PROPERTY_PRODUCT = "product";
+    private Product product;
 
-    public static final String JSON_PROPERTY_PRICE = "price";
-    private BigDecimal price;
+    public static final String JSON_PROPERTY_QUANTITY = "quantity";
+    private int quantity;
 
-    /**
-     * Gets or Sets orderType
-     */
-    public enum OrderTypeEnum {
-        REPLENISHMENT_ORDER("replenishmentOrder");
-
-        private String value;
-
-        OrderTypeEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static OrderTypeEnum fromValue(String value) {
-            for (OrderTypeEnum b : OrderTypeEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-    }
-    public static final String JSON_PROPERTY_ORDER_TYPE = "orderType";
-    private OrderTypeEnum orderType;
-
-    public static final String JSON_PROPERTY_DESTINATION = "destination";
-    private Warehouse destination;
-
-    public ReplenishmentOrder(UUID id, OffsetDateTime dateTime, StatusEnum status, List<@Valid OrderItem> orderItems, BigDecimal price, OrderTypeEnum orderType, Warehouse destination) {
-        this.id = id;
-        this.dateTime = dateTime;
+    public ReplenishmentOrder(UUID trackingId, StatusEnum status, Product product) {
+        this.trackingId = trackingId;
         this.status = status;
-        this.orderItems = orderItems;
-        this.price = price;
-        this.orderType = orderType;
-        this.destination = destination;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public ReplenishmentOrder id(UUID id) {
-        this.id = id;
+    public ReplenishmentOrder() {}
+
+    public ReplenishmentOrder trackingId(UUID trackingId) {
+        this.trackingId = trackingId;
         return this;
     }
 
@@ -152,42 +98,17 @@ public class ReplenishmentOrder {
      * @return id
      */
     @NotNull
-    @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_ID)
+    @Schema(name = "trackingId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_TRACKING_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public UUID getId() {
-        return id;
+    public UUID getTrackingId() {
+        return trackingId;
     }
 
-    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonProperty(JSON_PROPERTY_TRACKING_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public ReplenishmentOrder dateTime(OffsetDateTime dateTime) {
-        this.dateTime = dateTime;
-        return this;
-    }
-
-    /**
-     * Get dateTime
-     * @return dateTime
-     */
-    @NotNull
-    @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_DATE_TIME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
-    public OffsetDateTime getDateTime() {
-        return dateTime;
-    }
-
-    @JsonProperty(JSON_PROPERTY_DATE_TIME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
-    public void setDateTime(OffsetDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setTrackingId(UUID trackingId) {
+        this.trackingId = trackingId;
     }
 
     public ReplenishmentOrder status(StatusEnum status) {
@@ -213,102 +134,44 @@ public class ReplenishmentOrder {
         this.status = status;
     }
 
-    public ReplenishmentOrder orderItems(List<@Valid OrderItem> orderItems) {
-        this.orderItems = orderItems;
-        return this;
-    }
-
-    public ReplenishmentOrder addOrderItemsItem(OrderItem orderItemsItem) {
-        this.orderItems.add(orderItemsItem);
+    public ReplenishmentOrder product(Product product) {
+        this.product = product;
         return this;
     }
 
     /**
-     * Get orderItems
-     * @return orderItems
+     * Get product
+     * @return product
      */
     @NotNull
-    @Schema(name = "orderItems", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_ORDER_ITEMS)
+    @Schema(name = "product", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_PRODUCT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public List<@Valid OrderItem> getOrderItems() {
-        return orderItems;
+    public Product getProduct() {
+        return product;
     }
 
-    @JsonProperty(JSON_PROPERTY_ORDER_ITEMS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setOrderItems(List<@Valid OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    public ReplenishmentOrder price(BigDecimal price) {
-        this.price = price;
+    public ReplenishmentOrder quantity(int quantity) {
+        this.quantity = quantity;
         return this;
     }
 
     /**
-     * Get price
-     * @return price
+     * Get quantity
+     * @return quantity
      */
     @NotNull
-    @Schema(name = "price", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_PRICE)
+    @Schema(name = "quantity", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public BigDecimal getPrice() {
-        return price;
+    public int getQuantity() {
+        return quantity;
     }
 
-    @JsonProperty(JSON_PROPERTY_PRICE)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public ReplenishmentOrder orderType(OrderTypeEnum orderType) {
-        this.orderType = orderType;
-        return this;
-    }
-
-    /**
-     * Get orderType
-     * @return orderType
-     */
-    @NotNull
-    @Schema(name = "orderType", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_ORDER_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public OrderTypeEnum getOrderType() {
-        return orderType;
-    }
-
-    @JsonProperty(JSON_PROPERTY_ORDER_TYPE)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setOrderType(OrderTypeEnum orderType) {
-        this.orderType = orderType;
-    }
-
-    public ReplenishmentOrder destination(Warehouse destination) {
-        this.destination = destination;
-        return this;
-    }
-
-    /**
-     * Get destination
-     * @return destination
-     */
-    @Valid
-    @NotNull
-    @Schema(name = "destination", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_DESTINATION)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public Warehouse getDestination() {
-        return destination;
-    }
-
-    @JsonProperty(JSON_PROPERTY_DESTINATION)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setDestination(Warehouse destination) {
-        this.destination = destination;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     @Override
@@ -320,31 +183,25 @@ public class ReplenishmentOrder {
             return false;
         }
         ReplenishmentOrder replenishmentOrder = (ReplenishmentOrder) o;
-        return Objects.equals(this.id, replenishmentOrder.id) &&
-            Objects.equals(this.dateTime, replenishmentOrder.dateTime) &&
+        return Objects.equals(this.trackingId, replenishmentOrder.trackingId) &&
             Objects.equals(this.status, replenishmentOrder.status) &&
-            Objects.equals(this.orderItems, replenishmentOrder.orderItems) &&
-            Objects.equals(this.price, replenishmentOrder.price) &&
-            Objects.equals(this.orderType, replenishmentOrder.orderType) &&
-            Objects.equals(this.destination, replenishmentOrder.destination);
+            Objects.equals(this.product, replenishmentOrder.product) &&
+            Objects.equals(this.quantity, replenishmentOrder.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, dateTime, status, orderItems, price, orderType, destination);
+        return Objects.hash(trackingId, status, product, quantity);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class ReplenishmentOrder {\n");
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
+        sb.append("    id: ").append(toIndentedString(trackingId)).append("\n");
         sb.append("    status: ").append(toIndentedString(status)).append("\n");
-        sb.append("    orderItems: ").append(toIndentedString(orderItems)).append("\n");
-        sb.append("    price: ").append(toIndentedString(price)).append("\n");
-        sb.append("    orderType: ").append(toIndentedString(orderType)).append("\n");
-        sb.append("    destination: ").append(toIndentedString(destination)).append("\n");
+        sb.append("    orderItems: ").append(toIndentedString(product)).append("\n");
+        sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("}");
         return sb.toString();
     }

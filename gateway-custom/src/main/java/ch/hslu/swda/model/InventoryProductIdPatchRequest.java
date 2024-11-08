@@ -13,11 +13,10 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.Arrays;
+
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.micronaut.core.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,39 +25,39 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * InventoryProductIdPatchRequest
  */
 @JsonPropertyOrder({
-  InventoryProductIdPatchRequest.JSON_PROPERTY_COUNT
+  InventoryProductIdPatchRequest.JSON_PROPERTY_QUANTITY
 })
 @JsonTypeName("_inventory__productId__patch_request")
 @Introspected
 public class InventoryProductIdPatchRequest {
-    public static final String JSON_PROPERTY_COUNT = "count";
-    private Integer count;
+    public static final String JSON_PROPERTY_QUANTITY = "quantity";
+    private Integer quantity;
 
-    public InventoryProductIdPatchRequest(Integer count) {
-        this.count = count;
+    public InventoryProductIdPatchRequest(Integer quantity) {
+        this.quantity = quantity;
     }
 
-    public InventoryProductIdPatchRequest count(Integer count) {
-        this.count = count;
+    public InventoryProductIdPatchRequest quantity(Integer quantity) {
+        this.quantity = quantity;
         return this;
     }
 
     /**
-     * Get count
-     * @return count
+     * Get quantity
+     * @return quantity
      */
     @NotNull
-    @Schema(name = "count", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @Schema(name = "quantity", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public Integer getCount() {
-        return count;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 
     @Override
@@ -70,19 +69,19 @@ public class InventoryProductIdPatchRequest {
             return false;
         }
         InventoryProductIdPatchRequest inventoryProductIdPatchRequest = (InventoryProductIdPatchRequest) o;
-        return Objects.equals(this.count, inventoryProductIdPatchRequest.count);
+        return Objects.equals(this.quantity, inventoryProductIdPatchRequest.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(count);
+        return Objects.hash(quantity);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class InventoryProductIdPatchRequest {\n");
-        sb.append("    count: ").append(toIndentedString(count)).append("\n");
+        sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("}");
         return sb.toString();
     }

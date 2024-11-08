@@ -13,12 +13,9 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.math.BigDecimal;
-import java.util.UUID;
 import com.fasterxml.jackson.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.micronaut.core.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Introspected
 public class Product {
     public static final String JSON_PROPERTY_ID = "id";
-    private UUID id;
+    private int id;
 
     public static final String JSON_PROPERTY_NAME = "name";
     private String name;
@@ -43,7 +40,7 @@ public class Product {
     public static final String JSON_PROPERTY_PRICE = "price";
     private BigDecimal price;
 
-    public Product(UUID id, String name, BigDecimal price) {
+    public Product(int id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -51,7 +48,7 @@ public class Product {
 
     public Product() {}
 
-    public Product id(UUID id) {
+    public Product id(int id) {
         this.id = id;
         return this;
     }
@@ -64,13 +61,13 @@ public class Product {
     @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.id = id;
     }
 

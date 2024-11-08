@@ -16,46 +16,45 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Tuple for Month and Number of students.
  */
 public final class InventoryItemUpdate {
 
-    final private UUID productId;
-    private int count;
+    final private int productId;
+    private int quantity;
 
     /**
      * Constructor.
      *
      * @param productId    product id
-     * @param count     quantity
+     * @param quantity     quantity
      */
-    public InventoryItemUpdate(final UUID productId, final int count) {
+    public InventoryItemUpdate(final int productId, final int quantity) {
         this.productId = productId;
-        this.count = count;
+        this.quantity = quantity;
     }
 
     /**
      * @return product id
      */
-    public UUID getProductId() {
+    public int getProductId() {
         return productId;
     }
 
     /**
      * @return the quantity
      */
-    public int getCount() {
-        return count;
+    public int getQuantity() {
+        return quantity;
     }
 
     /**
-     * @param count the quantity to set
+     * @param quantity the quantity to set
      */
-    public void setCount(final int count) {
-        this.count = count;
+    public void setQuantity(final int quantity) {
+        this.quantity = quantity;
     }
 
     /**
@@ -83,6 +82,6 @@ public final class InventoryItemUpdate {
      */
     @Override
     public String toString() {
-        return "Inventory Item Update[productId=" + this.productId + ", quantity='" + this.count + "]";
+        return "Inventory Item Update[productId=" + this.productId + ", quantity='" + this.quantity + "]";
     }
 }
