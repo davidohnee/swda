@@ -1,5 +1,7 @@
 package ch.hslu.swda.models;
 
+import ch.hslu.swda.entities.Product;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -8,6 +10,7 @@ public class ReplenishTask {
     private final int productId;
     private final int count;
     private final ReplenishTaskReservation reservation;
+    private Product product;
 
     public ReplenishTask(
         int productId,
@@ -27,6 +30,14 @@ public class ReplenishTask {
             ReplenishTaskReservation reservation
     ) {
         this(productId, count, reservation, UUID.randomUUID());
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public UUID getTrackingId() {

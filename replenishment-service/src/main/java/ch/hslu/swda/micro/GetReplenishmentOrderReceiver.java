@@ -17,6 +17,8 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.entities.FullReplenishmentOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +29,13 @@ public final class GetReplenishmentOrderReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(GetReplenishmentOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final Replenisher replenisher;
+    private final ObjectMapper mapper = new ObjectMapper();
 
-    public GetReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus) {
+    public GetReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus, Replenisher replenisher) {
         this.exchangeName = exchangeName;
         this.bus = bus;
+        this.replenisher = replenisher;
     }
 
     /**
@@ -42,8 +47,15 @@ public final class GetReplenishmentOrderReceiver implements MessageReceiver {
         // receive message and reply
         try {
             LOG.debug("received chat message with replyTo property [{}]: [{}]", replyTo, message);
-            LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
-            bus.reply(exchangeName, replyTo, corrId, "Hello there. This is the service template.");
+
+            var tasks = replenisher.getTasks();
+            var orders = FullReplenishmentOrder.fromReplenishTasks(tasks);
+
+            String data = (orders != null) ? mapper.writeValueAsString(orders) : "";
+
+            LOG.debug("sending answer [{}] with topic [{}] according to replyTo-property", data, replyTo);
+
+            bus.reply(exchangeName, replyTo, corrId, data);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
         }

@@ -45,7 +45,6 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
      */
     @Override
     public void onMessageReceived(final String route, final String replyTo, final String corrId, final String message) {
-
         // receive message and reply
         try {
             LOG.debug("received chat message with replyTo property [{}]: [{}]", replyTo, message);
@@ -59,6 +58,8 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
             bus.reply(exchangeName, replyTo, corrId, data);
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

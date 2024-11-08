@@ -1,0 +1,56 @@
+package ch.hslu.swda.entities;
+
+import ch.hslu.swda.models.ReplenishTask;
+
+import java.util.List;
+import java.util.UUID;
+
+public class FullReplenishmentOrder {
+    private Product product;
+    private int quantity;
+    private ReplenishmentStatus status;
+    private UUID trackingId;
+
+    public FullReplenishmentOrder(Product product, int quantity, ReplenishmentStatus status, UUID trackingId) {
+        this.product = product;
+        this.quantity = quantity;
+        this.status = status;
+        this.trackingId = trackingId;
+    }
+
+    public FullReplenishmentOrder() {
+        this(new Product(), 0, ReplenishmentStatus.PENDING, UUID.randomUUID());
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public ReplenishmentStatus getStatus() {
+        return status;
+    }
+
+    public UUID getTrackingId() {
+        return trackingId;
+    }
+
+    public static FullReplenishmentOrder fromReplenishTask(ReplenishTask task) {
+        return new FullReplenishmentOrder(
+                task.getProduct(),
+                task.getCount(),
+                task.completed() ? ReplenishmentStatus.DONE : ReplenishmentStatus.CONFIRMED,
+                task.getTrackingId()
+        );
+    }
+
+    public static List<FullReplenishmentOrder> fromReplenishTasks(List<ReplenishTask> tasks) {
+        return tasks
+                .stream()
+                .map(FullReplenishmentOrder::fromReplenishTask)
+                .toList();
+    }
+}

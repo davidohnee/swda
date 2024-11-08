@@ -17,7 +17,9 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.entities.InventoryItem;
 import ch.hslu.swda.stock.api.StockFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +30,13 @@ import java.util.concurrent.TimeoutException;
 /**
  * Beispielcode für Implementation eines Servcies mit RabbitMQ.
  */
-public final class ReplenishmentService implements AutoCloseable {
+public final class ReplenishmentService implements AutoCloseable, GetInventoryItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReplenishmentService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final Replenisher replenisher = new Replenisher(StockFactory.getStock());
+    private final Replenisher replenisher = new Replenisher(StockFactory.getStock(), this);
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * @throws IOException      IO-Fehler.
@@ -67,7 +70,11 @@ public final class ReplenishmentService implements AutoCloseable {
      */
     private void receiveGetAllReplenishmentOrderMessages() throws IOException {
         LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_GET_ENTITYSET);
-        bus.listenFor(exchangeName, "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_GET_ENTITYSET, MessageRoutes.REPLENISHMENT_GET_ENTITYSET, new GetReplenishmentOrderReceiver(exchangeName, bus));
+        bus.listenFor(
+            exchangeName,
+            "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_GET_ENTITYSET,
+            MessageRoutes.REPLENISHMENT_GET_ENTITYSET,
+            new GetReplenishmentOrderReceiver(exchangeName, bus, replenisher));
     }
 
     /**
@@ -76,5 +83,32 @@ public final class ReplenishmentService implements AutoCloseable {
     @Override
     public void close() {
         bus.close();
+    }
+
+    @Override
+    public void getInventoryItem(int productId, InventoryResponseHandler handler)
+            throws IOException, InterruptedException {
+        LOG.info("Requesting inventory item with id {}", productId);
+
+        bus.talkAsync(
+                exchangeName,
+                MessageRoutes.INVENTORY_GET_ENTITY,
+                String.valueOf(productId),
+                (route, replyTo, corrId, message) -> {
+                    InventoryItem item = null;
+
+                    if (!message.equals("Product not found")) {
+                        try {
+                            item = mapper.readValue(message, InventoryItem.class);
+                        } catch (IOException e) {
+                            LOG.error("Error processing message", e);
+                        }
+                    }
+
+                    LOG.info("Received inventory item: {}", item);
+
+                    handler.handle(item);
+                }
+        );
     }
 }
