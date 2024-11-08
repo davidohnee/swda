@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import static com.mongodb.client.model.Filters.eq;
 
 public class GenericDAO<T> {
-    private final MongoCollection<T> collection;
+    protected final MongoCollection<T> collection;
 
     public GenericDAO(MongoDatabase database, String collectionName, Class<T> clazz) {
         this.collection = database.getCollection(collectionName, clazz);
