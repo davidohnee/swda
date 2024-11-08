@@ -5,6 +5,6 @@ import ch.hslu.swda.entities.OrderInfo;
 
 import java.io.IOException;
 
-public interface ReplenishmentClientService {
+public interface ReplenishmentClient {
     OrderInfo replenish(ReplenishmentOrder order) throws IOException, InterruptedException;
 }

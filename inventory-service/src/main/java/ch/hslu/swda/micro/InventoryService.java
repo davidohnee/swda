@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Beispielcode für Implementation eines Servcies mit RabbitMQ.
  */
-public final class InventoryService implements AutoCloseable, ReplenishmentClientService {
+public final class InventoryService implements AutoCloseable, ReplenishmentClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(InventoryService.class);
     private final String exchangeName;

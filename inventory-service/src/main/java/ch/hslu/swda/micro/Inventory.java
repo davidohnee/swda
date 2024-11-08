@@ -14,10 +14,10 @@ public class Inventory {
 
     private final List<InventoryItem> inventory = new ArrayList<>();
     private final List<Product> productRange = new ArrayList<>();
-    private final ReplenishmentClientService replenishmentClientService;
+    private final ReplenishmentClient replenishmentClient;
 
-    public Inventory(ReplenishmentClientService replenishmentClientService) {
-        this.replenishmentClientService = replenishmentClientService;
+    public Inventory(ReplenishmentClient replenishmentClient) {
+        this.replenishmentClient = replenishmentClient;
         this.addSampleData();
     }
 
@@ -83,7 +83,7 @@ public class Inventory {
 
         if (newQuantity < REPLENISHMENT_THRESHOLD) {
             try {
-                replenishmentClientService.replenish(
+                replenishmentClient.replenish(
                         new ReplenishmentOrder(
                             item.getProduct().getId().hashCode(), // FIXME: This is terrible design
                             REPLENISHMENT_AMOUNT
