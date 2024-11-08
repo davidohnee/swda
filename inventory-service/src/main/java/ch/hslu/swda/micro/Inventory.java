@@ -47,21 +47,25 @@ public class Inventory {
 
     public OrderInfo take(OrderItem orderItem) {
         InventoryItem item = this.get(orderItem.getProductId());
+
         if (item == null) {
-            return null;
+            return new OrderInfo(
+                    orderItem.getProductId().hashCode(),
+                    OrderItemStatus.NOT_FOUND
+            );
         }
 
         if (orderItem.getQuantity() <= item.getQuantity()) {
             this.update(orderItem.getProductId(), item.getQuantity() - orderItem.getQuantity());
             return new OrderInfo(
                     item.getProduct().getId().hashCode(),
-                    ReplenishmentStatus.DONE
+                    OrderItemStatus.DONE
             );
         }
 
         return new OrderInfo(
                 item.getProduct().getId().hashCode(),
-                ReplenishmentStatus.CONFIRMED
+                OrderItemStatus.CONFIRMED
         );
     }
 

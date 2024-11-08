@@ -6,20 +6,20 @@ import java.util.UUID;
 public class OrderInfo {
     private final UUID trackingId;
     private final int productId;
-    private final ReplenishmentStatus status;
+    private final OrderItemStatus status;
 
-    public OrderInfo(UUID trackingId, int productId, ReplenishmentStatus status) {
+    public OrderInfo(UUID trackingId, int productId, OrderItemStatus status) {
         this.trackingId = trackingId;
         this.productId = productId;
         this.status = status;
     }
 
-    public OrderInfo(int productId, ReplenishmentStatus status) {
+    public OrderInfo(int productId, OrderItemStatus status) {
         this(UUID.randomUUID(), productId, status);
     }
 
     public OrderInfo() {
-        this(0, ReplenishmentStatus.PENDING);
+        this(0, OrderItemStatus.NOT_FOUND);
     }
 
     public UUID getTrackingId() {
@@ -30,7 +30,7 @@ public class OrderInfo {
         return productId;
     }
 
-    public ReplenishmentStatus getStatus() {
+    public OrderItemStatus getStatus() {
         return status;
     }
 
