@@ -1,24 +1,23 @@
 classDiagram
     Employee "0..*" o-- "1" Role: has
     InventoryItem "1" o-- "1" Product: is of type
-    Order "1" o-- "1..*" OrderItem: consists of
-    OrderItem "1" o-- "1" InventoryItem: is
-    Warehouse "1" o-- "1" WarehouseType: type
+    Order "1" o-- "1..*" InventoryItem: consists of
     Customer "1" --> "0..*" CustomerOrder: places
-    OrderItem "1" o-- "1" Warehouse: is from
     Employee "1" --> "0..*" Customer: manages
     Invoice "1" *-- "1" CustomerOrder: generates
     Customer "1" --> "0..*" Invoice: receives
     Employee "1" --> "0..*" CustomerOrder: processes
     Employee "1" --> "0..*" ReplenishmentOrder: places
     Role "1" o-- "1" RoleName: is called
-    Warehouse "1" *-- "0..*" InventoryItem: stores
+    Inventory "1" *-- "0..*" InventoryItem: stores
     Customer "1" --> "0..*" Reminder: receives
     Reminder "0..*" *-- "1" Invoice: for
-    ReplenishmentOrder "1" o-- "1" Warehouse: for
+    ReplenishmentOrder "1" -- "1" Inventory: for
     Shipment "1" --> "1" Customer: notify
     CustomerOrder "1" --> "1" Shipment: initiates
     Order "0..*" o-- "1" OrderStatus: has
+    Order "1" -- "1" OrderInfo: for
+    OrderInfo "1" *-- "1" OrderStatus: is
 
     Employee --|> Person: inherits
     Customer --|> Person: inherits
@@ -26,17 +25,17 @@ classDiagram
     ReplenishmentOrder --|> Order: inherits
     CustomerOrder --|> Order: inherits
     
-    class WarehouseType{
-        <<enumeration>>
-        CENTRAL
-        LOCAL
-    }
     class OrderStatus{
         <<enumeration>>
+        UNVALIDATED
         PENDING
         CONFIRMED
         AWAITING_PAYMENT
         DONE
+    }
+    class OrderInfo {
+        -UUID trackingId
+        -OrderStatus status
     }
     class Shipment{
         -CustomerOrder order
@@ -61,27 +60,21 @@ classDiagram
     }
     class InventoryItem{
         -Product product
-        -Number count
+        -Number quantity
     }
-    class Warehouse{
+    class Inventory{
         +take(List~InventoryItem~ items)
-    }
-    class OrderItem {
-        -InventoryItem item
-        -Warehouse source
     }
     class Order{
         -timstamp: DateTime
-        -items: List~OrderItem~
+        -items: List~InventoryItem~
         -status: OrderStatus
         +getTimestamp() DateTime
         +getTotalPrice() Number
-        +getItems() List~OrderItem~
+        +getItems() List~InventoryItem~
         +getStatus() OrderStatus
     }
     class ReplenishmentOrder{
-        -destination: Warehouse
-        +getWarehouse() Warehouse
     }
     class CustomerOrder{
         -seller: Employee
