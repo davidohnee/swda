@@ -16,7 +16,10 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.entities.InventoryTakeItemsRequest;
+import ch.hslu.swda.entities.ReplenishResponseHandler;
 import ch.hslu.swda.entities.ReplenishmentOrder;
 import ch.hslu.swda.entities.OrderInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,28 +84,34 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
 
     private void receiveGetInventoryMessages() throws IOException {
         LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_GET_ENTITYSET);
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_GET_ENTITY);
+        MessageReceiver receiver = new GetInventoryReceiver(exchangeName, bus, this.inventory);
         bus.listenFor(
                 exchangeName,
                 "InventoryService <- " + MessageRoutes.INVENTORY_GET_ENTITYSET,
                 MessageRoutes.INVENTORY_GET_ENTITYSET,
-                new GetInventoryReceiver(exchangeName, bus, this.inventory)
+                receiver
+        );
+        bus.listenFor(
+                exchangeName,
+                "InventoryService <- " + MessageRoutes.INVENTORY_GET_ENTITY,
+                MessageRoutes.INVENTORY_GET_ENTITY,
+                receiver
         );
     }
 
-    public OrderInfo replenish(ReplenishmentOrder order) throws IOException, InterruptedException {
+    public void replenish(
+        ReplenishmentOrder order,
+        ReplenishResponseHandler handler
+    ) throws IOException, InterruptedException {
         final String message = mapper.writeValueAsString(order);
 
         LOG.debug("Sending synchronous message to broker with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
-        String response = bus.talkSync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, message);
-
-        if (response == null) {
-            LOG.debug("Received no response. Timeout occurred. Will retry later");
-            return null;
-        }
-
-        OrderInfo orderResponse = mapper.readValue(response, OrderInfo.class);
-        LOG.debug("Received response: [{}]", orderResponse);
-        return orderResponse;
+        bus.talkAsync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, message,
+                (final String route, final String replyTo, final String corrId, final String response) -> {
+                    LOG.debug("Received response with routing [{}]", route);
+                    OrderInfo request = mapper.readValue(response, OrderInfo.class);
+        });
     }
 
     /**

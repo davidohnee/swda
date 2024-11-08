@@ -2,20 +2,27 @@ package ch.hslu.swda.entities;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.UUID;
+import java.util.Random;
 
 public final class Product {
-    private final UUID id;
+    private final int id;
     private final String name;
     private BigDecimal price;
 
-    public Product(UUID id, String name, BigDecimal price) {
+    public Product(int id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public UUID getId() {
+    public static int randomId() {
+        final int min = 100_000;
+        final int max = Integer.MAX_VALUE;
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
+    }
+
+    public int getId() {
         return this.id;
     }
 
@@ -37,7 +44,7 @@ public final class Product {
             return true;
         }
         return (object instanceof Product product)
-                && Objects.equals(product.id, this.id);
+                && product.getId() == this.id;
     }
 
     @Override

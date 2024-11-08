@@ -5,12 +5,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Random;
 import java.util.UUID;
 
 class InventoryItemTest {
 
     Product randomProduct() {
-        return new Product(UUID.randomUUID(), "Product 1", new BigDecimal("100.0"));
+        Random random = new Random();
+        int productId = random.nextInt() + 100000;
+        return new Product(productId, "Product 1", new BigDecimal("100.0"));
     }
 
     @Test

@@ -11,7 +11,7 @@ class ProductTest {
 
     @Test
     void testCreateProduct() {
-        UUID id = UUID.randomUUID();
+        int id = Product.randomId();
         Product product = new Product(id, "Product 1", new BigDecimal("100.0"));
         Assertions.assertThat(product.getId()).isEqualTo(id);
         Assertions.assertThat(product.getName()).isEqualTo("Product 1");
@@ -20,7 +20,7 @@ class ProductTest {
 
     @Test
     void testSetPrice() {
-        Product product = new Product(UUID.randomUUID(), "Product 1", new BigDecimal("100.0"));
+        Product product = new Product(Product.randomId(), "Product 1", new BigDecimal("100.0"));
         product.setPrice(new BigDecimal("200.0"));
         Assertions.assertThat(product.getPrice()).isEqualTo(new BigDecimal("200.0"));
     }

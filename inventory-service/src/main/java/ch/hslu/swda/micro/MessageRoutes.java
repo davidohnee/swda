@@ -12,6 +12,7 @@ public class MessageRoutes {
     static final String CUSTOMER_GET_ENTITYSET = "customer.entityset";
 
     static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
+    static final String INVENTORY_GET_ENTITY = "inventory.entity";
     static final String INVENTORY_PATCH = "inventory.patch";
     static final String INVENTORY_TAKE = "inventory.take";
 

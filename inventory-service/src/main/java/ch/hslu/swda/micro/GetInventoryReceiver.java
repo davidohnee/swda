@@ -17,14 +17,15 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.entities.InventoryItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public final class GetInventoryReceiver implements MessageReceiver {
-
     private static final Logger LOG = LoggerFactory.getLogger(GetInventoryReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
@@ -51,7 +52,23 @@ public final class GetInventoryReceiver implements MessageReceiver {
             LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
 
             ObjectMapper mapper = new ObjectMapper();
-            String data = mapper.writeValueAsString(this.inventory.getAll());
+
+            String data = switch (route) {
+                case MessageRoutes.INVENTORY_GET_ENTITY -> {
+                    String cleanedMessage = message.trim().replaceAll("^\"|\"$", "");
+                    int productId = Integer.parseInt(cleanedMessage);
+                    InventoryItem order = this.inventory.get(productId);
+                    yield (order != null) ? mapper.writeValueAsString(order) : "Product not found";
+                }
+                case MessageRoutes.INVENTORY_GET_ENTITYSET -> {
+                    var orders = inventory.getAll();
+                    yield mapper.writeValueAsString(orders);
+                }
+                default -> {
+                    LOG.warn("Unknown route: {}", route);
+                    yield "Unknown route";
+                }
+            };
 
             LOG.debug("sending response: {}", data);
 

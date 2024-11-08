@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Inventory {
     public static final int REPLENISHMENT_THRESHOLD = 10;
@@ -24,7 +23,7 @@ public class Inventory {
     private void addSampleData() {
         for (int i = 0; i < 5; i++) {
             var product = new Product(
-                    UUID.randomUUID(),
+                    Product.randomId(),
                     "Product " + i,
                     BigDecimal.valueOf(10 + i));
             productRange.add(product);
@@ -36,9 +35,9 @@ public class Inventory {
         return inventory;
     }
 
-    public InventoryItem get(UUID productId) {
+    public InventoryItem get(int productId) {
         for (InventoryItem i : inventory) {
-            if (i.getProduct().getId().equals(productId)) {
+            if (i.getProduct().getId() == productId) {
                 return i;
             }
         }
@@ -50,7 +49,7 @@ public class Inventory {
 
         if (item == null) {
             return new OrderInfo(
-                    orderItem.getProductId().hashCode(),
+                    orderItem.getProductId(),
                     OrderItemStatus.NOT_FOUND
             );
         }
@@ -58,18 +57,18 @@ public class Inventory {
         if (orderItem.getQuantity() <= item.getQuantity()) {
             this.update(orderItem.getProductId(), item.getQuantity() - orderItem.getQuantity());
             return new OrderInfo(
-                    item.getProduct().getId().hashCode(),
+                    item.getProduct().getId(),
                     OrderItemStatus.DONE
             );
         }
 
         return new OrderInfo(
-                item.getProduct().getId().hashCode(),
+                item.getProduct().getId(),
                 OrderItemStatus.CONFIRMED
         );
     }
 
-    public InventoryItem update(UUID productId, int newQuantity) {
+    public InventoryItem update(int productId, int newQuantity) {
         InventoryItem item = this.get(productId);
         if (item == null) {
             return null;
@@ -85,9 +84,10 @@ public class Inventory {
             try {
                 replenishmentClient.replenish(
                         new ReplenishmentOrder(
-                            item.getProduct().getId().hashCode(), // FIXME: This is terrible design
+                            item.getProduct().getId(),
                             REPLENISHMENT_AMOUNT
-                        )
+                        ),
+                        (orderInfo) -> {}
                 );
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);

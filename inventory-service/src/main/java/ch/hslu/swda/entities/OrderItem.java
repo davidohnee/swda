@@ -16,14 +16,13 @@
 package ch.hslu.swda.entities;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * Tuple for Month and Number of students.
  */
 public final class OrderItem {
 
-    final private UUID productId;
+    final private int productId;
     final private int quantity;
 
     /**
@@ -32,19 +31,19 @@ public final class OrderItem {
      * @param productId    product id
      * @param quantity     quantity
      */
-    public OrderItem(final UUID productId, final int quantity) {
+    public OrderItem(final int productId, final int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
 
     public OrderItem() {
-        this(UUID.randomUUID(), 0);
+        this(0, 0);
     }
 
     /**
      * @return product id
      */
-    public UUID getProductId() {
+    public int getProductId() {
         return productId;
     }
 
@@ -66,7 +65,7 @@ public final class OrderItem {
         }
         return obj instanceof OrderItem other
                 && this.quantity == other.quantity
-                && Objects.equals(other.productId, this.productId);
+                && this.productId == other.productId;
     }
 
     /**

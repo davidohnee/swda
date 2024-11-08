@@ -15,6 +15,8 @@
  */
 package ch.hslu.swda.bus;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 /**
  * Listener Interface für Messages aus RabbitMQ.
  */
@@ -28,5 +30,5 @@ public interface MessageReceiver {
      * @param corrId  corrId.
      * @param message Message.
      */
-    void onMessageReceived(String route, String replyTo, String corrId, String message);
+    void onMessageReceived(String route, String replyTo, String corrId, String message) throws JsonProcessingException;
 }
