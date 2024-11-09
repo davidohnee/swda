@@ -37,7 +37,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @JsonPropertyOrder({
   OrderCreate.JSON_PROPERTY_DATE_TIME,
-  OrderCreate.JSON_PROPERTY_STATUS,
   OrderCreate.JSON_PROPERTY_ORDER_ITEMS,
   OrderCreate.JSON_PROPERTY_ORDER_TYPE,
   OrderCreate.JSON_PROPERTY_CUSTOMER_ID,
@@ -53,40 +52,8 @@ public class OrderCreate {
     /**
      * Gets or Sets status
      */
-    public enum StatusEnum {
-        PENDING("PENDING"),
-        CONFIRMED("CONFIRMED"),
-        AWAITING_PAYMENT("AWAITING_PAYMENT"),
-        DONE("DONE");
 
-        private final String value;
-
-        StatusEnum(String value) {
-            this.value = value;
-        }
-
-        @JsonValue
-        public String getValue() {
-            return value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-
-        @JsonCreator
-        public static StatusEnum fromValue(String value) {
-            for (StatusEnum b : StatusEnum.values()) {
-                if (b.value.equals(value)) {
-                    return b;
-                }
-            }
-            throw new IllegalArgumentException("Unexpected value '" + value + "'");
-        }
-    }
     public static final String JSON_PROPERTY_STATUS = "status";
-    private StatusEnum status;
 
     public static final String JSON_PROPERTY_ORDER_ITEMS = "orderItems";
     private List<@Valid OrderItemCreate> orderItems = new ArrayList<>();
@@ -136,9 +103,8 @@ public class OrderCreate {
     public static final String JSON_PROPERTY_DESTINATION_ID = "destinationId";
     private UUID destinationId;
 
-    public OrderCreate(OffsetDateTime dateTime, StatusEnum status, List<@Valid OrderItemCreate> orderItems, OrderTypeEnum orderType, UUID customerId, UUID sellerId, UUID destinationId) {
+    public OrderCreate(OffsetDateTime dateTime, List<@Valid OrderItemCreate> orderItems, OrderTypeEnum orderType, UUID customerId, UUID sellerId, UUID destinationId) {
         this.dateTime = dateTime;
-        this.status = status;
         this.orderItems = orderItems;
         this.orderType = orderType;
         this.customerId = customerId;
@@ -169,29 +135,6 @@ public class OrderCreate {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setDateTime(OffsetDateTime dateTime) {
         this.dateTime = dateTime;
-    }
-
-    public OrderCreate status(StatusEnum status) {
-        this.status = status;
-        return this;
-    }
-
-    /**
-     * Get status
-     * @return status
-     */
-    @NotNull
-    @Schema(name = "status", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_STATUS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    @JsonProperty(JSON_PROPERTY_STATUS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setStatus(StatusEnum status) {
-        this.status = status;
     }
 
     public OrderCreate orderItems(List<@Valid OrderItemCreate> orderItems) {
@@ -324,7 +267,6 @@ public class OrderCreate {
         }
         OrderCreate orderCreate = (OrderCreate) o;
         return Objects.equals(this.dateTime, orderCreate.dateTime) &&
-            Objects.equals(this.status, orderCreate.status) &&
             Objects.equals(this.orderItems, orderCreate.orderItems) &&
             Objects.equals(this.orderType, orderCreate.orderType) &&
             Objects.equals(this.customerId, orderCreate.customerId) &&
@@ -334,7 +276,7 @@ public class OrderCreate {
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateTime, status, orderItems, orderType, customerId, sellerId, destinationId);
+        return Objects.hash(dateTime, orderItems, orderType, customerId, sellerId, destinationId);
     }
 
     @Override
@@ -342,7 +284,6 @@ public class OrderCreate {
         StringBuilder sb = new StringBuilder();
         sb.append("class OrderCreate {\n");
         sb.append("    dateTime: ").append(toIndentedString(dateTime)).append("\n");
-        sb.append("    status: ").append(toIndentedString(status)).append("\n");
         sb.append("    orderItems: ").append(toIndentedString(orderItems)).append("\n");
         sb.append("    orderType: ").append(toIndentedString(orderType)).append("\n");
         sb.append("    customerId: ").append(toIndentedString(customerId)).append("\n");
