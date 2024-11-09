@@ -55,7 +55,7 @@ public final class CustomerService implements AutoCloseable {
 
     private void receiveValidationRequest() throws IOException {
         LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_VALIDATE);
-        bus.listenFor(exchangeName, "CustomerService <- customer.validate", MessageRoutes.CUSTOMER_CREATE, new CustomerCreateReceiver(exchangeName, bus, new CustomerDBQuery(db)));
+        bus.listenFor(exchangeName, "CustomerService <- customer.validate", MessageRoutes.CUSTOMER_VALIDATE, new CustomerValidationReceiver(exchangeName, bus, new CustomerDBQuery(db)));
     }
 
     @Override
