@@ -2,101 +2,70 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.model.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import ch.hslu.swda.model.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 
-public final class OrderService implements AutoCloseable {
+public final class OrderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private final String exchangeName;
     private final BusConnector bus;
     private final OrdersMemory ordersMemory;
+    private final ExecutorService orderProcessingPool;
+    private boolean running;
 
     public OrderService() throws IOException, TimeoutException {
-        String threadName = Thread.currentThread().getName();
-        LOG.debug("[Thread: {}] Service started", threadName);
-
+        LOG.debug("Initializing OrderService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
-        this.bus.connect();
-
         this.ordersMemory = new OrdersMemory();
+        this.running = false;
+        this.orderProcessingPool = Executors.newCachedThreadPool();
     }
 
-    public void readOrder() throws IOException {
-        LOG.debug("Listening for messages on routing [{}]", MessageRoutes.ORDER_GET_ENTITYSET);
-        bus.listenFor(
-                exchangeName,
-                "OrderService <- order.get.entityset",
-                MessageRoutes.ORDER_GET_ENTITYSET,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
-        );
-
-        LOG.debug("Listening for messages on routing [{}]", MessageRoutes.ORDER_GET_ENTITY);
-        bus.listenFor(
-                exchangeName,
-                "OrderService <- order.get.entity",
-                MessageRoutes.ORDER_GET_ENTITY,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
-        );
-
-        LOG.debug("Listening for messages on routing [{}]", MessageRoutes.ORDER_CREATE);
-        bus.listenFor(
-                exchangeName,
-                "OrderService <- order.create",
-                MessageRoutes.ORDER_CREATE,
-                new CreateOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
-        );
+    public void start() throws IOException, TimeoutException {
+        try {
+            this.bus.connect();
+            this.running = true;
+            LOG.info("OrderService connected to RabbitMQ.");
+            OrderMessageListener messageListener = new OrderMessageListener(
+                    this.exchangeName,
+                    this.bus,
+                    this.ordersMemory
+            );
+            messageListener.addUnvalidatedOrderListener(this::processOrder);
+            messageListener.start();
+        } catch (IOException e) {
+            this.running = false;
+            throw new IOException("Failed to start OrderService.", e);
+        } catch (TimeoutException e) {
+            this.running = false;
+            throw new TimeoutException("Failed to start OrderService." + e);
+        }
     }
 
-    // only for testing purposes
-    public void createOrder() throws IOException {
-        Order order = new Order(
-                UUID.randomUUID(),
-                OffsetDateTime.now().minusDays(7),
-                Order.StatusEnum.PENDING,
-                Collections.emptyList(),
-                new BigDecimal(1200),
-                Order.OrderTypeEnum.CUSTOMER_ORDER,
-                new Customer(
-                        UUID.randomUUID(),
-                        "Kelly",
-                        "Clark",
-                        new Address("Seventh Street", "7D", "8901", "Pinewood"),
-                        new ContactInfo()
-                ),
-                new Employee(
-                        UUID.randomUUID(),
-                        "Leo",
-                        "Red",
-                        Employee.RoleEnum.MANAGER
-                ),
-                new Warehouse(
-                        UUID.randomUUID(),
-                        Warehouse.TypeEnum.LOCAL
-                )
-        );
-        ObjectMapper mapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule());
-        String data = mapper.writeValueAsString(order);
-
-        LOG.debug("Sending asynchronous message to broker with routing [{}]", MessageRoutes.ORDER_CREATE);
-        bus.talkAsync(this.exchangeName, MessageRoutes.ORDER_CREATE, data);
+    private void processOrder(Order order) {
+        LOG.info("Processing order: {}", order.getId());
+        this.orderProcessingPool.submit(() -> new OrderProcessingWorker(
+                this.exchangeName,
+                this.bus,
+                this.ordersMemory
+        ).processOrder(order));
     }
 
+    public void stop() {
+        LOG.info("Stopping OrderService and closing connections...");
+        this.running = false;
+        this.bus.close();
+    }
 
-    @Override
-    public void close() {
-        bus.close();
+    public boolean isRunning() {
+        return this.running;
     }
 }

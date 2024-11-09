@@ -52,6 +52,7 @@ public class Order {
      * Gets or Sets status
      */
     public enum StatusEnum {
+        UNVALIDATED("UNVALIDATED"),
         PENDING("PENDING"),
         CONFIRMED("CONFIRMED"),
         AWAITING_PAYMENT("AWAITING_PAYMENT"),
