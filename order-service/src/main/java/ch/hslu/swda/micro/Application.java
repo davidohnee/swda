@@ -40,6 +40,7 @@ public final class Application {
     private static void attemptOrderServiceStart() {
         try {
             if (orderService == null || !orderService.isRunning()) {
+                LOG.info("Creating new OrderService...");
                 orderService = new OrderService();
                 orderService.start();
                 LOG.info("OrderService started successfully.");
@@ -51,7 +52,6 @@ public final class Application {
             LOG.error("Unexpected error in OrderService, retrying: {}", ex.getMessage(), ex);
             stopOrderService();
         } finally {
-            LOG.info("Attempting to restart OrderService in {}ms...", RESTART_DELAY_MS);
             executorService.schedule(Application::attemptOrderServiceStart, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
         }
     }
