@@ -2,17 +2,19 @@ package ch.hslu.swda.micro;
 
 public final class MessageRoutes {
 
-    static final String ORDER_GET_ENTITY = "order.entity";
-    static final String ORDER_GET_ENTITYSET = "order.entityset";
-    static final String ORDER_CREATE = "order.create";
-    static final String ORDER_STATUS = "order.status";
-    static final String ORDER_UPDATE = "order.update";
+    public static final String ORDER_GET_ENTITY = "order.entity";
+    public static final String ORDER_GET_ENTITYSET = "order.entityset";
+    public static final String ORDER_CREATE = "order.create";
+    public static final String ORDER_STATUS = "order.status";
+    public static final String ORDER_UPDATE = "order.update";
 
-    static final String CUSTOMER_GET_ENTITY = "customer.entity";
-    static final String CUSTOMER_GET_ENTITYSET = "customer.entityset";
+    public static final String CUSTOMER_GET_ENTITY = "customer.entity";
+    public static final String CUSTOMER_GET_ENTITYSET = "customer.entityset";
+    public static final String CUSTOMER_VALIDATE = "customer.validate";
 
-    static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
-    static final String INVENTORY_PATCH = "inventory.patch";
+    public static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
+    public static final String INVENTORY_PATCH = "inventory.patch";
+    public static final String INVENTORY_TAKE = "inventory.take";
 
     /**
      * No instance allowed.

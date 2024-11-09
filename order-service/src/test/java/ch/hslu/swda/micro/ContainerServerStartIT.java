@@ -43,12 +43,12 @@ final class ContainerServerStartIT {
             = new GenericContainer<>(DockerImageName.parse(IMAGE))
                     .withStartupTimeout(Duration.ofSeconds(20))
                     .withEnv("RABBIT", "OFF")
-                    .waitingFor(Wait.forLogMessage(".*Service started.*\\n", 1));
+                    .waitingFor(Wait.forLogMessage(".*Application starting...*\\n", 1));
 
     @Test
     void testContainerStartable() throws Exception {
         final String logs = container.getLogs();
         LOG.info(logs);
-        assertThat(logs).contains("Service started");
+        assertThat(logs).contains("Application starting...");
     }
 }

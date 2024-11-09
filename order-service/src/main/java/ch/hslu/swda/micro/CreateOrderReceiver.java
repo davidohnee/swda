@@ -9,12 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 public final class CreateOrderReceiver implements MessageReceiver {
 
@@ -23,12 +20,14 @@ public final class CreateOrderReceiver implements MessageReceiver {
     private final BusConnector bus;
     private final OrdersMemory ordersMemory;
     private final ObjectMapper mapper;
+    private final Consumer<Order> orderConsumer;
 
-    public CreateOrderReceiver(String exchangeName, BusConnector bus, OrdersMemory ordersMemory) {
+    public CreateOrderReceiver(String exchangeName, BusConnector bus, OrdersMemory ordersMemory, Consumer<Order> orderConsumer) {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.ordersMemory = ordersMemory;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        this.orderConsumer = orderConsumer;
     }
 
     @Override
@@ -36,29 +35,35 @@ public final class CreateOrderReceiver implements MessageReceiver {
         LOG.debug("Received message with routing [{}]", route);
         try {
             LOG.debug("Received message: {}", message);
-            OrderCreate orderCreate = mapper.readValue(message, OrderCreate.class);
-
-            Order order = new Order(
-                    UUID.randomUUID(),
-                    OffsetDateTime.now(),
-                    Order.StatusEnum.PENDING,
-                    getOrderItems(orderCreate.getOrderItems()),
-                    new BigDecimal(100),
-                    Order.OrderTypeEnum.CUSTOMER_ORDER,
-                    getCustomerById(orderCreate.getCustomerId()),
-                    getEmployeeById(orderCreate.getSellerId()),
-                    getWarehouseById(orderCreate.getDestinationId())
-            );
-
-            ordersMemory.addOrder(order);
-            String data = mapper.writeValueAsString(order);
-
-            LOG.debug("Sending response: {}", data);
-            bus.reply(exchangeName, replyTo, corrId, data);
+            OrderCreate orderCreate = this.mapper.readValue(message, OrderCreate.class);
+            Order unvalidatedOrder = createUnvalidatedOrder(orderCreate);
+            ordersMemory.addOrder(unvalidatedOrder);
+            sendResponse(replyTo, corrId, unvalidatedOrder);
+            orderConsumer.accept(unvalidatedOrder);
         } catch (IOException e) {
             LOG.error("Error processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
         }
+    }
+
+    private Order createUnvalidatedOrder(OrderCreate orderCreate) {
+        return new Order(
+                UUID.randomUUID(),
+                orderCreate.getDateTime(),
+                Order.StatusEnum.UNVALIDATED,
+                getIncompleteOrderItems(orderCreate.getOrderItems()),
+                null,
+                Order.OrderTypeEnum.valueOf(orderCreate.getOrderType().name()),
+                getIncompleteCustomer(orderCreate.getCustomerId()),
+                getIncompleteEmployee(orderCreate.getSellerId()),
+                getWarehouseById(orderCreate.getDestinationId())
+        );
+    }
+
+    private void sendResponse(String replyTo, String corrId, Order unvalidatedOrder) throws IOException {
+        String data = this.mapper.writeValueAsString(unvalidatedOrder);
+        LOG.debug("Sending response: {}", data);
+        bus.reply(exchangeName, replyTo, corrId, data);
     }
 
     private void sendErrorResponse(String replyTo, String corrId, String errorMessage) {
@@ -69,61 +74,34 @@ public final class CreateOrderReceiver implements MessageReceiver {
         }
     }
 
-    private List<OrderItem> getOrderItems(List<OrderItemCreate> items) {
-        // TODO: Implement method to retrieve OrderItems by Order ID
-        // For now, return a dummy list of OrderItems based on the OrderItemCreate list
-        List<String> productNames = List.of(
-                "Widget",
-                "Gadget",
-                "Thingamajig",
-                "Doohickey",
-                "Contraption",
-                "Gizmo",
-                "Apparatus",
-                "Instrument",
-                "Device",
-                "Mechanism"
-        );
-
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-
+    private List<OrderItem> getIncompleteOrderItems(List<OrderItemCreate> items) {
         return items.stream()
                 .map(itemCreate -> {
-                    String productName = productNames.get(random.nextInt(productNames.size()));
-
-                    BigDecimal price = BigDecimal.valueOf(random.nextDouble(10.0, 500.0))
-                            .setScale(2, BigDecimal.ROUND_HALF_UP);
-
                     Product product = new Product(
                             itemCreate.getProductId(),
-                            productName,
-                            price
+                            null,
+                            null
                     );
-
                     return new OrderItem(product, itemCreate.getQuantity());
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Customer getCustomerById(UUID customerId) {
-        // TODO: Implement method to retrieve Customer by ID
-        // For now, return a dummy customer
+    private Customer getIncompleteCustomer(UUID customerId) {
         return new Customer(
                 customerId,
-                "FirstName",
-                "LastName",
-                new Address("Street", "Number", "PostalCode", "City"),
+                null,
+                null,
+                new Address(),
                 new ContactInfo()
         );
     }
 
-    private Employee getEmployeeById(UUID employeeId) {
-        // TODO: Implement method to retrieve Employee by ID
-        // For now, return a dummy employee
+    private Employee getIncompleteEmployee(UUID employeeId) {
         return new Employee(
                 employeeId,
-                "FirstName",
-                "LastName",
+                null,
+                null,
                 Employee.RoleEnum.SALES
         );
     }

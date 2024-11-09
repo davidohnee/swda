@@ -15,6 +15,10 @@
  */
 package ch.hslu.swda.bus;
 
+import com.rabbitmq.client.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -23,14 +27,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Beispielcode für Verbindung mit RabbitMQ.
@@ -57,6 +53,47 @@ public final class BusConnector implements AutoCloseable {
     public void talkAsync(final String exchange, final String route, final String message) throws IOException {
         AMQP.BasicProperties props = new AMQP.BasicProperties();
         LOG.debug("Sending message to exchange [{}] with route [{}]", exchange, route);
+        channelTalk.basicPublish(exchange, route, props, message.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Beispiel für synchrone Kommunikation.
+     *
+     * @param exchange Exchange.
+     * @param route    Route.
+     * @param message  Message.
+     * @return String.
+     * @throws IOException          Exception.
+     * @throws InterruptedException Exception.
+     */
+    public void talkAsync(
+            final String exchange,
+            final String route,
+            final String message,
+            final MessageReceiver receiver
+    ) throws IOException, InterruptedException {
+        // create a temporary reply queue
+        final String corrId = UUID.randomUUID().toString();
+        final String replyQueueName = channelTalk.queueDeclare().getQueue();
+        channelTalk.queueBind(replyQueueName, exchange, replyQueueName);
+        String consumerId = "";
+
+        // setup receiver
+        consumerId = channelTalk.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
+
+            // check if response matches correlation id
+            if (delivery.getProperties().getCorrelationId().equals(corrId)) {
+                String receivedMessage = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                receiver.onMessageReceived(route, delivery.getProperties().getReplyTo(), delivery.getProperties().getCorrelationId(), receivedMessage);
+                channelTalk.basicCancel(consumerTag);
+            }
+        }, consumerTag -> {
+            // empty
+        });
+
+        // send message
+        AMQP.BasicProperties props = new AMQP.BasicProperties.Builder().correlationId(corrId).replyTo(replyQueueName)
+                .build();
         channelTalk.basicPublish(exchange, route, props, message.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -173,7 +210,7 @@ public final class BusConnector implements AutoCloseable {
     /**
      * Schliesst die Verbindung zu RabbitMQ.
      *
-     * @see java.lang.AutoCloseable#close()
+     * @see AutoCloseable#close()
      */
     @Override
     public void close() {

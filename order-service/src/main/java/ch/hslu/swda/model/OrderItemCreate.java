@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * OrderItemCreate
@@ -34,19 +33,19 @@ import java.util.UUID;
 @Introspected
 public class OrderItemCreate {
     public static final String JSON_PROPERTY_PRODUCT_ID = "productId";
-    private UUID productId;
+    private int productId;
 
     public static final String JSON_PROPERTY_QUANTITY = "quantity";
     private Integer quantity;
 
-    public OrderItemCreate(UUID productId, Integer quantity) {
+    public OrderItemCreate(int productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
 
     public OrderItemCreate() {}
 
-    public OrderItemCreate productId(UUID productId) {
+    public OrderItemCreate productId(int productId) {
         this.productId = productId;
         return this;
     }
@@ -59,13 +58,13 @@ public class OrderItemCreate {
     @Schema(name = "productId", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_PRODUCT_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public UUID getProductId() {
+    public int getProductId() {
         return productId;
     }
 
     @JsonProperty(JSON_PROPERTY_PRODUCT_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setProductId(UUID productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 
