@@ -36,9 +36,8 @@ public final class Application {
         executorService.scheduleWithFixedDelay(() -> {
             try {
                 if (orderService == null || !orderService.isRunning()) {
-                    if (orderService == null) {
-                        orderService = new OrderService();
-                    }
+                    stopOrderService();
+                    orderService = new OrderService();
                     orderService.start();
                     LOG.info("OrderService started successfully.");
                 }
