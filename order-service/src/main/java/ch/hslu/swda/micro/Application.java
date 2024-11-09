@@ -17,7 +17,8 @@ public final class Application {
     private static ScheduledExecutorService executorService;
     private static OrderService orderService;
 
-    private Application() {}
+    private Application() {
+    }
 
     public static void main(final String[] args) {
         LOG.info("Application starting...");
@@ -33,19 +34,26 @@ public final class Application {
     }
 
     private static void startAndMonitorOrderService() {
-        executorService.scheduleWithFixedDelay(() -> {
-            try {
-                if (orderService == null || !orderService.isRunning()) {
-                    stopOrderService();
-                    orderService = new OrderService();
-                    orderService.start();
-                    LOG.info("OrderService started successfully.");
-                }
-            } catch (IOException | TimeoutException e) {
-                LOG.error("OrderService encountered an error: {}", e.getMessage(), e);
+        executorService.schedule(Application::attemptOrderServiceStart, 0, TimeUnit.MILLISECONDS);
+    }
+
+    private static void attemptOrderServiceStart() {
+        try {
+            if (orderService == null || !orderService.isRunning()) {
                 stopOrderService();
+                orderService = new OrderService();
+                orderService.start();
+                LOG.info("OrderService started successfully.");
             }
-        }, 0, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
+        } catch (IOException | TimeoutException e) {
+            LOG.error("OrderService encountered an error and will retry: {}", e.getMessage(), e);
+            stopOrderService();
+        } catch (Exception ex) {
+            LOG.error("Unexpected error in OrderService, retrying: {}", ex.getMessage(), ex);
+            stopOrderService();
+        } finally {
+            executorService.schedule(Application::attemptOrderServiceStart, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
+        }
     }
 
     private static void stopOrderService() {
