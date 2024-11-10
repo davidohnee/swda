@@ -24,6 +24,8 @@ import ch.hslu.swda.model.InventoryItemUpdate;
 import ch.hslu.swda.model.InventoryProductIdPatchRequest;
 import java.util.List;
 
+import ch.hslu.swda.common.routing.MessageRoutes;
+
 import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

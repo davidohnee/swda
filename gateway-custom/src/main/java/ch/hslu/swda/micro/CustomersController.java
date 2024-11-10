@@ -24,6 +24,8 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
 import ch.hslu.swda.model.Customer;
 
+import ch.hslu.swda.common.routing.MessageRoutes;
+
 import java.util.UUID;
 import java.util.List;
 

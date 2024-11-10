@@ -24,6 +24,8 @@ import java.util.UUID;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
+import ch.hslu.swda.common.routing.MessageRoutes;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.Operation;
