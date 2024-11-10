@@ -25,7 +25,7 @@
 
     <name>g09-replenishment-service</name>
     <description>
-        Beispiel Microservice im Modul SWDA mit RabbitMQ für Gruppe g09.
+        Replenishment Microservice im Modul SWDA mit RabbitMQ für Gruppe g09.
     </description>
     <url>https://gitlab.switch.ch/${scm.group.name}/g09/${project.artifactId}</url>
 
