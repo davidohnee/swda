@@ -11,6 +11,6 @@ public class EmployeeDAO extends GenericDAO<Employee> {
     }
 
     public Employee findByUUID(UUID uuid) {
-        return collection.find(eq("id", uuid)).first();
+        return collection.find(eq("_id", uuid)).first();
     }
 }
