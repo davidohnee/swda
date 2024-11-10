@@ -1,56 +1,157 @@
+/*
+ * Order Service G09
+ * API designed by team G09 for the HS24 SWDA course at HSLU
+ *
+ * The version of the OpenAPI document: 1.0.0
+ */
+
 package ch.hslu.swda.common.entities;
 
-import java.math.BigDecimal;
 import java.util.Objects;
+import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.*;
 
-public final class Product {
-    private final long id;
-    private final String name;
+import jakarta.validation.constraints.*;
+import io.micronaut.core.annotation.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+/**
+ * Product
+ */
+@JsonPropertyOrder({
+    Product.JSON_PROPERTY_ID,
+    Product.JSON_PROPERTY_NAME,
+    Product.JSON_PROPERTY_PRICE
+})
+@JsonTypeName("Product")
+@Introspected
+public class Product {
+    public static final String JSON_PROPERTY_ID = "id";
+    private int id;
+
+    public static final String JSON_PROPERTY_NAME = "name";
+    private String name;
+
+    public static final String JSON_PROPERTY_PRICE = "price";
     private BigDecimal price;
 
-    public Product(long id, String name, BigDecimal price) {
+    public Product(int id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public long getId() {
-        return this.id;
+    public Product() {}
+
+    public Product id(int id) {
+        this.id = id;
+        return this;
     }
 
+    /**
+     * Get id
+     * @return id
+     */
+    @NotNull
+    @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public int getId() {
+        return id;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Product name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Get name
+     * @return name
+     */
+    @NotNull
+    @Schema(name = "name", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_NAME)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public String getName() {
-        return this.name;
+        return name;
     }
 
+    @JsonProperty(JSON_PROPERTY_NAME)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Product price(BigDecimal price) {
+        this.price = price;
+        return this;
+    }
+
+    /**
+     * Get price
+     * @return price
+     */
+    @NotNull
+    @Schema(name = "price", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_PRICE)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public BigDecimal getPrice() {
-        return this.price;
+        return price;
     }
 
+    @JsonProperty(JSON_PROPERTY_PRICE)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == this) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        return (object instanceof Product product)
-                &&
-                (product.id == this.id);
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Product product = (Product) o;
+        return Objects.equals(this.id, product.id) &&
+                Objects.equals(this.name, product.name) &&
+                Objects.equals(this.price, product.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, name, price);
     }
 
     @Override
     public String toString() {
-        return "Product [" +
-                "id='" + this.id + '\'' +
-                ", name='" + this.name + '\'' +
-                ", price='" + this.price + '\'' +
-                ']';
+        StringBuilder sb = new StringBuilder();
+        sb.append("class Product {\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
+        sb.append("    price: ").append(toIndentedString(price)).append("\n");
+        sb.append("}");
+        return sb.toString();
     }
+
+    /**
+     * Convert the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     */
+    private String toIndentedString(Object o) {
+        if (o == null) {
+            return "null";
+        }
+        return o.toString().replace("\n", "\n    ");
+    }
+
 }
+

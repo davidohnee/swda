@@ -28,6 +28,8 @@ public class MongoDBConnectionManager {
 
         this.mongoClient = MongoClients.create(settings);
         this.database = mongoClient.getDatabase(databaseName);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
 
     // double-checked locking singleton implementation
