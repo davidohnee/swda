@@ -5,21 +5,18 @@ networks:
   bus:
     name: bus
     external: true
+  internal:
+    name: internal
+    external: true
 
 services:
   app:
     image: $CICD_IMAGE_ID
     environment:
       - RMQ_HOST=bus
-      - MONGODB_CONNECTION=mongodb://demo_mongodb:27017
+      - MONGODB_CONNECTION=mongodb://mongodb:27017
     networks:
       - bus
-      # - ingress
+      - internal
     deploy:
       replicas: 1
-      # labels:
-      #   - 'traefik.enable=true'
-      #   - "traefik.http.routers.${CICD_STACK_NAME}App.rule=Host(`${CI_PROJECT_NAME}.${TLD}`)"
-      #   - "traefik.http.services.${CICD_STACK_NAME}App.loadbalancer.server.port=8080"
-      #   - 'traefik.http.routers.${CICD_STACK_NAME}App.entrypoints=websecure'
-      #   - 'traefik.http.routers.${CICD_STACK_NAME}App.tls.certresolver=letsencrypt'
