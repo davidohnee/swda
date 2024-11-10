@@ -1083,6 +1083,17 @@
         </plugins>
     </reporting>
 
+    <repositories>
+        <repository>
+            <id>gitlab-maven-swda-stock</id>
+            <url>https://gitlab.com/api/v4/projects/39090453/packages/maven</url>
+        </repository>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <site>
             <id>gitlab-site</id>
