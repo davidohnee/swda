@@ -1,0 +1,15 @@
+version: "3.5"
+
+services:
+    app:
+        build:
+            context: .
+        networks:
+            - backbone
+        ports:
+            - "8080:80"
+
+networks:
+    backbone:
+        name: g09-backbone_backbone
+        external: true
