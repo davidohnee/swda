@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.entities.FullReplenishmentOrder;
+import ch.hslu.swda.micro.Replenisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+/**
+ * Receiver for creating replenishment orders.
+ *
+ * Expects: null
+ * Returns: FullReplenishmentOrder[]
+ */
 public final class GetReplenishmentOrderReceiver implements MessageReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetReplenishmentOrderReceiver.class);

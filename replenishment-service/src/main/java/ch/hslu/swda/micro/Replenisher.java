@@ -1,6 +1,6 @@
 package ch.hslu.swda.micro;
 
-import ch.hslu.swda.entities.ReplenishmentOrderResponse;
+import ch.hslu.swda.dto.replenishment.ReplenishmentOrderResponse;
 import ch.hslu.swda.entities.ReplenishmentStatus;
 import ch.hslu.swda.models.ReplenishTask;
 import ch.hslu.swda.models.ReplenishTaskReservation;
@@ -16,9 +16,9 @@ public class Replenisher {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Replenisher.class);
     private final Stock stock;
     private final List<ReplenishTask> tasks = new ArrayList<>();
-    private final GetInventoryItem inventoryItemGetter;
+    private final InventoryClient inventoryItemGetter;
 
-    public Replenisher(final Stock stock, GetInventoryItem inventoryItemGetter) {
+    public Replenisher(final Stock stock, InventoryClient inventoryItemGetter) {
         this.stock = stock;
         this.inventoryItemGetter = inventoryItemGetter;
     }

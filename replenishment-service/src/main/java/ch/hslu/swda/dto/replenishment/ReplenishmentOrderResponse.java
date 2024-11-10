@@ -1,4 +1,6 @@
-package ch.hslu.swda.entities;
+package ch.hslu.swda.dto.replenishment;
+
+import ch.hslu.swda.entities.ReplenishmentStatus;
 
 import java.util.Objects;
 import java.util.UUID;

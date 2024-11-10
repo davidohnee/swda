@@ -17,7 +17,9 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.entities.InventoryItem;
+import ch.hslu.swda.dto.inventory.InventoryItem;
+import ch.hslu.swda.micro.receivers.CreateReplenishmentOrderReceiver;
+import ch.hslu.swda.micro.receivers.GetReplenishmentOrderReceiver;
 import ch.hslu.swda.stock.api.StockFactory;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,7 +33,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * Beispielcode für Implementation eines Servcies mit RabbitMQ.
  */
-public final class ReplenishmentService implements AutoCloseable, GetInventoryItem {
+public final class ReplenishmentService implements AutoCloseable, InventoryClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReplenishmentService.class);
     private final String exchangeName;

@@ -1,4 +1,4 @@
-package ch.hslu.swda.entities;
+package ch.hslu.swda.dto.replenishment;
 
 public class ReplenishmentOrder {
     private final int productId;
