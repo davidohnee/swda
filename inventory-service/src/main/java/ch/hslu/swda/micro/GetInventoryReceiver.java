@@ -17,6 +17,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.entities.InventoryItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

@@ -18,6 +18,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.entities.InventoryTakeItemsRequest;
 import ch.hslu.swda.entities.ReplenishResponseHandler;
 import ch.hslu.swda.entities.ReplenishmentOrder;
