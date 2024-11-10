@@ -19,6 +19,7 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.entities.InventoryItem;
 import ch.hslu.swda.stock.api.StockFactory;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
