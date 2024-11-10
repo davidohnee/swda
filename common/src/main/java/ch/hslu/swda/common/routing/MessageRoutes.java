@@ -14,6 +14,7 @@ public final class MessageRoutes {
 
     public static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
     public static final String INVENTORY_PATCH = "inventory.patch";
+    public static final String INVENTORY_TAKE = "inventory.take";
 
     public static final String REPLENISHMENT_CREATE = "replenishment.create";
     public static final String REPLENISHMENT_GET_ENTITYSET = "replenishment.entityset";
