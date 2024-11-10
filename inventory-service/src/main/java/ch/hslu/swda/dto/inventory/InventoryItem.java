@@ -19,23 +19,39 @@ import ch.hslu.swda.entities.Product;
 
 import java.util.Objects;
 
+
 /**
  * Tuple for Month and Number of students.
  */
-public final class InventoryItem {
+public class InventoryItem {
+    public final static int DEFAULT_REPLENISHMENT_THRESHOLD = 10;
 
     final private Product product;
-    private int quantity;
+    private int replenishmentThreshold;
+    protected int quantity;
 
     /**
      * Constructor.
      *
      * @param product    product
+     * @param replenishmentThreshold replenishmentThreshold
      * @param quantity     quantity
      */
-    public InventoryItem(final Product product, final int quantity) {
+    public InventoryItem(final Product product, int replenishmentThreshold, final int quantity) {
         this.product = product;
+        this.replenishmentThreshold = replenishmentThreshold;
         this.quantity = quantity;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param product product
+     * @param quantity quantity
+     */
+
+    public InventoryItem(final Product product, final int quantity) {
+        this(product, DEFAULT_REPLENISHMENT_THRESHOLD, quantity);
     }
 
     /**
@@ -53,10 +69,24 @@ public final class InventoryItem {
     }
 
     /**
+     * @return the replenishmentThreshold
+     */
+    public int getReplenishmentThreshold() {
+        return replenishmentThreshold;
+    }
+
+    /**
      * @param quantity the quantity to set
      */
     public void setQuantity(final int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * @param replenishmentThreshold the replenishmentThreshold to set
+     */
+    public void setReplenishmentThreshold(final int replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
     }
 
     /**
@@ -84,6 +114,10 @@ public final class InventoryItem {
      */
     @Override
     public String toString() {
-        return "Inventory Item[product=" + this.product + ", quantity='" + this.quantity + "]";
+        return "InventoryItem[" +
+                "product=" + this.product +
+                ", quantity='" + this.quantity +
+                ", replenishmentThreshold='" + this.replenishmentThreshold +
+                "]";
     }
 }

@@ -1,25 +1,22 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.inventory;
 
 import ch.hslu.swda.dto.inventory.InventoryItem;
-import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
 import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.*;
+import ch.hslu.swda.micro.ReplenishmentClient;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory {
-    public static final int REPLENISHMENT_THRESHOLD = 10;
-    public static final int REPLENISHMENT_AMOUNT = 100;
-
-    private final List<InventoryItem> inventory = new ArrayList<>();
+public class InMemoryInventory implements Inventory {
+    private final List<FullInventoryItem> inventory = new ArrayList<>();
     private final List<Product> productRange = new ArrayList<>();
     private final ReplenishmentClient replenishmentClient;
 
-    public Inventory(ReplenishmentClient replenishmentClient) {
+    public InMemoryInventory(ReplenishmentClient replenishmentClient) {
         this.replenishmentClient = replenishmentClient;
         this.addSampleData();
     }
@@ -31,16 +28,16 @@ public class Inventory {
                     "Product " + i,
                     BigDecimal.valueOf(10 + i));
             productRange.add(product);
-            inventory.add(new InventoryItem(product, 100));
+            inventory.add(new FullInventoryItem(product, 100));
         }
     }
 
-    public List<InventoryItem> getAll() {
+    public List<FullInventoryItem> getAll() {
         return inventory;
     }
 
-    public InventoryItem get(int productId) {
-        for (InventoryItem i : inventory) {
+    public FullInventoryItem get(int productId) {
+        for (FullInventoryItem i : inventory) {
             if (i.getProduct().getId() == productId) {
                 return i;
             }
@@ -48,23 +45,26 @@ public class Inventory {
         return null;
     }
 
-    public OrderInfo take(InventoryUpdateRequest inventoryUpdateRequest) {
-        InventoryItem item = this.get(inventoryUpdateRequest.getProductId());
+    public OrderInfo take(int productId, int quantity) {
+        FullInventoryItem item = this.get(productId);
 
         if (item == null) {
             return new OrderInfo(
-                    inventoryUpdateRequest.getProductId(),
+                    productId,
                     OrderItemStatus.NOT_FOUND
             );
         }
 
-        if (inventoryUpdateRequest.getQuantity() <= item.getQuantity()) {
-            this.update(inventoryUpdateRequest.getProductId(), item.getQuantity() - inventoryUpdateRequest.getQuantity());
+        if (quantity <= item.getQuantity()) {
+            this.update(productId, item.getQuantity() - quantity, item.getReplenishmentThreshold());
             return new OrderInfo(
                     item.getProduct().getId(),
                     OrderItemStatus.DONE
             );
         }
+
+        item.preorder(quantity - item.getQuantity());
+        this.update(productId, 0, item.getReplenishmentThreshold());
 
         return new OrderInfo(
                 item.getProduct().getId(),
@@ -72,8 +72,8 @@ public class Inventory {
         );
     }
 
-    public InventoryItem update(int productId, int newQuantity) {
-        InventoryItem item = this.get(productId);
+    public FullInventoryItem update(int productId, int newQuantity, Integer newReplenishmentThreshold) {
+        FullInventoryItem item = this.get(productId);
         if (item == null) {
             return null;
         }
@@ -82,9 +82,12 @@ public class Inventory {
             throw new IllegalArgumentException("Quantity must be positive");
         }
 
+        if (newReplenishmentThreshold != null) {
+            item.setReplenishmentThreshold(newReplenishmentThreshold);
+        }
         item.setQuantity(newQuantity);
 
-        if (newQuantity < REPLENISHMENT_THRESHOLD) {
+        if (newQuantity < item.getReplenishmentThreshold()) {
             try {
                 replenishmentClient.replenish(
                         new ReplenishmentOrder(

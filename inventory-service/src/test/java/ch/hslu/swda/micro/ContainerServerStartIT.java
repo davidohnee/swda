@@ -29,7 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 /**
- * Testcases für Inventory Service. Verwendet TestContainer, d.h. die aktuelle
+ * Testcases für InMemoryInventory Service. Verwendet TestContainer, d.h. die aktuelle
  * Version muss als Docker-Image verfügbar sein (gebunden an package-Lifecycle).
  */
 @Testcontainers

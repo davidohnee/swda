@@ -19,7 +19,7 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.dto.inventory.InventoryItem;
 import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
-import ch.hslu.swda.micro.Inventory;
+import ch.hslu.swda.inventory.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public final class UpdateInventoryReceiver implements MessageReceiver {
 
             InventoryUpdateRequest request = mapper.readValue(message, InventoryUpdateRequest.class);
 
-            InventoryItem item = this.inventory.update(request.getProductId(), request.getQuantity());
+            InventoryItem item = this.inventory.update(request.getProductId(), request.getQuantity(), request.getReplenishmentThreshold());
 
             String data = (item != null) ? mapper.writeValueAsString(item) : "";
 

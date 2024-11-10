@@ -24,6 +24,7 @@ public final class InventoryUpdateRequest {
 
     final private int productId;
     final private int quantity;
+    final private Integer replenishmentThreshold;
 
     /**
      * Constructor.
@@ -31,13 +32,18 @@ public final class InventoryUpdateRequest {
      * @param productId    product id
      * @param quantity     quantity
      */
-    public InventoryUpdateRequest(final int productId, final int quantity) {
+    public InventoryUpdateRequest(final int productId, final int quantity, Integer replenishmentThreshold) {
         this.productId = productId;
         this.quantity = quantity;
+        this.replenishmentThreshold = replenishmentThreshold;
+    }
+
+    public InventoryUpdateRequest(final int productId, final int quantity) {
+        this(productId, quantity, 0);
     }
 
     public InventoryUpdateRequest() {
-        this(0, 0);
+        this(0, 0, null);
     }
 
     /**
@@ -54,9 +60,12 @@ public final class InventoryUpdateRequest {
         return quantity;
     }
 
+    public Integer getReplenishmentThreshold() {
+        return replenishmentThreshold;
+    }
 
     /**
-     * identical if same product id and quantity {@inheritDoc}.
+     * identical if all properties are equal {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -65,15 +74,16 @@ public final class InventoryUpdateRequest {
         }
         return obj instanceof InventoryUpdateRequest other
                 && this.quantity == other.quantity
-                && this.productId == other.productId;
+                && this.productId == other.productId
+                && Objects.equals(this.replenishmentThreshold, other.replenishmentThreshold);
     }
 
     /**
-     * Hashcode based on product id. {@inheritDoc}.
+     * Hashcode based on all properties. {@inheritDoc}.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.productId, this.quantity);
+        return Objects.hash(this.productId, this.quantity, this.replenishmentThreshold);
     }
 
     /**
@@ -81,6 +91,10 @@ public final class InventoryUpdateRequest {
      */
     @Override
     public String toString() {
-        return "Order Item[productId=" + this.productId + ", quantity='" + this.quantity + "]";
+        return "InventoryUpdateRequest[" +
+                "productId=" + this.productId +
+                ", quantity='" + this.quantity +
+                ", replenishmentThreshold='" + this.replenishmentThreshold +
+                "]";
     }
 }

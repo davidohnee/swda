@@ -20,7 +20,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.dto.inventory.InventoryTakeRequest;
 import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
 import ch.hslu.swda.entities.OrderInfo;
-import ch.hslu.swda.micro.Inventory;
+import ch.hslu.swda.inventory.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,8 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
             List<InventoryUpdateRequest> items = request.getItems();
 
             for (int i = 0; i < items.size(); i++) {
-                orderInfo[i] = this.inventory.take(items.get(i));
+                var item = items.get(i);
+                orderInfo[i] = this.inventory.take(item.getProductId(), item.getQuantity());
             }
 
             String data = (orderInfo != null) ? mapper.writeValueAsString(orderInfo) : "";

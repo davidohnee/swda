@@ -1,5 +1,6 @@
 # Modul SWDA - Service Microservice Sample
-Beispiel Microservice für SWDA, basierend auf RabbitMQ für g99.
+Beispiel Microservice für SWDA, basierend auf RabbitMQ für 
+g99.
 
 ## Build lokal
 Der lokale Build setzt eine laufende Docker-Installation voraus!

@@ -22,6 +22,8 @@ import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.entities.ReplenishResponseHandler;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.OrderInfo;
+import ch.hslu.swda.inventory.InMemoryInventory;
+import ch.hslu.swda.inventory.Inventory;
 import ch.hslu.swda.micro.receivers.GetInventoryReceiver;
 import ch.hslu.swda.micro.receivers.TakeFromInventoryReceiver;
 import ch.hslu.swda.micro.receivers.UpdateInventoryReceiver;
@@ -41,7 +43,7 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
     private static final Logger LOG = LoggerFactory.getLogger(InventoryService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final Inventory inventory = new Inventory(this);
+    private final Inventory inventory = new InMemoryInventory(this);
     private final ObjectMapper mapper = new ObjectMapper();
 
     /**
