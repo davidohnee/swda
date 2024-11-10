@@ -33,12 +33,12 @@ public class Address {
     private String streetNumber;
 
     public static final String JSON_PROPERTY_PLZ = "plz";
-    private String plz;
+    private int plz;
 
     public static final String JSON_PROPERTY_TOWN_NAME = "townName";
     private String townName;
 
-    public Address(String streetName, String streetNumber, String plz, String townName) {
+    public Address(String streetName, String streetNumber, int plz, String townName) {
         this.streetName = streetName;
         this.streetNumber = streetNumber;
         this.plz = plz;
@@ -93,7 +93,7 @@ public class Address {
         this.streetNumber = streetNumber;
     }
 
-    public Address plz(String plz) {
+    public Address plz(int plz) {
         this.plz = plz;
         return this;
     }
@@ -106,13 +106,13 @@ public class Address {
     @Schema(name = "plz", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_PLZ)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public String getPlz() {
+    public int getPlz() {
         return plz;
     }
 
     @JsonProperty(JSON_PROPERTY_PLZ)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setPlz(String plz) {
+    public void setPlz(int plz) {
         this.plz = plz;
     }
 

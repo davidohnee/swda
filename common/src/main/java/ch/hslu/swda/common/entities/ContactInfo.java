@@ -31,7 +31,11 @@ public class ContactInfo {
     public static final String JSON_PROPERTY_PHONE = "phone";
     private String phone;
 
-    public ContactInfo() {
+    public ContactInfo() {}
+
+    public ContactInfo(String email, String phone) {
+        this.email = email;
+        this.phone = phone;
     }
 
     public ContactInfo email(String email) {
