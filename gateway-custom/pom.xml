@@ -1099,7 +1099,6 @@
             <id>gitlab-site</id>
             <url>https://hslu.pages.switch.ch/edu/bachelor-computer-science/somewhere/${project.artifactId}</url>
         </site>
-
         <repository>
             <id>gitlab-maven</id>
             <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
