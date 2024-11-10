@@ -1,9 +1,11 @@
 package ch.hslu.swda.micro;
 
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hslu.swda.common.database.MongoDBConnectionManager;
+import ch.hslu.swda.common.config.ApplicationConfig;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -19,11 +21,20 @@ public final class Application {
     private static ScheduledExecutorService executorService;
     private static OrderService orderService;
 
-    private Application() {
-    }
+    private static MongoDatabase database;
+
+    private Application() {}
 
     public static void main(final String[] args) {
         LOG.info("Application starting...");
+
+        LOG.info("Creating database connection...");
+        MongoDBConnectionManager connectionManager = MongoDBConnectionManager.getInstance(
+            ApplicationConfig.getConnectionString(),
+            ApplicationConfig.getDatabaseName()
+        );
+
+        database = connectionManager.getDatabase();
 
         if (!"OFF".equals(System.getenv("RABBIT"))) {
             executorService = Executors.newSingleThreadScheduledExecutor();
@@ -43,11 +54,9 @@ public final class Application {
         try {
             if (orderService == null || !orderService.isRunning()) {
                 LOG.info("Creating new OrderService...");
-                orderService = new OrderService();
+                orderService = new OrderService(database);
                 orderService.start();
                 LOG.info("OrderService started successfully.");
-
-
             }
         } catch (IOException | TimeoutException e) {
             LOG.error("OrderService encountered an error and will retry: {}", e.getMessage(), e);

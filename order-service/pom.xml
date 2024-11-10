@@ -400,6 +400,11 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.10.2</version>
+        </dependency>
+        <dependency>
             <groupId>ch.hslu.swda24hs.g09</groupId>
             <artifactId>g09-common</artifactId>
         </dependency>

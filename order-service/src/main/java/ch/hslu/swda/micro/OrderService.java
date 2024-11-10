@@ -3,6 +3,7 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.model.Order;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ public final class OrderService {
     private final ExecutorService orderProcessingPool;
     private boolean running;
 
-    public OrderService() throws IOException, TimeoutException {
+    public OrderService(MongoDatabase database) throws IOException, TimeoutException {
         LOG.debug("Initializing OrderService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
