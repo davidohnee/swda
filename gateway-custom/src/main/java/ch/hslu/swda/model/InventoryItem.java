@@ -37,9 +37,13 @@ public class InventoryItem {
     public static final String JSON_PROPERTY_QUANTITY = "quantity";
     private Integer quantity;
 
-    public InventoryItem(Product product, Integer quantity) {
+    public static final String JSON_PROPERTY_REPLENISHMENT_THRESHOLD = "replenishmentThreshold";
+    private Integer replenishmentThreshold;
+
+    public InventoryItem(Product product, Integer quantity, Integer replenishmentThreshold) {
         this.product = product;
         this.quantity = quantity;
+        this.replenishmentThreshold = replenishmentThreshold;
     }
 
     public InventoryItem() {}
@@ -91,6 +95,22 @@ public class InventoryItem {
         this.quantity = quantity;
     }
 
+    public InventoryItem replenishmentThreshold(Integer replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
+        return this;
+    }
+
+    /**
+     * Get replenishmentThreshold
+     * @return replenishmentThreshold
+     */
+    @Schema(name = "replenishmentThreshold", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_THRESHOLD)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public Integer getReplenishmentThreshold() {
+        return replenishmentThreshold;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -101,7 +121,8 @@ public class InventoryItem {
         }
         InventoryItem inventoryItem = (InventoryItem) o;
         return Objects.equals(this.product, inventoryItem.product) &&
-            Objects.equals(this.quantity, inventoryItem.quantity);
+            Objects.equals(this.quantity, inventoryItem.quantity) &&
+            Objects.equals(this.replenishmentThreshold, inventoryItem.replenishmentThreshold);
     }
 
     @Override
@@ -115,6 +136,7 @@ public class InventoryItem {
         sb.append("class InventoryItem {\n");
         sb.append("    product: ").append(toIndentedString(product)).append("\n");
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
+        sb.append("    replenishmentThreshold: ").append(toIndentedString(replenishmentThreshold)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -129,6 +151,5 @@ public class InventoryItem {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 }
 

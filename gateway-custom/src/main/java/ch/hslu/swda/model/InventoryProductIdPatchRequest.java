@@ -31,10 +31,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Introspected
 public class InventoryProductIdPatchRequest {
     public static final String JSON_PROPERTY_QUANTITY = "quantity";
+    public static final String JSON_PROPERTY_REPLENISHMENT_THRESHOLD = "replenishmentThreshold";
     private Integer quantity;
+    private Integer replenishmentThreshold;
 
-    public InventoryProductIdPatchRequest(Integer quantity) {
+    public InventoryProductIdPatchRequest(Integer quantity, Integer replenishmentThreshold) {
         this.quantity = quantity;
+        this.replenishmentThreshold = replenishmentThreshold;
     }
 
     public InventoryProductIdPatchRequest quantity(Integer quantity) {
@@ -60,6 +63,24 @@ public class InventoryProductIdPatchRequest {
         this.quantity = quantity;
     }
 
+    public InventoryProductIdPatchRequest replenishmentThreshold(Integer replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
+        return this;
+    }
+
+    @Schema(name = "replenishmentThreshold", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_THRESHOLD)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public Integer getReplenishmentThreshold() {
+        return replenishmentThreshold;
+    }
+
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_THRESHOLD)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public void setReplenishmentThreshold(Integer replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -69,12 +90,13 @@ public class InventoryProductIdPatchRequest {
             return false;
         }
         InventoryProductIdPatchRequest inventoryProductIdPatchRequest = (InventoryProductIdPatchRequest) o;
-        return Objects.equals(this.quantity, inventoryProductIdPatchRequest.quantity);
+        return Objects.equals(this.quantity, inventoryProductIdPatchRequest.quantity) &&
+                Objects.equals(this.replenishmentThreshold, inventoryProductIdPatchRequest.replenishmentThreshold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quantity);
+        return Objects.hash(quantity, replenishmentThreshold);
     }
 
     @Override
@@ -82,6 +104,7 @@ public class InventoryProductIdPatchRequest {
         StringBuilder sb = new StringBuilder();
         sb.append("class InventoryProductIdPatchRequest {\n");
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
+        sb.append("    replenishmentThreshold: ").append(toIndentedString(replenishmentThreshold)).append("\n");
         sb.append("}");
         return sb.toString();
     }

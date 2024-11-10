@@ -23,7 +23,8 @@ import java.util.Objects;
 public final class InventoryItemUpdate {
 
     final private int productId;
-    private int quantity;
+    final private int quantity;
+    final private Integer replenishmentThreshold;
 
     /**
      * Constructor.
@@ -31,9 +32,14 @@ public final class InventoryItemUpdate {
      * @param productId    product id
      * @param quantity     quantity
      */
-    public InventoryItemUpdate(final int productId, final int quantity) {
+    public InventoryItemUpdate(final int productId, final int quantity, Integer replenishmentThreshold) {
         this.productId = productId;
         this.quantity = quantity;
+        this.replenishmentThreshold = replenishmentThreshold;
+    }
+
+    public InventoryItemUpdate() {
+        this(0, 0, 0);
     }
 
     /**
@@ -50,15 +56,12 @@ public final class InventoryItemUpdate {
         return quantity;
     }
 
-    /**
-     * @param quantity the quantity to set
-     */
-    public void setQuantity(final int quantity) {
-        this.quantity = quantity;
+    public Integer getReplenishmentThreshold() {
+        return replenishmentThreshold;
     }
 
     /**
-     * identical if same product id {@inheritDoc}.
+     * identical if all properties are equal {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
@@ -66,15 +69,17 @@ public final class InventoryItemUpdate {
             return true;
         }
         return obj instanceof InventoryItemUpdate other
-                && Objects.equals(other.productId, this.productId);
+                && this.quantity == other.quantity
+                && this.productId == other.productId
+                && Objects.equals(this.replenishmentThreshold, other.replenishmentThreshold);
     }
 
     /**
-     * Hashcode based on product id. {@inheritDoc}.
+     * Hashcode based on all properties. {@inheritDoc}.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.productId);
+        return Objects.hash(this.productId, this.quantity, this.replenishmentThreshold);
     }
 
     /**
@@ -82,6 +87,10 @@ public final class InventoryItemUpdate {
      */
     @Override
     public String toString() {
-        return "Inventory Item Update[productId=" + this.productId + ", quantity='" + this.quantity + "]";
+        return "InventoryUpdateRequest[" +
+                "productId=" + this.productId +
+                ", quantity='" + this.quantity +
+                ", replenishmentThreshold='" + this.replenishmentThreshold +
+                "]";
     }
 }

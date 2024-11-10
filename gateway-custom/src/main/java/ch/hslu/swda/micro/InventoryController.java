@@ -122,7 +122,10 @@ public class InventoryController {
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
 
-            InventoryItemUpdate inventoryItemUpdate = new InventoryItemUpdate(productId, inventoryProductIdPatchRequest.getQuantity());
+            InventoryItemUpdate inventoryItemUpdate = new InventoryItemUpdate(
+                    productId,
+                    inventoryProductIdPatchRequest.getQuantity(),
+                    inventoryProductIdPatchRequest.getReplenishmentThreshold());
 
             String message = objectMapper.writeValueAsString(inventoryItemUpdate);
 
