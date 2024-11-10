@@ -1,5 +1,9 @@
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.dto.inventory.InventoryItem;
+import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
+import ch.hslu.swda.entities.OrderInfo;
+import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.*;
 
 import java.io.IOException;
@@ -44,18 +48,18 @@ public class Inventory {
         return null;
     }
 
-    public OrderInfo take(OrderItem orderItem) {
-        InventoryItem item = this.get(orderItem.getProductId());
+    public OrderInfo take(InventoryUpdateRequest inventoryUpdateRequest) {
+        InventoryItem item = this.get(inventoryUpdateRequest.getProductId());
 
         if (item == null) {
             return new OrderInfo(
-                    orderItem.getProductId(),
+                    inventoryUpdateRequest.getProductId(),
                     OrderItemStatus.NOT_FOUND
             );
         }
 
-        if (orderItem.getQuantity() <= item.getQuantity()) {
-            this.update(orderItem.getProductId(), item.getQuantity() - orderItem.getQuantity());
+        if (inventoryUpdateRequest.getQuantity() <= item.getQuantity()) {
+            this.update(inventoryUpdateRequest.getProductId(), item.getQuantity() - inventoryUpdateRequest.getQuantity());
             return new OrderInfo(
                     item.getProduct().getId(),
                     OrderItemStatus.DONE

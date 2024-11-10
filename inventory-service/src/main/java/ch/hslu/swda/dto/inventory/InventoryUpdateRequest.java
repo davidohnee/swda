@@ -13,34 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.hslu.swda.entities;
+package ch.hslu.swda.dto.inventory;
 
 import java.util.Objects;
 
 /**
  * Tuple for Month and Number of students.
  */
-public final class InventoryItem {
+public final class InventoryUpdateRequest {
 
-    final private Product product;
-    private int quantity;
+    final private int productId;
+    final private int quantity;
 
     /**
      * Constructor.
      *
-     * @param product    product
+     * @param productId    product id
      * @param quantity     quantity
      */
-    public InventoryItem(final Product product, final int quantity) {
-        this.product = product;
+    public InventoryUpdateRequest(final int productId, final int quantity) {
+        this.productId = productId;
         this.quantity = quantity;
     }
 
+    public InventoryUpdateRequest() {
+        this(0, 0);
+    }
+
     /**
-     * @return product
+     * @return product id
      */
-    public Product getProduct() {
-        return product;
+    public int getProductId() {
+        return productId;
     }
 
     /**
@@ -50,31 +54,26 @@ public final class InventoryItem {
         return quantity;
     }
 
-    /**
-     * @param quantity the quantity to set
-     */
-    public void setQuantity(final int quantity) {
-        this.quantity = quantity;
-    }
 
     /**
-     * identical if same product {@inheritDoc}.
+     * identical if same product id and quantity {@inheritDoc}.
      */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        return obj instanceof InventoryItem other
-                && Objects.equals(other.product, this.product);
+        return obj instanceof InventoryUpdateRequest other
+                && this.quantity == other.quantity
+                && this.productId == other.productId;
     }
 
     /**
-     * Hashcode based on field product. {@inheritDoc}.
+     * Hashcode based on product id. {@inheritDoc}.
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.product);
+        return Objects.hash(this.productId, this.quantity);
     }
 
     /**
@@ -82,6 +81,6 @@ public final class InventoryItem {
      */
     @Override
     public String toString() {
-        return "Inventory Item[product=" + this.product + ", quantity='" + this.quantity + "]";
+        return "Order Item[productId=" + this.productId + ", quantity='" + this.quantity + "]";
     }
 }

@@ -13,19 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.entities.InventoryItem;
+import ch.hslu.swda.dto.inventory.InventoryItem;
+import ch.hslu.swda.micro.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.UUID;
 
+/**
+ * Receiver for getting items from the inventory.
+ *
+ * ENTITY_SET:
+ * Expects: null
+ * Returns: InventoryItem[]
+ *
+ * ENTITY:
+ * Expects: int (productId)
+ * Returns: InventoryItem
+ */
 public final class GetInventoryReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(GetInventoryReceiver.class);
     private final String exchangeName;

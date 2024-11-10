@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.entities.InventoryTakeItemsRequest;
-import ch.hslu.swda.entities.OrderItem;
+import ch.hslu.swda.dto.inventory.InventoryTakeRequest;
+import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
 import ch.hslu.swda.entities.OrderInfo;
+import ch.hslu.swda.micro.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Receiver for taking items from the inventory.
+ *
+ * Expects: InventoryTakeRequest
+ * Returns: OrderInfo[]
+ */
 public final class TakeFromInventoryReceiver implements MessageReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TakeFromInventoryReceiver.class);
@@ -51,9 +58,9 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
         try {
             LOG.debug("Received message: {}", message);
 
-            InventoryTakeItemsRequest request = mapper.readValue(message, InventoryTakeItemsRequest.class);
+            InventoryTakeRequest request = mapper.readValue(message, InventoryTakeRequest.class);
             OrderInfo[] orderInfo = new OrderInfo[request.getItems().size()];
-            List<OrderItem> items = request.getItems();
+            List<InventoryUpdateRequest> items = request.getItems();
 
             for (int i = 0; i < items.size(); i++) {
                 orderInfo[i] = this.inventory.take(items.get(i));

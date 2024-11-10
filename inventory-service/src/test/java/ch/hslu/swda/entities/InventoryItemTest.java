@@ -1,12 +1,12 @@
 package ch.hslu.swda.entities;
 
+import ch.hslu.swda.dto.inventory.InventoryItem;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Random;
-import java.util.UUID;
 
 class InventoryItemTest {
 

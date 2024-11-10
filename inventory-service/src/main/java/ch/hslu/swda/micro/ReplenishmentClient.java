@@ -1,8 +1,7 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.entities.ReplenishResponseHandler;
-import ch.hslu.swda.entities.ReplenishmentOrder;
-import ch.hslu.swda.entities.OrderInfo;
+import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 
 import java.io.IOException;
 
