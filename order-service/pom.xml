@@ -245,6 +245,11 @@
                 <version>5.14.2</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>ch.hslu.swda24hs.g09</groupId>
+                <artifactId>g09-common</artifactId>
+                <version>1.0.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -393,6 +398,10 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.hslu.swda24hs.g09</groupId>
+            <artifactId>g09-common</artifactId>
         </dependency>
     </dependencies>
 

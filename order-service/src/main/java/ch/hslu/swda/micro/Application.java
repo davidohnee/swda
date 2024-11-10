@@ -3,6 +3,8 @@ package ch.hslu.swda.micro;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.hslu.swda.common.database.MongoDBConnectionManager;
+
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,6 +46,8 @@ public final class Application {
                 orderService = new OrderService();
                 orderService.start();
                 LOG.info("OrderService started successfully.");
+
+
             }
         } catch (IOException | TimeoutException e) {
             LOG.error("OrderService encountered an error and will retry: {}", e.getMessage(), e);

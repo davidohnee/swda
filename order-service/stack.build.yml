@@ -10,6 +10,7 @@ services:
         CI_GIT_DATE: $CICD_GIT_DATE
     environment:
       - RMQ_HOST=bus
+      - MONGODB_CONNECTION=mongodb://localhost:27017
     networks:
       - backbone
 

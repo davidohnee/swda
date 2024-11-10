@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import ch.hslu.swda.common.routing.MessageRoutes;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;

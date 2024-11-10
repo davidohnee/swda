@@ -2,7 +2,8 @@ package ch.hslu.swda.micro.customer;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.dto.CustomerValidationRequest;
-import ch.hslu.swda.micro.MessageRoutes;
+//import ch.hslu.swda.micro.MessageRoutes;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
