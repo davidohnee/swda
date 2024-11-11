@@ -3,23 +3,24 @@ package ch.hslu.swda.inventory;
 import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.*;
-import ch.hslu.swda.micro.ReplenishmentClient;
+import ch.hslu.swda.micro.senders.ReplenishmentClient;
+import ch.hslu.swda.micro.senders.OnItemAvailable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class InMemoryInventory implements Inventory {
-    private final List<FullInventoryItem> inventory = new ArrayList<>();
-    private final List<Product> productRange = new ArrayList<>();
+    private final Map<Integer, FullInventoryItem> inventory = new HashMap<>();
     private final ReplenishmentClient replenishmentClient;
+    private final OnItemAvailable onItemAvailable;
     private final Logger LOG = LoggerFactory.getLogger(InMemoryInventory.class);
 
-    public InMemoryInventory(ReplenishmentClient replenishmentClient) {
+    public InMemoryInventory(ReplenishmentClient replenishmentClient, OnItemAvailable onItemAvailable) {
         this.replenishmentClient = replenishmentClient;
+        this.onItemAvailable = onItemAvailable;
         this.addSampleData();
     }
 
@@ -29,26 +30,16 @@ public class InMemoryInventory implements Inventory {
                     Product.randomId(),
                     "Product " + i,
                     BigDecimal.valueOf(10 + i));
-            productRange.add(product);
-            inventory.add(new FullInventoryItem(product, 100));
+            inventory.put(product.getId(), new FullInventoryItem(product, 100));
         }
     }
 
-    public List<FullInventoryItem> getAll() {
-        return inventory;
-    }
-
-    public FullInventoryItem get(int productId) {
-        for (FullInventoryItem i : inventory) {
-            if (i.getProduct().getId() == productId) {
-                return i;
-            }
-        }
-        return null;
+    public Collection<FullInventoryItem> getAll() {
+        return inventory.values();
     }
 
     public OrderInfo take(int productId, int quantity) {
-        FullInventoryItem item = this.get(productId);
+        FullInventoryItem item = this.inventory.get(productId);
 
         if (item == null) {
             return new OrderInfo(
@@ -77,7 +68,7 @@ public class InMemoryInventory implements Inventory {
     }
 
     public FullInventoryItem update(int productId, int newQuantity, Integer newReplenishmentThreshold) {
-        FullInventoryItem item = this.get(productId);
+        FullInventoryItem item = this.inventory.get(productId);
         if (item == null) {
             return null;
         }
@@ -115,5 +106,26 @@ public class InMemoryInventory implements Inventory {
         }
 
         return item;
+    }
+
+    @Override
+    public void handleReplenishment(OrderInfo item) {
+        FullInventoryItem inventoryItem = this.inventory.get(item.getProductId());
+        if (inventoryItem == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
+
+        if (inventoryItem.isStockReplenishment(item)) {
+            inventoryItem.handleReplenishment(item);
+            LOG.debug("Product {} replenished", item.getProductId());
+            return;
+        }
+
+        this.onItemAvailable.onItemAvailable(item);
+    }
+
+    @Override
+    public FullInventoryItem get(int productId) {
+        return this.inventory.get(productId);
     }
 }

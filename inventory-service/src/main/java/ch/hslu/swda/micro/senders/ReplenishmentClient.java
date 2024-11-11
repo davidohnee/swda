@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.senders;
 
 import ch.hslu.swda.entities.ReplenishResponseHandler;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;

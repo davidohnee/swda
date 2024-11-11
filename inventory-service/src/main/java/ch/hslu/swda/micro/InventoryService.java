@@ -19,15 +19,14 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.entities.ReplenishResponseHandler;
-import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
-import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.inventory.InMemoryInventory;
 import ch.hslu.swda.inventory.Inventory;
 import ch.hslu.swda.micro.receivers.GetInventoryReceiver;
+import ch.hslu.swda.micro.receivers.OnItemReplenishedReceiver;
 import ch.hslu.swda.micro.receivers.TakeFromInventoryReceiver;
 import ch.hslu.swda.micro.receivers.UpdateInventoryReceiver;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ch.hslu.swda.micro.senders.OnItemAvailableSender;
+import ch.hslu.swda.micro.senders.ReplenishmentClientSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +37,12 @@ import java.util.concurrent.TimeoutException;
 /**
  * Beispielcode für Implementation eines Servcies mit RabbitMQ.
  */
-public final class InventoryService implements AutoCloseable, ReplenishmentClient {
+public final class InventoryService implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(InventoryService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final Inventory inventory = new InMemoryInventory(this);
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final Inventory inventory;
 
     /**
      * @throws IOException      IO-Fehler.
@@ -61,10 +59,15 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
         this.bus = new BusConnector();
         this.bus.connect();
 
+        this.inventory = new InMemoryInventory(
+                new ReplenishmentClientSender(this.exchangeName, this.bus),
+                new OnItemAvailableSender(this.exchangeName, this.bus));
+
         // start message receivers
         this.receiveGetInventoryMessages();
         this.receiveUpdateInventoryMessages();
-        receiveTakeFromInventoryMessages();
+        this.receiveTakeFromInventoryMessages();
+        this.receiveOnItemReplenishedMessages();
     }
 
     private void receiveTakeFromInventoryMessages() throws IOException {
@@ -105,19 +108,14 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
         );
     }
 
-    public void replenish(
-        ReplenishmentOrder order,
-        ReplenishResponseHandler handler
-    ) throws IOException, InterruptedException {
-        final String message = mapper.writeValueAsString(order);
-
-        LOG.debug("Sending synchronous message to broker with routing [{}]", MessageRoutes.REPLENISHMENT_CREATE);
-        bus.talkAsync(exchangeName, MessageRoutes.REPLENISHMENT_CREATE, message,
-                (final String route, final String replyTo, final String corrId, final String response) -> {
-                    LOG.debug("Received response with routing [{}]", route);
-                    OrderInfo request = mapper.readValue(response, OrderInfo.class);
-                    handler.handle(request);
-        });
+    private void receiveOnItemReplenishedMessages() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_ON_REPLENISH);
+        bus.listenFor(
+                exchangeName,
+                "InventoryService <- " + MessageRoutes.REPLENISHMENT_ON_REPLENISH,
+                MessageRoutes.REPLENISHMENT_ON_REPLENISH,
+                new OnItemReplenishedReceiver(this.inventory)
+        );
     }
 
     /**
