@@ -73,6 +73,7 @@ public class Replenisher {
         for (ReplenishTask task : tasks) {
             if (task.shouldHaveArrived()) {
                 LOG.info("Replenishing task for product {} is due", task.getProductId());
+                this.stock.freeReservation(task.getReservation().getReservationTicket());
                 this.stock.orderItem(task.getProductId(), task.getCount());
                 doneTasks.add(task);
             }
