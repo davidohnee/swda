@@ -26,6 +26,7 @@ public class Replenisher {
     public ReplenishmentOrderResponse replenish(int productId, int count) throws IOException, InterruptedException {
         int inStock = this.stock.getItemCount(productId);
         ReplenishmentStatus status;
+        int immediatelyAvailableQuantity;
 
         LOG.debug("Replenishing product {} with count {} and in stock {}", productId, count, inStock);
 
@@ -45,15 +46,21 @@ public class Replenisher {
                 task.setProduct(inventoryItem.getProduct());
             });
 
+            immediatelyAvailableQuantity = 0;
             status = ReplenishmentStatus.CONFIRMED;
         } else {
             LOG.info("Enough in stock for product {} ({} >= {})", productId, inStock, count);
-            // enough in stock; order requested amount
+            // enough in stock; provide requested amount
             this.stock.orderItem(productId, count);
+            immediatelyAvailableQuantity = count;
             status = ReplenishmentStatus.DONE;
         }
 
-        return new ReplenishmentOrderResponse(productId, status);
+        return new ReplenishmentOrderResponse(
+                productId,
+                status,
+                immediatelyAvailableQuantity
+        );
     }
 
     public List<ReplenishTask> getTasks() {

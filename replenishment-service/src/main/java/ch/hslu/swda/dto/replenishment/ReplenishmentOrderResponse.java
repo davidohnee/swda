@@ -9,19 +9,21 @@ public class ReplenishmentOrderResponse {
     private final UUID trackingId;
     private final int productId;
     private final ReplenishmentStatus status;
+    private final int quantity;
 
-    public ReplenishmentOrderResponse(UUID trackingId, int productId, ReplenishmentStatus status) {
+    public ReplenishmentOrderResponse(UUID trackingId, int productId, ReplenishmentStatus status, int quantity) {
         this.trackingId = trackingId;
         this.productId = productId;
         this.status = status;
+        this.quantity = quantity;
     }
 
-    public ReplenishmentOrderResponse(int productId, ReplenishmentStatus status) {
-        this(UUID.randomUUID(), productId, status);
+    public ReplenishmentOrderResponse(int productId, ReplenishmentStatus status, int quantity) {
+        this(UUID.randomUUID(), productId, status, quantity);
     }
 
     public ReplenishmentOrderResponse() {
-        this(0, ReplenishmentStatus.PENDING);
+        this(0, ReplenishmentStatus.PENDING, 0);
     }
 
     public UUID getTrackingId() {
@@ -36,11 +38,18 @@ public class ReplenishmentOrderResponse {
         return status;
     }
 
+    public int getQuantity() {
+        return quantity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ReplenishmentOrderResponse that)) return false;
-        return productId == that.productId && Objects.equals(trackingId, that.trackingId) && status == that.status;
+        return productId == that.productId &&
+                Objects.equals(trackingId, that.trackingId) &&
+                status == that.status &&
+                quantity == that.quantity;
     }
 
     @Override
@@ -53,6 +62,7 @@ public class ReplenishmentOrderResponse {
                 "trackingId=" + trackingId +
                 ", productId=" + productId +
                 ", status=" + status +
+                ", quantity=" + quantity +
                 '}';
     }
 }
