@@ -17,11 +17,13 @@ public final class MessageRoutes {
     public static final String INVENTORY_GET_ENTITYSET = "inventory.entityset";
     public static final String INVENTORY_PATCH = "inventory.patch";
     public static final String INVENTORY_TAKE = "inventory.take";
+    public static final String INVENTORY_ON_AVAILABLE = "inventory.on.available";
 
     public static final String REPLENISHMENT_CREATE = "replenishment.create";
     public static final String REPLENISHMENT_GET_ENTITYSET = "replenishment.entityset";
     public static final String REPLENISHMENT_GET_ENTITY = "replenishment.entity";
     public static final String REPLENISHMENT_PATCH = "replenishment.patch";
+    public static final String REPLENISHMENT_ON_REPLENISH = "replenishment.on.replenish";
 
     /**
      * No instance allowed.
