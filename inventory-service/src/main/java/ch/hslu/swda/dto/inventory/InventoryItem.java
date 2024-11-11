@@ -16,6 +16,7 @@
 package ch.hslu.swda.dto.inventory;
 
 import ch.hslu.swda.entities.Product;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Objects;
 
@@ -87,6 +88,11 @@ public class InventoryItem {
      */
     public void setReplenishmentThreshold(final int replenishmentThreshold) {
         this.replenishmentThreshold = replenishmentThreshold;
+    }
+
+    @JsonIgnore
+    public int getReplenishmentAmount() {
+        return 5 * this.replenishmentThreshold;
     }
 
     /**

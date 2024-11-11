@@ -116,6 +116,7 @@ public final class InventoryService implements AutoCloseable, ReplenishmentClien
                 (final String route, final String replyTo, final String corrId, final String response) -> {
                     LOG.debug("Received response with routing [{}]", route);
                     OrderInfo request = mapper.readValue(response, OrderInfo.class);
+                    handler.handle(request);
         });
     }
 

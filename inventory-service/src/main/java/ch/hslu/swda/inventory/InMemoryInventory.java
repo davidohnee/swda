@@ -1,10 +1,11 @@
 package ch.hslu.swda.inventory;
 
-import ch.hslu.swda.dto.inventory.InventoryItem;
 import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.*;
 import ch.hslu.swda.micro.ReplenishmentClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ public class InMemoryInventory implements Inventory {
     private final List<FullInventoryItem> inventory = new ArrayList<>();
     private final List<Product> productRange = new ArrayList<>();
     private final ReplenishmentClient replenishmentClient;
+    private final Logger LOG = LoggerFactory.getLogger(InMemoryInventory.class);
 
     public InMemoryInventory(ReplenishmentClient replenishmentClient) {
         this.replenishmentClient = replenishmentClient;
@@ -51,7 +53,8 @@ public class InMemoryInventory implements Inventory {
         if (item == null) {
             return new OrderInfo(
                     productId,
-                    OrderItemStatus.NOT_FOUND
+                    OrderItemStatus.NOT_FOUND,
+                    quantity
             );
         }
 
@@ -59,16 +62,17 @@ public class InMemoryInventory implements Inventory {
             this.update(productId, item.getQuantity() - quantity, item.getReplenishmentThreshold());
             return new OrderInfo(
                     item.getProduct().getId(),
-                    OrderItemStatus.DONE
+                    OrderItemStatus.DONE,
+                    quantity
             );
         }
 
-        item.preorder(quantity - item.getQuantity());
         this.update(productId, 0, item.getReplenishmentThreshold());
 
         return new OrderInfo(
                 item.getProduct().getId(),
-                OrderItemStatus.CONFIRMED
+                OrderItemStatus.CONFIRMED,
+                quantity - item.getQuantity()
         );
     }
 
@@ -92,9 +96,18 @@ public class InMemoryInventory implements Inventory {
                 replenishmentClient.replenish(
                         new ReplenishmentOrder(
                             item.getProduct().getId(),
-                            REPLENISHMENT_AMOUNT
+                            item.getReplenishmentAmount()
                         ),
-                        (orderInfo) -> {}
+                        (orderInfo) -> {
+                            LOG.info("Replenishment {} has been processed", orderInfo);
+                            synchronized (item) {
+                                if (orderInfo.getStatus() == OrderItemStatus.DONE) {
+                                    item.handleReplenishment(orderInfo);
+                                } else {
+                                    item.setReplenishmentTrackingId(orderInfo.getTrackingId());
+                                }
+                            }
+                        }
                 );
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
