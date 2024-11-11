@@ -219,3 +219,10 @@ table {
         --color: var(--green);
     }
 }
+
+.gradient-text,
+.router-link-active .entry {
+    background: linear-gradient(to right top, var(--green), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

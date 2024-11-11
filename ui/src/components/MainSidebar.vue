@@ -3,8 +3,8 @@
 </script>
 <template>
     <div class="navigator">
-        <div class="app-title">
-            <img :src="Logo" />
+        <div class="app-title gradient-text">
+            <span class="material-symbols-rounded">storefront</span>
             <h2>SWDA</h2>
         </div>
 
@@ -61,10 +61,14 @@
     .app-title {
         display: grid;
         align-items: center;
-        grid-template-columns: 50px 1fr;
+        grid-template-columns: max-content 1fr;
         gap: 1em;
         margin-bottom: 1em;
         padding-bottom: 1em;
+
+        & span {
+            font-size: 2.5rem;
+        }
 
         & h2 {
             margin: 0;
@@ -78,23 +82,22 @@
         & a {
             container-type: inline-size;
             container-name: sidebar-element;
+            border-radius: 0.5em;
+            padding: 0.5em 1em;
 
             .entry {
                 display: flex;
                 align-items: center;
                 gap: 0.5em;
-                padding: 0.5em 1em;
-                border-radius: 0.5em;
                 transition: background 0.2s;
                 color: var(--fg);
             }
 
-            &.router-link-active .entry {
-                color: var(--accent);
+            &.router-link-active {
                 background: var(--bg-mute);
             }
 
-            &:hover .entry {
+            &:hover {
                 background: var(--bg-mute);
             }
         }

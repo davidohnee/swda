@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { computed, onMounted, ref } from "vue";
-    import { api, type InventoryItem } from "@/api";
+    import { api } from "@/api";
+    import type { InventoryItem } from "@/types";
 
     const item = ref<InventoryItem>();
     const dialog = ref<HTMLDialogElement>();
@@ -20,9 +21,9 @@
     defineExpose({ open });
 
     const apply = async () => {
-        await api.inventory.update(item.value.product.id, {
-            quantity: item.value.quantity,
-            replenishmentThreshold: item.value.replenishmentThreshold,
+        await api.inventory.update(item.value!.product.id, {
+            quantity: item.value!.quantity,
+            replenishmentThreshold: item.value!.replenishmentThreshold,
         });
         close();
     };

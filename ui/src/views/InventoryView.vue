@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { ref, onMounted } from "vue";
-    import { api, type InventoryItem } from "@/api";
+    import { api } from "@/api";
+    import type { InventoryItem } from "@/types";
     import EditInventoryItemDialog from "@/components/EditInventoryItemDialog.vue";
 
     const inventory = ref<InventoryItem[]>([]);
-    const editDialog = ref<EditInventoryItemDialog>();
+    const editDialog = ref<typeof EditInventoryItemDialog>();
 
     const fetchInventory = async () => {
         inventory.value = await api.inventory.getAll();
@@ -15,7 +16,7 @@
     });
 
     const edit = (item: InventoryItem) => {
-        editDialog.value.open(item);
+        editDialog.value!.open(item);
     };
 </script>
 
