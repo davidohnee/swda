@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.senders;
 
 import java.io.IOException;
 

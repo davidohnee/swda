@@ -17,9 +17,10 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.dto.inventory.InventoryItem;
 import ch.hslu.swda.micro.receivers.CreateReplenishmentOrderReceiver;
 import ch.hslu.swda.micro.receivers.GetReplenishmentOrderReceiver;
+import ch.hslu.swda.micro.senders.InventoryItemGetter;
+import ch.hslu.swda.micro.senders.OnItemReplenishedSender;
 import ch.hslu.swda.stock.api.StockFactory;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,14 +32,14 @@ import java.util.concurrent.TimeoutException;
 
 
 /**
- * Beispielcode für Implementation eines Servcies mit RabbitMQ.
+ * Replenishment Service
  */
-public final class ReplenishmentService implements AutoCloseable, InventoryClient {
+public final class ReplenishmentService implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReplenishmentService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final Replenisher replenisher = new Replenisher(StockFactory.getStock(), this);
+    private final Replenisher replenisher;
     private final ObjectMapper mapper = new ObjectMapper();
 
     /**
@@ -54,6 +55,11 @@ public final class ReplenishmentService implements AutoCloseable, InventoryClien
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
         this.bus.connect();
+
+        this.replenisher = new Replenisher(
+                StockFactory.getStock(),
+                new InventoryItemGetter(this.exchangeName, this.bus),
+                new OnItemReplenishedSender(this.exchangeName, this.bus));
 
         // start message receivers
         this.receiveCreateReplenishmentOrderMessages();
@@ -86,32 +92,5 @@ public final class ReplenishmentService implements AutoCloseable, InventoryClien
     @Override
     public void close() {
         bus.close();
-    }
-
-    @Override
-    public void getInventoryItem(int productId, InventoryResponseHandler handler)
-            throws IOException, InterruptedException {
-        LOG.info("Requesting inventory item with id {}", productId);
-
-        bus.talkAsync(
-                exchangeName,
-                MessageRoutes.INVENTORY_GET_ENTITY,
-                String.valueOf(productId),
-                (route, replyTo, corrId, message) -> {
-                    InventoryItem item = null;
-
-                    if (!message.equals("Product not found")) {
-                        try {
-                            item = mapper.readValue(message, InventoryItem.class);
-                        } catch (IOException e) {
-                            LOG.error("Error processing message", e);
-                        }
-                    }
-
-                    LOG.info("Received inventory item: {}", item);
-
-                    handler.handle(item);
-                }
-        );
     }
 }

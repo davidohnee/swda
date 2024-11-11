@@ -60,6 +60,10 @@ public class ReplenishTask {
         return count == this.reservation.getReservedCount();
     }
 
+    public boolean shouldHaveArrived() {
+        return reservation.shouldHaveArrived();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
