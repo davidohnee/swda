@@ -4,4 +4,9 @@ include:
     file:
       - edu/swarm.cd.yml
       - edu/config/swda.yml
-  - /swda/config/config.yml
+
+  - project: hslu/edu/bachelor-computer-science/swda/shared/swda-ci
+    ref: main
+    file:
+      - swda/config/config.yml
+
