@@ -15,15 +15,124 @@ include:
   tags:
     - $CICD_RUNNER
 
-build:
+.vueJob:
+  tags:
+    - "$CICD_RUNNER"
+  before_script:
+    - |
+      # Custom environment variables
+      CICD_ENV_FILE_REF=.${CI_COMMIT_REF_NAME}.env
+      if [ -f "$CICD_ENV_FILE_REF" ]; then
+        echo 'INFO: found env file for ref $CI_COMMIT_REF_NAME'
+        source $CICD_ENV_FILE_REF
+      fi
+
+      # Working directory
+      echo "Setting working directory to [$CICD_FS_ROOT]"
+      if [ -n "$CICD_FS_ROOT" ]; then
+        cd $CICD_FS_ROOT
+      fi
+
+    - |
+      # Git information
+      GIT_REV=$(echo $CI_COMMIT_SHA | cut -c1-8)
+      GIT_TAG=$(git tag --points-at HEAD) || true
+      if [ -n "$GIT_TAG" ]; then
+        GIT_VERSION="$GIT_TAG"
+      else
+        GIT_VERSION="$GIT_REV"
+      fi
+      export CICD_GIT_VERSION="$GIT_VERSION"
+      export CICD_GIT_DATE=$(git log -1 --format=%at)
+      export CICD_GIT_AUTHOR=$(git log -1 --pretty=format:'%ae')
+      echo "Providing build info: ver=$CICD_GIT_VERSION, date=$CICD_GIT_DATE"
+
+      # Image tag
+      if [ -n "$CICD_IMAGE_TAG" ]; then
+        :
+      else
+        export CICD_IMAGE_TAG="$GIT_VERSION"
+      fi
+      echo "Providing build info: REV TAG=$CICD_IMAGE_TAG"
+      export CICD_IMAGE_ID=$CI_REGISTRY_IMAGE:$CICD_IMAGE_TAG
+
+vue-build:
   extends:
-    - .job
-    - .filterBuild
+    - ".job"
+    - ".vueJob"
+  image: node:lts
   stage: build
-  image: node:20-alpine
   script:
     - npm ci
     - npm run build
   artifacts:
     paths:
       - dist/
+  rules:
+    - when: on_success
+
+vue-dockerize:
+  extends:
+    - ".job"
+    - ".buildDocker"
+  stage: publish
+  image: "$CICD_DEVOPS_PATH/ci-agents/docker:$CICD_DIND_IMAGE_VER"
+  services:
+    - name: docker:dind
+  variables:
+    CICD_JOB_DIRECTORY: "."
+    CICD_JOB_DOCKERFILE: "Dockerfile"
+    CICD_JOB_IMAGE: "$CI_REGISTRY_IMAGE"
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_TLS_CERTDIR: ''
+  needs:
+    - job: vue-build
+      artifacts: true
+  before_script:
+    - until docker info; do sleep 1; done
+    - |
+      # Custom environment variables
+      CICD_ENV_FILE_REF=.${CI_COMMIT_REF_NAME}.env
+      if [ -f "$CICD_ENV_FILE_REF" ]; then
+        echo 'INFO: found env file for ref $CI_COMMIT_REF_NAME'
+        source $CICD_ENV_FILE_REF
+      fi
+
+      # Working directory
+      echo "Setting working directory to [$CICD_FS_ROOT]"
+      if [ -n "$CICD_FS_ROOT" ]; then
+        cd $CICD_FS_ROOT
+      fi
+
+    - |
+      # Git information
+      GIT_REV=$(echo $CI_COMMIT_SHA | cut -c1-8)
+      GIT_TAG=$(git tag --points-at HEAD) || true
+      if [ -n "$GIT_TAG" ]; then
+        GIT_VERSION="$GIT_TAG"
+      else
+        GIT_VERSION="$GIT_REV"
+      fi
+      export CICD_GIT_VERSION="$GIT_VERSION"
+      export CICD_GIT_DATE=$(git log -1 --format=%at)
+      export CICD_GIT_AUTHOR=$(git log -1 --pretty=format:'%ae')
+      echo "Providing build info: ver=$CICD_GIT_VERSION, date=$CICD_GIT_DATE"
+
+      # Image tag
+      if [ -n "$CICD_IMAGE_TAG" ]; then
+        :
+      else
+        export CICD_IMAGE_TAG="$GIT_VERSION"
+      fi
+      echo "Providing build info: REV TAG=$CICD_IMAGE_TAG"
+      export CICD_IMAGE_ID=$CI_REGISTRY_IMAGE:$CICD_IMAGE_TAG
+
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --tag $CICD_JOB_IMAGE:$CICD_IMAGE_TAG --tag $CICD_JOB_IMAGE:latest -f $CICD_JOB_DOCKERFILE .
+    - docker push $CICD_JOB_IMAGE:latest
+    - docker push $CICD_JOB_IMAGE:$CICD_IMAGE_TAG
+  after_script:
+    - docker logout $CI_REGISTRY
+  rules:
+    - when: on_success
