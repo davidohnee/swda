@@ -10,15 +10,20 @@ include:
     file:
       - swda/config/config.yml
 
+.job:
+  extends: .configSwda
+  tags:
+    - $CICD_RUNNER
+
 build:
   extends:
     - .job
     - .filterBuild
   stage: build
+  image: node:20-alpine
   script:
     - npm ci
     - npm run build
   artifacts:
     paths:
       - dist/
-
