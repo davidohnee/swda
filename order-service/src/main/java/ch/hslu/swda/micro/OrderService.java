@@ -27,6 +27,7 @@ public final class OrderService {
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
         this.orderDAO = new OrderDAO(database);
+        new OrdersMemory().getAllOrders().forEach(orderDAO::create); // load dummy data into database
         this.running = false;
         this.orderProcessingPool = Executors.newCachedThreadPool();
     }
