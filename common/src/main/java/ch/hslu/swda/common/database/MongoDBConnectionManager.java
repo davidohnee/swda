@@ -20,24 +20,9 @@ public class MongoDBConnectionManager {
 
     private MongoDBConnectionManager(String connectionString, String databaseName) {
         CodecRegistry pojoCodecRegistry = fromRegistries(
+                fromCodecs(new OffsetDateTimeCodec()),
                 MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()),
-                fromRegistries(new CodecRegistry() {
-                    @Override
-                    public <T> Codec<T> get(Class<T> aClass, CodecRegistry codecRegistry) {
-                        if (aClass == OffsetDateTime.class) {
-                            return (Codec<T>) new OffsetDateTimeCodec();
-                        } else {
-                            return codecRegistry.get(aClass);
-
-                        }
-                    }
-
-                    @Override
-                    public <T> Codec<T> get(Class<T> aClass) {
-                        return (Codec<T>) new OffsetDateTimeCodec();
-                    }
-                })
+                fromProviders(PojoCodecProvider.builder().automatic(true).build())
         );
 
         MongoClientSettings settings = MongoClientSettings.builder()
