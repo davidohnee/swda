@@ -1,13 +1,14 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.entities.OrderItemCreate;
 import ch.hslu.swda.micro.customer.CustomerService;
 import ch.hslu.swda.micro.customer.CustomerServiceImpl;
 import ch.hslu.swda.micro.customer.CustomerValidateException;
 import ch.hslu.swda.micro.inventory.InventoryService;
 import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
-import ch.hslu.swda.model.Order;
-import ch.hslu.swda.model.OrderItemCreate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +22,12 @@ public class OrderProcessingWorker {
     private static final int TIMEOUT_CUSTOMER_VALIDATION = 30;
     private static final int TIMEOUT_INVENTORY_RESERVATION = 30;
     private static final Logger LOG = LoggerFactory.getLogger(OrderProcessingWorker.class);
-    private final OrdersMemory ordersMemory;
+    private final OrderDAO orderDAO;
     private final CustomerService customerService;
     private final InventoryService inventoryService;
 
-    public OrderProcessingWorker(String exchangeName, BusConnector bus, OrdersMemory ordersMemory) {
-        this.ordersMemory = ordersMemory;
+    public OrderProcessingWorker(String exchangeName, BusConnector bus, OrderDAO orderDAO) {
+        this.orderDAO = orderDAO;
         this.customerService = new CustomerServiceImpl(bus, exchangeName);
         this.inventoryService = new InventoryServiceImpl(bus, exchangeName);
     }

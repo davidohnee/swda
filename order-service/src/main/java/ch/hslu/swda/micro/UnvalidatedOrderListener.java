@@ -1,6 +1,7 @@
 package ch.hslu.swda.micro;
 
-import ch.hslu.swda.model.Order;
+
+import ch.hslu.swda.common.entities.Order;
 
 /**
  * Listener for unvalidated orders.

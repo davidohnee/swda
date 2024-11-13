@@ -1,6 +1,7 @@
 package ch.hslu.swda.dto;
 
-import ch.hslu.swda.model.OrderItemCreate;
+
+import ch.hslu.swda.common.entities.OrderItemCreate;
 
 import java.util.List;
 import java.util.Objects;

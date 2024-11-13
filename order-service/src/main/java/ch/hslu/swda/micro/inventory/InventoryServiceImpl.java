@@ -1,10 +1,9 @@
 package ch.hslu.swda.micro.inventory;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.common.entities.OrderItemCreate;
 import ch.hslu.swda.dto.InventoryTakeItemsRequest;
-//import ch.hslu.swda.micro.MessageRoutes;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.model.OrderItemCreate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

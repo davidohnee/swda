@@ -1,6 +1,7 @@
 package ch.hslu.swda.micro.inventory;
 
-import ch.hslu.swda.model.OrderItemCreate;
+
+import ch.hslu.swda.common.entities.OrderItemCreate;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

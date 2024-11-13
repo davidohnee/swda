@@ -2,7 +2,8 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.model.*;
+import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.entities.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -18,14 +19,14 @@ public final class CreateOrderReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(CreateOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final OrdersMemory ordersMemory;
+    private final OrderDAO orderDAO;
     private final ObjectMapper mapper;
     private final Consumer<Order> orderConsumer;
 
-    public CreateOrderReceiver(String exchangeName, BusConnector bus, OrdersMemory ordersMemory, Consumer<Order> orderConsumer) {
+    public CreateOrderReceiver(String exchangeName, BusConnector bus, OrderDAO orderDAO, Consumer<Order> orderConsumer) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.ordersMemory = ordersMemory;
+        this.orderDAO = orderDAO;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         this.orderConsumer = orderConsumer;
     }
@@ -37,7 +38,7 @@ public final class CreateOrderReceiver implements MessageReceiver {
             LOG.debug("Received message: {}", message);
             OrderCreate orderCreate = this.mapper.readValue(message, OrderCreate.class);
             Order unvalidatedOrder = createUnvalidatedOrder(orderCreate);
-            ordersMemory.addOrder(unvalidatedOrder);
+            this.orderDAO.create(unvalidatedOrder);
             sendResponse(replyTo, corrId, unvalidatedOrder);
             orderConsumer.accept(unvalidatedOrder);
         } catch (IOException e) {

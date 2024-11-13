@@ -1,11 +1,11 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
-import ch.hslu.swda.model.Order;
+import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.hslu.swda.common.routing.MessageRoutes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,13 +15,13 @@ public class OrderMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(OrderMessageListener.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final OrdersMemory ordersMemory;
+    private final OrderDAO orderDAO;
     private final List<UnvalidatedOrderListener> unvalidatedOrderListener;
 
-    public OrderMessageListener(String exchangeName, BusConnector bus, OrdersMemory ordersMemory) {
+    public OrderMessageListener(String exchangeName, BusConnector bus, OrderDAO orderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.ordersMemory = ordersMemory;
+        this.orderDAO = orderDAO;
         this.unvalidatedOrderListener = new ArrayList<>();
     }
 
@@ -48,14 +48,14 @@ public class OrderMessageListener {
                 this.exchangeName,
                 "OrderService <- order.get.entityset",
                 MessageRoutes.ORDER_GET_ENTITYSET,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
+                new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
 
         this.bus.listenFor(
                 this.exchangeName,
                 "OrderService <- order.get.entity",
                 MessageRoutes.ORDER_GET_ENTITY,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.ordersMemory)
+                new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
 
         this.bus.listenFor(
@@ -65,7 +65,7 @@ public class OrderMessageListener {
                 new CreateOrderReceiver(
                         this.exchangeName,
                         this.bus,
-                        this.ordersMemory,
+                        this.orderDAO,
                         this::notifyUnvalidatedOrderListener)
         );
     }

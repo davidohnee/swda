@@ -1,6 +1,7 @@
 package ch.hslu.swda.micro;
 
-import ch.hslu.swda.model.*;
+
+import ch.hslu.swda.common.entities.*;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;

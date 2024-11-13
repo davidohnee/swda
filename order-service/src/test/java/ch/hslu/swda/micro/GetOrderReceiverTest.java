@@ -1,15 +1,15 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
-import ch.hslu.swda.model.Order;
+import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import ch.hslu.swda.common.routing.MessageRoutes;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,23 +21,23 @@ public class GetOrderReceiverTest {
 
     private GetOrderReceiver getOrderReceiver;
     private BusConnector busConnector;
-    private OrdersMemory ordersMemory;
+    private OrderDAO orderDAO;
     private ObjectMapper objectMapper;
     private Order order;
 
     @BeforeEach
     public void setUp() {
         busConnector = mock(BusConnector.class);
-        ordersMemory = mock(OrdersMemory.class);
+        orderDAO = mock(OrderDAO.class);
         order = mock(Order.class);
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        getOrderReceiver = new GetOrderReceiver("testExchange", busConnector, ordersMemory);
+        getOrderReceiver = new GetOrderReceiver("testExchange", busConnector, orderDAO);
     }
 
     @Test
     public void testOnMessageReceived_OrderGetEntity() throws IOException {
         UUID orderId = UUID.randomUUID();
-        when(ordersMemory.getOrderById(orderId)).thenReturn(order);
+        when(orderDAO.findByUUID(orderId)).thenReturn(order);
 
         String message = "\"" + orderId + "\"";
         getOrderReceiver.onMessageReceived(MessageRoutes.ORDER_GET_ENTITY, "replyTo", "corrId", message);
@@ -52,7 +52,7 @@ public class GetOrderReceiverTest {
     @Test
     public void testOnMessageReceived_OrderGetEntity_OrderNotFound() throws IOException {
         UUID orderId = UUID.randomUUID();
-        when(ordersMemory.getOrderById(orderId)).thenReturn(null);
+        when(orderDAO.findByUUID(orderId)).thenReturn(null);
 
         String message = "\"" + orderId + "\"";
         getOrderReceiver.onMessageReceived(MessageRoutes.ORDER_GET_ENTITY, "replyTo", "corrId", message);
@@ -66,7 +66,7 @@ public class GetOrderReceiverTest {
     @Test
     public void testOnMessageReceivedOrderGetEntitySet() throws IOException {
         List<Order> orders = List.of(order, order, order);
-        when(ordersMemory.getAllOrders()).thenReturn(orders);
+        when(orderDAO.findAll()).thenReturn(orders);
 
         getOrderReceiver.onMessageReceived(MessageRoutes.ORDER_GET_ENTITYSET, "replyTo", "corrId", "");
 

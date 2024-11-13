@@ -1,12 +1,11 @@
 package ch.hslu.swda.dto;
 
-import ch.hslu.swda.model.OrderItemCreate;
+import ch.hslu.swda.common.entities.OrderItemCreate;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.UUID;
 
 class InventoryTakeItemsRequestTest {
 

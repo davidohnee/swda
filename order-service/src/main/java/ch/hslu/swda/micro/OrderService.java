@@ -2,7 +2,8 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.model.Order;
+import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.entities.Order;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public final class OrderService {
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final OrdersMemory ordersMemory;
+    private final OrderDAO orderDAO;
     private final ExecutorService orderProcessingPool;
     private boolean running;
 
@@ -25,7 +26,7 @@ public final class OrderService {
         LOG.debug("Initializing OrderService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
-        this.ordersMemory = new OrdersMemory();
+        this.orderDAO = new OrderDAO(database);
         this.running = false;
         this.orderProcessingPool = Executors.newCachedThreadPool();
     }
@@ -38,7 +39,7 @@ public final class OrderService {
             OrderMessageListener messageListener = new OrderMessageListener(
                     this.exchangeName,
                     this.bus,
-                    this.ordersMemory
+                    this.orderDAO
             );
             messageListener.addUnvalidatedOrderListener(this::processOrder);
             messageListener.start();
@@ -56,7 +57,7 @@ public final class OrderService {
         this.orderProcessingPool.submit(() -> new OrderProcessingWorker(
                 this.exchangeName,
                 this.bus,
-                this.ordersMemory
+                this.orderDAO
         ).processOrder(order));
     }
 
