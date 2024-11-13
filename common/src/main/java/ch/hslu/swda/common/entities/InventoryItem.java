@@ -22,26 +22,43 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * InventoryItem
  */
 @JsonPropertyOrder({
   InventoryItem.JSON_PROPERTY_PRODUCT,
-  InventoryItem.JSON_PROPERTY_COUNT
+  InventoryItem.JSON_PROPERTY_QUANTITY,
+  InventoryItem.JSON_PROPERTY_REPLENISHMENT_THRESHOLD,
+  InventoryItem.JSON_PROPERTY_REPLENISHMENT_TRACKING_ID
 })
 @JsonTypeName("InventoryItem")
 @Introspected
 public class InventoryItem {
+    public final static int DEFAULT_REPLENISHMENT_THRESHOLD = 10;
+
     public static final String JSON_PROPERTY_PRODUCT = "product";
     private Product product;
 
-    public static final String JSON_PROPERTY_COUNT = "count";
-    private Integer count;
+    public static final String JSON_PROPERTY_QUANTITY = "quantity";
+    private Integer quantity;
 
-    public InventoryItem(Product product, Integer count) {
+    public static final String JSON_PROPERTY_REPLENISHMENT_THRESHOLD = "replenishmentThreshold";
+    private int replenishmentThreshold = DEFAULT_REPLENISHMENT_THRESHOLD;
+
+    public static final String JSON_PROPERTY_REPLENISHMENT_TRACKING_ID = "replenishmentTrackingId";
+    private UUID replenishmentTrackingId;
+
+    public InventoryItem(Product product, int quantity, int replenishmentThreshold, UUID replenishmentTrackingId) {
         this.product = product;
-        this.count = count;
+        this.quantity = quantity;
+        this.replenishmentThreshold = replenishmentThreshold;
+        this.replenishmentTrackingId = replenishmentTrackingId;
+    }
+
+    public InventoryItem(Product product, int quantity) {
+        this(product, quantity, DEFAULT_REPLENISHMENT_THRESHOLD, null);
     }
 
     public InventoryItem product(Product product) {
@@ -68,45 +85,82 @@ public class InventoryItem {
         this.product = product;
     }
 
-    public InventoryItem count(Integer count) {
-        this.count = count;
+    public InventoryItem quantity(Integer quantity) {
+        this.quantity = quantity;
         return this;
     }
 
     /**
-     * Get count
-     * @return count
+     * Get quantity
+     * @return quantity
      */
     @NotNull
-    @Schema(name = "count", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @Schema(name = "quantity", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public Integer getCount() {
-        return count;
+    public Integer getQuantity() {
+        return quantity;
     }
 
-    @JsonProperty(JSON_PROPERTY_COUNT)
+    @JsonProperty(JSON_PROPERTY_QUANTITY)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public InventoryItem replenishmentThreshold(int replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
+        return this;
+    }
+
+    /**
+     * Get replenishmentThreshold
+     * @return replenishmentThreshold
+     */
+    @Schema(name = "replenishmentThreshold", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_THRESHOLD)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public int getReplenishmentThreshold() {
+        return replenishmentThreshold;
+    }
+
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_THRESHOLD)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public void setReplenishmentThreshold(int replenishmentThreshold) {
+        this.replenishmentThreshold = replenishmentThreshold;
+    }
+
+    public InventoryItem replenishmentTrackingId(UUID replenishmentTrackingId) {
+        this.replenishmentTrackingId = replenishmentTrackingId;
+        return this;
+    }
+
+    /**
+     * Get replenishmentTrackingId
+     * @return replenishmentTrackingId
+     */
+    @Schema(name = "replenishmentTrackingId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_TRACKING_ID)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public UUID getReplenishmentTrackingId() {
+        return replenishmentTrackingId;
+    }
+
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_TRACKING_ID)
+    public void setReplenishmentTrackingId(UUID replenishmentTrackingId) {
+        this.replenishmentTrackingId = replenishmentTrackingId;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        InventoryItem inventoryItem = (InventoryItem) o;
-        return Objects.equals(this.product, inventoryItem.product) &&
-            Objects.equals(this.count, inventoryItem.count);
+        if (this == o) return true;
+        if (!(o instanceof InventoryItem that)) return false;
+        return replenishmentThreshold == that.replenishmentThreshold && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity) && Objects.equals(replenishmentTrackingId, that.replenishmentTrackingId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product, count);
+        return Objects.hash(product, quantity, replenishmentThreshold, replenishmentTrackingId);
     }
 
     @Override
@@ -114,7 +168,9 @@ public class InventoryItem {
         StringBuilder sb = new StringBuilder();
         sb.append("class InventoryItem {\n");
         sb.append("    product: ").append(toIndentedString(product)).append("\n");
-        sb.append("    count: ").append(toIndentedString(count)).append("\n");
+        sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
+        sb.append("    replenishmentThreshold: ").append(toIndentedString(replenishmentThreshold)).append("\n");
+        sb.append("    replenishmentTrackingId: ").append(toIndentedString(replenishmentTrackingId)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -129,6 +185,5 @@ public class InventoryItem {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 }
 
