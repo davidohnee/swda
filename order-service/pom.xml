@@ -402,7 +402,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
-            <version>4.10.2</version>
+            <version>4.11.3</version>
         </dependency>
         <dependency>
             <groupId>ch.hslu.swda24hs.g09</groupId>
