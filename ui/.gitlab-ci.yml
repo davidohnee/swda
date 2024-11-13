@@ -4,3 +4,4 @@ include:
     file:
       - edu/swarm.cd.yml
       - edu/config/swda.yml
+  - /swda/config/config.yml
