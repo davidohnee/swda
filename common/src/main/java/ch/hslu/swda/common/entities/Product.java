@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Random;
 
 public class Product {
     private int id;
@@ -66,5 +67,12 @@ public class Product {
                 ", name='" + this.name + '\'' +
                 ", price='" + this.price + '\'' +
                 ']';
+    }
+
+    public static int randomId() {
+        final int min = 100_000;
+        final int max = Integer.MAX_VALUE;
+        Random random = new Random();
+        return random.nextInt(max - min) + min;
     }
 }
