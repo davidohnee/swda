@@ -60,7 +60,7 @@ public class InMemoryInventory implements Inventory {
             );
         }
 
-        this.update(productId, 0, item.getReplenishmentThreshold());
+        this.update(productId, 0);
 
         return new OrderInfo(
                 item.getProduct().getId(),
@@ -69,6 +69,12 @@ public class InMemoryInventory implements Inventory {
         );
     }
 
+    @Override
+    public InventoryItem update(int productId, int newQuantity) {
+        return this.update(productId, newQuantity, null);
+    }
+
+    @Override
     public InventoryItem update(int productId, int newQuantity, Integer newReplenishmentThreshold) {
         InventoryItem item = this.inventory.get(productId);
         if (item == null) {

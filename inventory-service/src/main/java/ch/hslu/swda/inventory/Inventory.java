@@ -12,6 +12,8 @@ public interface Inventory {
 
     OrderInfo take(int productId, int quantity);
 
+    InventoryItem update(int productId, int newQuantity);
+
     InventoryItem update(int productId, int newQuantity, Integer newReplenishmentThreshold);
 
     void handleReplenishment(OrderInfo item);

@@ -5,12 +5,14 @@ import ch.hslu.swda.common.entities.InventoryItem;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemStatus;
 import ch.hslu.swda.common.entities.Product;
+import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.micro.senders.OnItemAvailable;
 import ch.hslu.swda.micro.senders.ReplenishmentClient;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,20 +67,96 @@ public class PersistentInventory implements Inventory {
     @Override
     public OrderInfo take(int productId, int quantity) {
         var item = this.get(productId);
+
         if (item == null) {
-            return new OrderInfo(productId, OrderItemStatus.NOT_FOUND, 0);
+            return new OrderInfo(
+                    productId,
+                    OrderItemStatus.NOT_FOUND,
+                    0);
         }
-        return new OrderInfo(productId, OrderItemStatus.DONE, quantity);
+
+        if (quantity <= item.getQuantity()) {
+            this.update(
+                    productId,
+                    item.getQuantity() - quantity);
+            return new OrderInfo(
+                    item.getProduct().getId(),
+                    OrderItemStatus.DONE,
+                    quantity
+            );
+        }
+
+        return new OrderInfo(
+                productId,
+                OrderItemStatus.DONE,
+                quantity);
+    }
+
+    @Override
+    public InventoryItem update(int productId, int newQuantity) {
+        return this.update(productId, newQuantity, null);
     }
 
     @Override
     public InventoryItem update(int productId, int newQuantity, Integer newReplenishmentThreshold) {
-        return null;
+        InventoryItem item = this.inventory.get(productId);
+        if (item == null) {
+            return null;
+        }
+
+        if (newQuantity < 0) {
+            throw new IllegalArgumentException("Quantity must be positive");
+        }
+
+        if (newReplenishmentThreshold != null) {
+            item.setReplenishmentThreshold(newReplenishmentThreshold);
+        }
+
+        item.setQuantity(newQuantity);
+        //this.database.update(inventoryItem);
+
+        if (newQuantity < item.getReplenishmentThreshold()) {
+            try {
+                replenishmentClient.replenish(
+                        new ReplenishmentOrder(
+                                item.getProduct().getId(),
+                                item.getReplenishmentThreshold() * 4
+                        ),
+                        (orderInfo) -> {
+                            LOG.info("Replenishment {} has been processed", orderInfo);
+                            synchronized (item) {
+                                if (orderInfo.getStatus() == OrderItemStatus.DONE) {
+                                    item.handleReplenishment(orderInfo);
+                                } else {
+                                    item.setReplenishmentTrackingId(orderInfo.getTrackingId());
+                                }
+                                //this.database.update(inventoryItem);
+                            }
+                        }
+                );
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return item;
     }
 
     @Override
     public void handleReplenishment(OrderInfo item) {
+        InventoryItem inventoryItem = this.get(item.getProductId());
+        if (inventoryItem == null) {
+            throw new IllegalArgumentException("Product not found");
+        }
 
+        if (inventoryItem.isStockReplenishment(item)) {
+            inventoryItem.handleReplenishment(item);
+            //this.database.update(inventoryItem);
+            LOG.debug("Product {} replenished", item.getProductId());
+            return;
+        }
+
+        this.onItemAvailable.onItemAvailable(item);
     }
 
     @Override
