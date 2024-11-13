@@ -1,0 +1,19 @@
+services:
+  app:
+    image: $CICD_IMAGE_ID
+    build:
+      context: .
+      args:
+        CI_GIT_VERSION: $CICD_GIT_VERSION
+        CI_GIT_DATE: $CICD_GIT_DATE
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8081:8090'
+
+networks:
+  backbone:
+    external:
+      name: g09-backbone_backbone

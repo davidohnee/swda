@@ -1,0 +1,6 @@
+include:
+  - project: hslu/shared/devops/cicd
+    ref: v5-stable
+    file: 
+      - edu/swarm.cd.yml
+      - edu/config/swda.yml
