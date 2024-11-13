@@ -35,7 +35,7 @@ import java.util.UUID;
 })
 @JsonTypeName("InventoryItem")
 @Introspected
-public class InventoryItem {
+public final class InventoryItem {
     public final static int DEFAULT_REPLENISHMENT_THRESHOLD = 10;
 
     public static final String JSON_PROPERTY_PRODUCT = "product";
