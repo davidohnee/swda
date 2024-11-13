@@ -99,7 +99,7 @@ public class InventoryItem {
      * identical if same product {@inheritDoc}.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -111,7 +111,7 @@ public class InventoryItem {
      * Hashcode based on field product. {@inheritDoc}.
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(this.product);
     }
 

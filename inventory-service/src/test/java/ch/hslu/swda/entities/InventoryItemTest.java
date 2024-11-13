@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Random;
 
-class InMemoryInventoryItemTest {
+class InventoryItemTest {
 
     Product randomProduct() {
         Random random = new Random();
@@ -37,7 +37,7 @@ class InMemoryInventoryItemTest {
     @Test
     void testEqualsContract() {
         EqualsVerifier.forClass(InventoryItem.class)
-                .withIgnoredFields("quantity")
+                .withIgnoredFields("quantity", "replenishmentThreshold")
                 .verify();
     }
 }
