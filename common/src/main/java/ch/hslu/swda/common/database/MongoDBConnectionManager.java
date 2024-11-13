@@ -18,7 +18,7 @@ public class MongoDBConnectionManager {
     private MongoDBConnectionManager(String connectionString, String databaseName) {
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build()),
+//                fromProviders(PojoCodecProvider.builder().automatic(true).build()),
                 fromCodecs(new OffsetDateTimeCodec())
         );
 
