@@ -151,6 +151,15 @@ public class InventoryItem {
         this.replenishmentTrackingId = replenishmentTrackingId;
     }
 
+    public boolean isStockReplenishment(OrderInfo info) {
+        return info.getTrackingId() == replenishmentTrackingId;
+    }
+
+    public void handleReplenishment(OrderInfo info) {
+        this.quantity += info.getQuantity();
+        this.replenishmentTrackingId = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
