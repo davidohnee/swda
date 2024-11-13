@@ -18,38 +18,34 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Person
+ * Shipment
  */
 @JsonPropertyOrder({
-  Person.JSON_PROPERTY_ID,
-  Person.JSON_PROPERTY_FIRST_NAME,
-  Person.JSON_PROPERTY_FAMILY_NAME
+  Shipment.JSON_PROPERTY_ID,
+  Shipment.JSON_PROPERTY_CUSTOMER_ORDER
 })
-@JsonTypeName("Person")
+@JsonTypeName("Shipment")
 @Introspected
-public class Person {
+public class Shipment {
     public static final String JSON_PROPERTY_ID = "id";
     private UUID id;
 
-    public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
-    private String firstName;
+    public static final String JSON_PROPERTY_CUSTOMER_ORDER = "customerOrder";
+    private CustomerOrder customerOrder;
 
-    public static final String JSON_PROPERTY_FAMILY_NAME = "familyName";
-    private String familyName;
-
-    public Person(UUID id, String firstName, String familyName) {
+    public Shipment(UUID id, CustomerOrder customerOrder) {
         this.id = id;
-        this.firstName = firstName;
-        this.familyName = familyName;
+        this.customerOrder = customerOrder;
     }
 
-    public Person id(UUID id) {
+    public Shipment id(UUID id) {
         this.id = id;
         return this;
     }
@@ -72,50 +68,28 @@ public class Person {
         this.id = id;
     }
 
-    public Person firstName(String firstName) {
-        this.firstName = firstName;
+    public Shipment customerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
         return this;
     }
 
     /**
-     * Get firstName
-     * @return firstName
+     * Get customerOrder
+     * @return customerOrder
      */
+    @Valid
     @NotNull
-    @Schema(name = "firstName", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_FIRST_NAME)
+    @Schema(name = "customerOrder", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public String getFirstName() {
-        return firstName;
+    public CustomerOrder getCustomerOrder() {
+        return customerOrder;
     }
 
-    @JsonProperty(JSON_PROPERTY_FIRST_NAME)
+    @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public Person familyName(String familyName) {
-        this.familyName = familyName;
-        return this;
-    }
-
-    /**
-     * Get familyName
-     * @return familyName
-     */
-    @NotNull
-    @Schema(name = "familyName", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_FAMILY_NAME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    @JsonProperty(JSON_PROPERTY_FAMILY_NAME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
+    public void setCustomerOrder(CustomerOrder customerOrder) {
+        this.customerOrder = customerOrder;
     }
 
     @Override
@@ -126,24 +100,22 @@ public class Person {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Person person = (Person) o;
-        return Objects.equals(this.id, person.id) &&
-            Objects.equals(this.firstName, person.firstName) &&
-            Objects.equals(this.familyName, person.familyName);
+        Shipment shipment = (Shipment) o;
+        return Objects.equals(this.id, shipment.id) &&
+            Objects.equals(this.customerOrder, shipment.customerOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, familyName);
+        return Objects.hash(id, customerOrder);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Person {\n");
+        sb.append("class Shipment {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
-        sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
+        sb.append("    customerOrder: ").append(toIndentedString(customerOrder)).append("\n");
         sb.append("}");
         return sb.toString();
     }

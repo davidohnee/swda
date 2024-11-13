@@ -18,38 +18,34 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Person
+ * Replenishment
  */
 @JsonPropertyOrder({
-  Person.JSON_PROPERTY_ID,
-  Person.JSON_PROPERTY_FIRST_NAME,
-  Person.JSON_PROPERTY_FAMILY_NAME
+  Replenishment.JSON_PROPERTY_ID,
+  Replenishment.JSON_PROPERTY_REPLENISHMENT_ORDER
 })
-@JsonTypeName("Person")
+@JsonTypeName("Replenishment")
 @Introspected
-public class Person {
+public class Replenishment {
     public static final String JSON_PROPERTY_ID = "id";
     private UUID id;
 
-    public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
-    private String firstName;
+    public static final String JSON_PROPERTY_REPLENISHMENT_ORDER = "replenishmentOrder";
+    private ReplenishmentOrder replenishmentOrder;
 
-    public static final String JSON_PROPERTY_FAMILY_NAME = "familyName";
-    private String familyName;
-
-    public Person(UUID id, String firstName, String familyName) {
+    public Replenishment(UUID id, ReplenishmentOrder replenishmentOrder) {
         this.id = id;
-        this.firstName = firstName;
-        this.familyName = familyName;
+        this.replenishmentOrder = replenishmentOrder;
     }
 
-    public Person id(UUID id) {
+    public Replenishment id(UUID id) {
         this.id = id;
         return this;
     }
@@ -72,50 +68,28 @@ public class Person {
         this.id = id;
     }
 
-    public Person firstName(String firstName) {
-        this.firstName = firstName;
+    public Replenishment replenishmentOrder(ReplenishmentOrder replenishmentOrder) {
+        this.replenishmentOrder = replenishmentOrder;
         return this;
     }
 
     /**
-     * Get firstName
-     * @return firstName
+     * Get replenishmentOrder
+     * @return replenishmentOrder
      */
+    @Valid
     @NotNull
-    @Schema(name = "firstName", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_FIRST_NAME)
+    @Schema(name = "replenishmentOrder", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public String getFirstName() {
-        return firstName;
+    public ReplenishmentOrder getReplenishmentOrder() {
+        return replenishmentOrder;
     }
 
-    @JsonProperty(JSON_PROPERTY_FIRST_NAME)
+    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public Person familyName(String familyName) {
-        this.familyName = familyName;
-        return this;
-    }
-
-    /**
-     * Get familyName
-     * @return familyName
-     */
-    @NotNull
-    @Schema(name = "familyName", requiredMode = Schema.RequiredMode.REQUIRED)
-    @JsonProperty(JSON_PROPERTY_FAMILY_NAME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    @JsonProperty(JSON_PROPERTY_FAMILY_NAME)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
+    public void setReplenishmentOrder(ReplenishmentOrder replenishmentOrder) {
+        this.replenishmentOrder = replenishmentOrder;
     }
 
     @Override
@@ -126,24 +100,22 @@ public class Person {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Person person = (Person) o;
-        return Objects.equals(this.id, person.id) &&
-            Objects.equals(this.firstName, person.firstName) &&
-            Objects.equals(this.familyName, person.familyName);
+        Replenishment replenishment = (Replenishment) o;
+        return Objects.equals(this.id, replenishment.id) &&
+            Objects.equals(this.replenishmentOrder, replenishment.replenishmentOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, familyName);
+        return Objects.hash(id, replenishmentOrder);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class Person {\n");
+        sb.append("class Replenishment {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
-        sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
+        sb.append("    replenishmentOrder: ").append(toIndentedString(replenishmentOrder)).append("\n");
         sb.append("}");
         return sb.toString();
     }
