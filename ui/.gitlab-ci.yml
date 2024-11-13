@@ -1,32 +1,6 @@
 include:
   - project: hslu/shared/devops/cicd
     ref: v5-stable
-    file: 
+    file:
       - edu/swarm.cd.yml
       - edu/config/swda.yml
-      - /edu/workflow/default/workflow.yml
-      - /templates/ci/dkc.yml
-      - /templates/common/scripts.yml
-
-  - project: hslu/edu/bachelor-computer-science/swda/shared/swda-ci
-    ref: main
-    file: 
-      - /swda/config/config.yml
-
-build:
-  extends:
-    - .job
-    - .build
-  stage: build
-  rules:
-    - !reference [.filterBuild, rules]
-
-dockerize:
-  extends:
-    - .job
-    - .buildDKC
-  needs:
-    - build
-  stage: publish
-  rules:
-    - !reference [.filterBuild, rules]
