@@ -13,17 +13,12 @@ include:
 build:
   extends:
     - .job
-    - .build
+    - .filterBuild
   stage: build
-  rules:
-    - !reference [.filterBuild, rules]
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
 
-dockerize:
-  extends:
-    - .job
-    - .buildDKC
-  needs:
-    - build
-  stage: publish
-  rules:
-    - !reference [.filterBuild, rules]
