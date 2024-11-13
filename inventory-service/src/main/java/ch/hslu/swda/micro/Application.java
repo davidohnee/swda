@@ -16,6 +16,9 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.common.config.ApplicationConfig;
+import ch.hslu.swda.common.database.MongoDBConnectionManager;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +35,7 @@ public final class Application {
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static final int RETRY_DELAY_MS = 2000;
     private static final int MAX_RETRIES = 60; // 2 minutes of retries
+    private static MongoDatabase database;
 
     /**
      * Privater Konstruktor.
@@ -68,6 +72,14 @@ public final class Application {
     public static void main(final String[] args) throws InterruptedException {
         final long startTime = System.currentTimeMillis();
         LOG.info("Service starting...");
+
+        LOG.info("Creating database connection...");
+        MongoDBConnectionManager connectionManager = MongoDBConnectionManager.getInstance(
+                ApplicationConfig.getConnectionString(),
+                ApplicationConfig.getDatabaseName()
+        );
+        database = connectionManager.getDatabase();
+
         if (!"OFF".equals(System.getenv("RABBIT"))) {
             if (waitForRabbitMQ()) {
                 final Timer timer = new Timer();
@@ -93,7 +105,7 @@ public final class Application {
 
         HeartBeat() {
             try {
-                this.service = new InventoryService();
+                this.service = new InventoryService(database);
             } catch (IOException | TimeoutException e) {
                 LOG.error(e.getMessage(), e);
             }

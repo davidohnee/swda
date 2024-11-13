@@ -1,9 +1,9 @@
 package ch.hslu.swda.micro.senders;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
-import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.entities.ReplenishResponseHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

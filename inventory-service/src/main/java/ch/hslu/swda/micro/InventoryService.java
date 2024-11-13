@@ -21,12 +21,14 @@ import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.inventory.InMemoryInventory;
 import ch.hslu.swda.inventory.Inventory;
+import ch.hslu.swda.inventory.PersistentInventory;
 import ch.hslu.swda.micro.receivers.GetInventoryReceiver;
 import ch.hslu.swda.micro.receivers.OnItemReplenishedReceiver;
 import ch.hslu.swda.micro.receivers.TakeFromInventoryReceiver;
 import ch.hslu.swda.micro.receivers.UpdateInventoryReceiver;
 import ch.hslu.swda.micro.senders.OnItemAvailableSender;
 import ch.hslu.swda.micro.senders.ReplenishmentClientSender;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +45,14 @@ public final class InventoryService implements AutoCloseable {
     private final String exchangeName;
     private final BusConnector bus;
     private final Inventory inventory;
+    private final MongoDatabase database;
 
     /**
      * @throws IOException      IO-Fehler.
      * @throws TimeoutException Timeout.
      */
-    InventoryService() throws IOException, TimeoutException {
+    InventoryService(MongoDatabase database) throws IOException, TimeoutException {
+        this.database = database;
 
         // thread info
         String threadName = Thread.currentThread().getName();
@@ -59,10 +63,13 @@ public final class InventoryService implements AutoCloseable {
         this.bus = new BusConnector();
         this.bus.connect();
 
-        this.inventory = new InMemoryInventory(
+        LOG.debug("Creating inventory...");
+        this.inventory = new PersistentInventory(
+                this.database,
                 new ReplenishmentClientSender(this.exchangeName, this.bus),
                 new OnItemAvailableSender(this.exchangeName, this.bus));
-
+        LOG.debug("Created inventory!");
+        
         // start message receivers
         this.receiveGetInventoryMessages();
         this.receiveUpdateInventoryMessages();

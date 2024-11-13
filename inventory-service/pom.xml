@@ -233,6 +233,11 @@
                 <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>4.10.2</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>

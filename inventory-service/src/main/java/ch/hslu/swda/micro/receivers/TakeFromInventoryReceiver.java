@@ -17,9 +17,9 @@ package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.dto.inventory.InventoryTakeRequest;
 import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
-import ch.hslu.swda.entities.OrderInfo;
 import ch.hslu.swda.inventory.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -67,7 +67,7 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
                 orderInfo[i] = this.inventory.take(item.getProductId(), item.getQuantity());
             }
 
-            String data = (orderInfo != null) ? mapper.writeValueAsString(orderInfo) : "";
+            String data = mapper.writeValueAsString(orderInfo);
 
             LOG.debug("Sending response: {}", data);
             bus.reply(exchangeName, replyTo, corrId, data);
