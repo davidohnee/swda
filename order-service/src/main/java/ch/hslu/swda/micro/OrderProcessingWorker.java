@@ -47,6 +47,8 @@ public class OrderProcessingWorker {
                             .map(orderItem -> new OrderItemCreate(orderItem.getProduct().getId(), orderItem.getQuantity()))
                             .toList();
                     order.setStatus(Order.StatusEnum.PENDING);
+                    LOG.info("Updating order {} status to PENDING.", order.getId());
+                    //this.orderDAO.update(order.getId(), order);
                     return inventoryService.takeItems(orderItems)
                             .orTimeout(TIMEOUT_INVENTORY_RESERVATION, TimeUnit.SECONDS);  // Add a timeout of 10 seconds for inventory reservation
                 })
@@ -72,8 +74,11 @@ public class OrderProcessingWorker {
 
 
     private void completeOrderProcessing(Order order) {
-        LOG.info("Order {} processed successfully.", order.getId());
         order.setStatus(Order.StatusEnum.CONFIRMED);
+        LOG.info("Updating order {} status to CONFIRMED.", order.getId());
+        //this.orderDAO.update(order.getId(), order);
+        LOG.info("Order {} processed successfully.", order.getId());
+
     }
 
     private void handleOrderFailure(Order order) {
