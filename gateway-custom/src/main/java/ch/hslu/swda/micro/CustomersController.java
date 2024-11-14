@@ -82,7 +82,7 @@ public class CustomersController {
 
             String response = bus.talkSync(exchange, route, message);
 
-            if (response == null) {
+            if (response == null || response.isEmpty()) {
                 return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
             }
 
