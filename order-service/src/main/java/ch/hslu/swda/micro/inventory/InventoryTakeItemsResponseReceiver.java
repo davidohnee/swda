@@ -1,7 +1,7 @@
 package ch.hslu.swda.micro.inventory;
 
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.dto.InventoryTakeItemsResponse;
+import ch.hslu.swda.common.entities.OrderInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public class InventoryTakeItemsResponseReceiver implements MessageReceiver {
         LOG.info("Received message from inventory service: {}", message);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            InventoryTakeItemsResponse[] response = mapper.readValue(message, InventoryTakeItemsResponse[].class);
+            OrderInfo[] response = mapper.readValue(message, OrderInfo[].class);
             LOG.info("Parsed response from inventory service: {}", response);
             future.complete(true);
         } catch (JsonProcessingException e) {
