@@ -29,7 +29,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 /**
- * Testcases für Student Service. Verwendet TestContainer, d.h. die aktuelle
+ * Testcases für Customer Service. Verwendet TestContainer, d.h. die aktuelle
  * Version muss als Docker-Image verfügbar sein (gebunden an package-Lifecycle).
  */
 @Testcontainers
