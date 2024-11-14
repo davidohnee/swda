@@ -22,7 +22,11 @@ public class Product {
         this.price = price;
     }
 
-    public Product() {}
+    public Product() {
+        this.id = randomId();
+        this.name = "";
+        this.price = BigDecimal.ZERO;
+    }
 
     public int getId() {
         return this.id;

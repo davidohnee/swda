@@ -3,6 +3,7 @@ package ch.hslu.swda.common.database;
 import ch.hslu.swda.common.entities.InventoryItem;
 import ch.hslu.swda.common.entities.Order;
 import com.mongodb.client.MongoDatabase;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,8 @@ public class InventoryItemDAO extends GenericDAO<InventoryItem> {
         super(database, "inventory", InventoryItem.class);
     }
 
-    public InventoryItem findByUUID(UUID uuid) {
-        return collection.find(eq("_id", uuid)).first();
+    public void update(InventoryItem entity) {
+        super.update(entity.getId(), entity);
     }
 
     public List<InventoryItem> getAll() {
