@@ -4,6 +4,9 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.routing.MessageRoutes;
+import ch.hslu.swda.micro.receivers.CreateOrderReceiver;
+import ch.hslu.swda.micro.receivers.GetOrderReceiver;
+import ch.hslu.swda.micro.receivers.UpdateOrderReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +70,13 @@ public class OrderMessageListener {
                         this.bus,
                         this.orderDAO,
                         this::notifyUnvalidatedOrderListener)
+        );
+
+        this.bus.listenFor(
+                this.exchangeName,
+                "OrderService <- order.update.from.inventory",
+                MessageRoutes.INVENTORY_ON_AVAILABLE,
+                new UpdateOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
     }
 }
