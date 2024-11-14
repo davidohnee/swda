@@ -141,6 +141,11 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>ch.hslu.swda24hs.g09</groupId>
+                <artifactId>g09-common</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
@@ -232,9 +237,25 @@
                 <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.14.2</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>ch.hslu.swda24hs.g09</groupId>
+            <artifactId>g09-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-aop</artifactId>
+            <version>4.6.5</version>
+        </dependency>
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
@@ -282,6 +303,30 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.23</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-core</artifactId>
+            <version>4.6.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.10.2</version>
         </dependency>
     </dependencies>
 
@@ -904,6 +949,10 @@
             <id>gitlab-maven-swda-stock</id>
             <url>https://gitlab.com/api/v4/projects/39090453/packages/maven</url>
         </repository>
+        <repository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
@@ -911,5 +960,13 @@
             <id>gitlab-site</id>
             <url>https://hslu.pages.switch.ch/edu/bachelor-computer-science/somewhere/${project.artifactId}</url>
         </site>
+        <repository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>

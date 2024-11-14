@@ -2,8 +2,9 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.db.CustomerDBQuery;
-import ch.hslu.swda.entities.Customer;
+import ch.hslu.swda.common.database.CustomerDAO;
+import ch.hslu.swda.common.entities.Customer;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -18,12 +19,12 @@ public class CustomerGetReceiver implements MessageReceiver {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private final String exchangeName;
     private final BusConnector bus;
-    private final CustomerDBQuery dbQuery;
+    private final CustomerDAO customerDAO;
 
-    public CustomerGetReceiver(final String exchangeName, final BusConnector bus, final CustomerDBQuery dbQuery) {
+    public CustomerGetReceiver(final String exchangeName, final BusConnector bus, final CustomerDAO customerDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.dbQuery = dbQuery;
+        this.customerDAO = customerDAO;
     }
 
     @Override
@@ -38,16 +39,16 @@ public class CustomerGetReceiver implements MessageReceiver {
             String msg = switch (route) {
                 case MessageRoutes.CUSTOMER_GET_ENTITY -> {
                     var customerId = deserializeUUID(message);
-                    Customer customer = dbQuery.getCustomerById(customerId);
-                    yield (customer != null) ? MAPPER.writeValueAsString(customer) : null;
+                    Customer customer = customerDAO.findByUUID(customerId);
+                    yield (customer != null) ? MAPPER.writeValueAsString(customer) : "";
                 }
                 case MessageRoutes.CUSTOMER_GET_ENTITYSET -> {
-                    var customers = dbQuery.getAllCustomer();
+                    var customers = customerDAO.findAll();
                     yield MAPPER.writeValueAsString(customers);
                 }
                 default -> {
                     LOG.warn("Unknown route: {}", route);
-                    yield "Route unknown";
+                    yield "";
                 }
             };
 
@@ -62,12 +63,5 @@ public class CustomerGetReceiver implements MessageReceiver {
 
     private UUID deserializeUUID(final String msg) throws JsonProcessingException {
         return MAPPER.readValue(msg, UUID.class);
-    }
-
-    private String serializeCustomer(final Customer customer) throws JsonProcessingException {
-        if (customer == null) {
-            return "Customer not found";
-        }
-        return MAPPER.writeValueAsString(customer);
     }
 }
