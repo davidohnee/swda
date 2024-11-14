@@ -9,6 +9,7 @@ import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.micro.senders.OnItemAvailable;
 import ch.hslu.swda.micro.senders.ReplenishmentClient;
 import com.mongodb.client.MongoDatabase;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PersistentInventory implements Inventory {
@@ -59,6 +59,7 @@ public class PersistentInventory implements Inventory {
                     "Product " + i,
                     BigDecimal.valueOf(10 + i));
             var item = new InventoryItem(product, 100);
+            item.setId(new ObjectId());
             inventory.put(product.getId(), item);
             database.create(item);
         }
@@ -104,6 +105,8 @@ public class PersistentInventory implements Inventory {
             return null;
         }
 
+        LOG.info("Updating item {}", item);
+
         if (newQuantity < 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
@@ -113,7 +116,7 @@ public class PersistentInventory implements Inventory {
         }
 
         item.setQuantity(newQuantity);
-        //this.database.update(inventoryItem);
+        this.database.update(item);
 
         if (newQuantity < item.getReplenishmentThreshold()) {
             try {
@@ -130,7 +133,7 @@ public class PersistentInventory implements Inventory {
                                 } else {
                                     item.setReplenishmentTrackingId(orderInfo.getTrackingId());
                                 }
-                                //this.database.update(inventoryItem);
+                                this.database.update(item);
                             }
                         }
                 );
@@ -151,7 +154,7 @@ public class PersistentInventory implements Inventory {
 
         if (inventoryItem.isStockReplenishment(item)) {
             inventoryItem.handleReplenishment(item);
-            //this.database.update(inventoryItem);
+            this.database.update(inventoryItem);
             LOG.debug("Product {} replenished", item.getProductId());
             return;
         }
