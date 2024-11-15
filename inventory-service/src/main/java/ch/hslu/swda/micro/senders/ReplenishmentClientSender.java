@@ -6,6 +6,7 @@ import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.entities.ReplenishResponseHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,8 @@ public class ReplenishmentClientSender implements ReplenishmentClient {
     public ReplenishmentClientSender(String exchangeName, BusConnector bus) {
         this.exchangeName = exchangeName;
         this.bus = bus;
+
+        this.mapper.registerModule(new JavaTimeModule());
     }
 
     public void replenish(
