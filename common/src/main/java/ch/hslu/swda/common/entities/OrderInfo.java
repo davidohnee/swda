@@ -19,8 +19,25 @@ public final class OrderInfo {
         this.deliveryDate = deliveryDate;
     }
 
+    /**
+     * Constructor for OrderInfo, trackingId is generated
+     * @param productId product id
+     * @param status status of the order
+     * @param quantity quantity of the product
+     * @param deliveryDate delivery date
+     */
     public OrderInfo(int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate) {
         this(UUID.randomUUID(), productId, status, quantity, deliveryDate);
+    }
+
+    /**
+     * Constructor for OrderInfo, trackingId is generated, delivery date is set to today
+     * @param productId product id
+     * @param status status of the order
+     * @param quantity quantity of the product
+     */
+    public OrderInfo(int productId, OrderItemStatus status, int quantity) {
+        this(UUID.randomUUID(), productId, status, quantity, LocalDate.now());
     }
 
     public OrderInfo() {
