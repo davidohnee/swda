@@ -1,5 +1,7 @@
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.common.entities.OrderInfo;
+import ch.hslu.swda.common.entities.OrderItemStatus;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrderResponse;
 import ch.hslu.swda.entities.ReplenishmentStatus;
 import ch.hslu.swda.micro.senders.InventoryClient;
@@ -27,10 +29,11 @@ public class Replenisher {
         this.onItemReplenished = onItemReplenished;
     }
 
-    public ReplenishmentOrderResponse replenish(int productId, int count) throws IOException, InterruptedException {
+    public OrderInfo replenish(int productId, int count) throws IOException, InterruptedException {
         int inStock = this.stock.getItemCount(productId);
-        ReplenishmentStatus status;
+        OrderItemStatus status;
         int immediatelyAvailableQuantity;
+        ReplenishTask task;
 
         LOG.debug("Replenishing product {} with count {} and in stock {}", productId, count, inStock);
 
@@ -39,10 +42,12 @@ public class Replenisher {
 
             // not enough in stock; reserve all and wait for replenishment
             String ticket = this.stock.reserveItem(productId, inStock);
-            LocalDate deliveryDate = this.stock.getItemDeliveryDate(productId);
+
+            // check again next week??
+            LocalDate deliveryDate = LocalDate.now().plusWeeks(1);
 
             ReplenishTaskReservation reservation = new ReplenishTaskReservation(inStock, ticket, deliveryDate);
-            ReplenishTask task = new ReplenishTask(productId, count, reservation);
+            task = new ReplenishTask(productId, count, reservation, null);
             tasks.add(task);
 
             this.inventoryItemGetter.getInventoryItem(productId, (inventoryItem) -> {
@@ -51,19 +56,31 @@ public class Replenisher {
             });
 
             immediatelyAvailableQuantity = 0;
-            status = ReplenishmentStatus.CONFIRMED;
+            status = OrderItemStatus.PENDING;
         } else {
             LOG.info("Enough in stock for product {} ({} >= {})", productId, inStock, count);
             // enough in stock; provide requested amount
             this.stock.orderItem(productId, count);
+
+            LocalDate deliveryDate = this.stock.getItemDeliveryDate(productId);
+
+            task = new ReplenishTask(productId, count, deliveryDate);
+            tasks.add(task);
+
+            this.inventoryItemGetter.getInventoryItem(productId, (inventoryItem) -> {
+                LOG.info("Received inventory item: {}", inventoryItem);
+                task.setProduct(inventoryItem.getProduct());
+            });
+
             immediatelyAvailableQuantity = count;
-            status = ReplenishmentStatus.DONE;
+            status = OrderItemStatus.CONFIRMED;
         }
 
-        return new ReplenishmentOrderResponse(
+        return new OrderInfo(
                 productId,
                 status,
-                immediatelyAvailableQuantity
+                immediatelyAvailableQuantity,
+                task.getDeliveryDate()
         );
     }
 
@@ -85,7 +102,8 @@ public class Replenisher {
                     task.getTrackingId(),
                     task.getProductId(),
                     ReplenishmentStatus.DONE,
-                    task.getCount()
+                    task.getCount(),
+                    task.getDeliveryDate()
             ));
         }
     }

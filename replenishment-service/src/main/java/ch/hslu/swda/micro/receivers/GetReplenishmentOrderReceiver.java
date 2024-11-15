@@ -20,6 +20,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.entities.FullReplenishmentOrder;
 import ch.hslu.swda.micro.Replenisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,8 @@ public final class GetReplenishmentOrderReceiver implements MessageReceiver {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.replenisher = replenisher;
+
+        this.mapper.registerModule(new JavaTimeModule());
     }
 
     /**

@@ -2,28 +2,31 @@ package ch.hslu.swda.dto.replenishment;
 
 import ch.hslu.swda.entities.ReplenishmentStatus;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ReplenishmentOrderResponse {
+public final class ReplenishmentOrderResponse {
     private final UUID trackingId;
     private final int productId;
     private final ReplenishmentStatus status;
     private final int quantity;
+    private final LocalDate deliveryDate;
 
-    public ReplenishmentOrderResponse(UUID trackingId, int productId, ReplenishmentStatus status, int quantity) {
+    public ReplenishmentOrderResponse(UUID trackingId, int productId, ReplenishmentStatus status, int quantity, LocalDate deliveryDate) {
         this.trackingId = trackingId;
         this.productId = productId;
         this.status = status;
         this.quantity = quantity;
+        this.deliveryDate = deliveryDate;
     }
 
-    public ReplenishmentOrderResponse(int productId, ReplenishmentStatus status, int quantity) {
-        this(UUID.randomUUID(), productId, status, quantity);
+    public ReplenishmentOrderResponse(int productId, ReplenishmentStatus status, int quantity, LocalDate deliveryDate) {
+        this(UUID.randomUUID(), productId, status, quantity, deliveryDate);
     }
 
     public ReplenishmentOrderResponse() {
-        this(0, ReplenishmentStatus.PENDING, 0);
+        this(0, ReplenishmentStatus.PENDING, 0, LocalDate.now());
     }
 
     public UUID getTrackingId() {
@@ -42,6 +45,10 @@ public class ReplenishmentOrderResponse {
         return quantity;
     }
 
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,7 +56,8 @@ public class ReplenishmentOrderResponse {
         return productId == that.productId &&
                 Objects.equals(trackingId, that.trackingId) &&
                 status == that.status &&
-                quantity == that.quantity;
+                quantity == that.quantity &&
+                Objects.equals(deliveryDate, that.deliveryDate);
     }
 
     @Override
@@ -63,6 +71,7 @@ public class ReplenishmentOrderResponse {
                 ", productId=" + productId +
                 ", status=" + status +
                 ", quantity=" + quantity +
+                ", deliveryDate=" + deliveryDate +
                 '}';
     }
 }

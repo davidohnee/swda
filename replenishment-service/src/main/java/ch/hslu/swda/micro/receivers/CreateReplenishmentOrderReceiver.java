@@ -17,6 +17,7 @@ package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrder;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrderResponse;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 
 import ch.hslu.swda.micro.Replenisher;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,8 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.replenisher = replenisher;
+
+        this.mapper.registerModule(new JavaTimeModule());
     }
 
     /**
@@ -58,7 +62,7 @@ public final class CreateReplenishmentOrderReceiver implements MessageReceiver {
 
             ReplenishmentOrder request = mapper.readValue(message, ReplenishmentOrder.class);
 
-            ReplenishmentOrderResponse response = replenisher.replenish(request.getProductId(), request.getQuantity());
+            OrderInfo response = replenisher.replenish(request.getProductId(), request.getQuantity());
             String data = (response != null) ? mapper.writeValueAsString(response) : "";
 
             LOG.debug("sending answer [{}] with topic [{}] according to replyTo-property", data, replyTo);

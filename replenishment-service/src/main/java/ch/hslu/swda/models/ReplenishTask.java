@@ -2,6 +2,7 @@ package ch.hslu.swda.models;
 
 import ch.hslu.swda.entities.Product;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,25 +12,37 @@ public class ReplenishTask {
     private final int count;
     private final ReplenishTaskReservation reservation;
     private Product product;
+    private final LocalDate deliveryDate;
 
     public ReplenishTask(
-        int productId,
-        int count,
-        ReplenishTaskReservation reservation,
-        UUID orderId
+            int productId,
+            int count,
+            ReplenishTaskReservation reservation,
+            UUID orderId,
+            LocalDate deliveryDate
     ) {
         this.trackingId = orderId;
         this.productId = productId;
         this.count = count;
         this.reservation = reservation;
+        this.deliveryDate = deliveryDate;
     }
 
     public ReplenishTask(
             int productId,
             int count,
-            ReplenishTaskReservation reservation
+            ReplenishTaskReservation reservation,
+            LocalDate deliveryDate
     ) {
-        this(productId, count, reservation, UUID.randomUUID());
+        this(productId, count, reservation, UUID.randomUUID(), deliveryDate);
+    }
+
+    public ReplenishTask(
+            int productId,
+            int count,
+            LocalDate deliveryDate
+    ) {
+        this(productId, count, null, deliveryDate);
     }
 
     public void setProduct(Product product) {
@@ -56,12 +69,19 @@ public class ReplenishTask {
         return productId;
     }
 
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
     public boolean completed() {
+        if (reservation == null) {
+            return this.shouldHaveArrived();
+        }
         return count == this.reservation.getReservedCount();
     }
 
     public boolean shouldHaveArrived() {
-        return reservation.shouldHaveArrived();
+        return deliveryDate.isBefore(LocalDate.now());
     }
 
     @Override
