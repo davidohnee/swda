@@ -41,7 +41,11 @@
                             <td>{{ item.product.name }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>
-                                {{ item.deliveryDate.toLocaleDateString() }}
+                                {{
+                                    item.deliveryDate
+                                        ? item.deliveryDate.toLocaleDateString()
+                                        : "N/A"
+                                }}
                             </td>
                             <td>
                                 <div

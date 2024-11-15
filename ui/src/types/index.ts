@@ -15,7 +15,7 @@ export interface ReplenishmentItem {
     product: Product;
     quantity: number;
     status: "PENDING" | "CONFIRMED" | "DONE";
-    deliveryDate: Date;
+    deliveryDate: Date | null;
 }
 
 interface Person {

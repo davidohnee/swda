@@ -3,7 +3,7 @@ import type { ErrorResponse, ReplenishmentItem } from "@/types";
 export const replenishments = {
     _mapReplenishmentItem: (item: any) => ({
         ...item,
-        deliveryDate: new Date(item.deliveryDate),
+        deliveryDate: item.deliveryDate ? new Date(item.deliveryDate) : null,
     }),
     async getAll(): Promise<ReplenishmentItem[] | ErrorResponse> {
         return fetch("/api/v1/replenishments")

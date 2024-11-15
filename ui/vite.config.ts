@@ -15,9 +15,9 @@ export default defineConfig({
     server: {
         proxy: {
             "/api/v1": {
-                target: "http://localhost:8090",
+                target: "https://gw.rocky-linux-009.prod.swda.labservices.ch/",
                 changeOrigin: true,
-                secure: false,
+                secure: true,
             },
         },
     },
