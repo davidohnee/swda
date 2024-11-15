@@ -1,12 +1,16 @@
 <script setup lang="ts">
-    import { ref, onMounted } from "vue";
+    import { ref, onMounted, computed } from "vue";
     import { api } from "@/api";
-    import type { ReplenishmentItem } from "@/types";
+    import type { ErrorResponse, ReplenishmentItem } from "@/types";
+    import ErrorLoader from "@/components/ErrorLoader.vue";
 
-    const replenishments = ref<ReplenishmentItem[]>([]);
+    const response = ref<ReplenishmentItem[] | ErrorResponse>();
+    const replenishments = computed(
+        () => response.value as ReplenishmentItem[]
+    );
 
     const fetchReplenishments = async () => {
-        replenishments.value = await api.replenishments.getAll();
+        response.value = await api.replenishments.getAll();
     };
 
     onMounted(() => {
@@ -16,38 +20,52 @@
 <template>
     <div class="replenishments">
         <h1>Replenishments</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Tracking ID</th>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="item in replenishments"
-                    :key="item.trackingId"
-                >
-                    <td>{{ item.trackingId }}</td>
-                    <td>{{ item.product.name }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>
-                        <div
-                            class="status"
-                            :class="{
-                                success: ['DONE', 'CONFIRMED'].includes(
-                                    item.status
-                                ),
-                                info: item.status === 'PENDING',
-                            }"
+        <ErrorLoader :content="response">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tracking ID</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Delivery Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="item in replenishments"
+                            :key="item.trackingId"
                         >
-                            {{ item.status }}
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            <td>{{ item.trackingId }}</td>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>
+                                {{ item.deliveryDate.toLocaleDateString() }}
+                            </td>
+                            <td>
+                                <div
+                                    class="status"
+                                    :class="{
+                                        success: ['DONE', 'CONFIRMED'].includes(
+                                            item.status
+                                        ),
+                                        info: item.status === 'PENDING',
+                                    }"
+                                >
+                                    {{ item.status }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p
+                    class="muted center"
+                    v-if="replenishments.length === 0"
+                >
+                    <em> No replenishments found. </em>
+                </p>
+            </div>
+        </ErrorLoader>
     </div>
 </template>

@@ -1,6 +1,12 @@
 <script setup lang="ts">
     import { RouterView } from "vue-router";
     import Sidebar from "./components/MainSidebar.vue";
+    import { version } from "../package.json";
+
+    console.log(
+        `%cSWDA G09 v${version}`,
+        "font-size: 2em; background: linear-gradient(to right top, #00bd7e, #535bf2);-webkit-background-clip: text;-webkit-text-fill-color: transparent;"
+    );
 </script>
 
 <template>
