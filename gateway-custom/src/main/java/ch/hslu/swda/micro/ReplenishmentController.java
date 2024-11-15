@@ -79,6 +79,7 @@ public class ReplenishmentController {
 
             LOG.info("Received response: {}", response);
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             List<ReplenishmentOrder> replenishments = objectMapper.readValue(response, new TypeReference<List<ReplenishmentOrder>>() {});
 
             return Mono.just(replenishments);

@@ -12,6 +12,7 @@
 
 package ch.hslu.swda.model;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -28,7 +29,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
   ReplenishmentOrder.JSON_PROPERTY_TRACKING_ID,
   ReplenishmentOrder.JSON_PROPERTY_STATUS,
   ReplenishmentOrder.JSON_PROPERTY_PRODUCT,
-  ReplenishmentOrder.JSON_PROPERTY_QUANTITY
+  ReplenishmentOrder.JSON_PROPERTY_QUANTITY,
+  ReplenishmentOrder.JSON_PROPERTY_DELIERY_DATE
 })
 @JsonTypeName("ReplenishmentOrder")
 @Introspected
@@ -79,10 +81,14 @@ public class ReplenishmentOrder {
     public static final String JSON_PROPERTY_QUANTITY = "quantity";
     private int quantity;
 
-    public ReplenishmentOrder(UUID trackingId, StatusEnum status, Product product) {
+    public static final String JSON_PROPERTY_DELIERY_DATE = "deliveryDate";
+    private LocalDate deliveryDate;
+
+    public ReplenishmentOrder(UUID trackingId, StatusEnum status, Product product, LocalDate deliveryDate) {
         this.trackingId = trackingId;
         this.status = status;
         this.product = product;
+        this.deliveryDate = deliveryDate;
         this.quantity = quantity;
     }
 
@@ -172,6 +178,24 @@ public class ReplenishmentOrder {
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @Schema(name = "deliveryDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_DELIERY_DATE)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public LocalDate getDeliveryDate() {
+        return deliveryDate;
+    }
+
+    @JsonProperty(JSON_PROPERTY_DELIERY_DATE)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public ReplenishmentOrder deliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+        return this;
     }
 
     @Override
