@@ -1,27 +1,13 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed } from "vue";
-    import { api } from "@/api";
-    import type { Customer } from "@/types";
     import ErrorLoader from "@/components/ErrorLoader.vue";
-    import type { ApiResponse } from "@/api/helper";
+    import { useCustomerStore } from "@/stores/customers";
 
-    const response = ref<ApiResponse<Customer[]>>();
-    const customers = computed(
-        () => (response.value?.data ?? []) as Customer[]
-    );
-
-    const fetchCustomers = async () => {
-        response.value = await api.cutomers.getAll();
-    };
-
-    onMounted(() => {
-        fetchCustomers();
-    });
+    const customers = useCustomerStore();
 </script>
 <template>
     <div class="customers">
         <h1>Customers</h1>
-        <ErrorLoader :content="response">
+        <ErrorLoader :content="customers.response">
             <div>
                 <table>
                     <thead>
@@ -35,7 +21,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="item in customers"
+                            v-for="item in customers.customers"
                             :key="item.id"
                         >
                             <td>{{ item.id }}</td>
@@ -53,7 +39,7 @@
                 </table>
                 <p
                     class="muted center"
-                    v-if="customers.length === 0"
+                    v-if="customers.customers.length === 0"
                 >
                     <em> No customers found. </em>
                 </p>

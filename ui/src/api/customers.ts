@@ -1,7 +1,7 @@
 import type { Customer } from "@/types";
 import { mapApiResponse } from "./helper";
 
-export const cutomers = {
+export const customers = {
     async getAll() {
         return fetch("/api/v1/customers").then(mapApiResponse<Customer[]>);
     },

@@ -1,24 +1,12 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed } from "vue";
-    import { api } from "@/api";
+    import { ref } from "vue";
     import type { InventoryItem } from "@/types";
     import EditInventoryItemDialog from "@/components/EditInventoryItemDialog.vue";
     import ErrorLoader from "@/components/ErrorLoader.vue";
-    import type { ApiResponse } from "@/api/helper";
+    import { useInventoryStore } from "@/stores/inventory";
 
-    const response = ref<ApiResponse<InventoryItem[]>>();
-    const inventory = computed(
-        () => (response.value?.data ?? []) as InventoryItem[]
-    );
+    const inventory = useInventoryStore();
     const editDialog = ref<typeof EditInventoryItemDialog>();
-
-    const fetchInventory = async () => {
-        response.value = await api.inventory.getAll();
-    };
-
-    onMounted(() => {
-        fetchInventory();
-    });
 
     const edit = (item: InventoryItem) => {
         editDialog.value!.open(item);
@@ -28,10 +16,10 @@
 <template>
     <div class="inventory">
         <h1>Inventory</h1>
-        <ErrorLoader :content="response">
+        <ErrorLoader :content="inventory.response">
             <div>
                 <EditInventoryItemDialog
-                    @close="fetchInventory"
+                    @close="inventory.refresh"
                     ref="editDialog"
                 />
                 <table>
@@ -47,7 +35,7 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="item in inventory"
+                            v-for="item in inventory.inventory"
                             :key="item.product.id"
                         >
                             <td>{{ item.product.id }}</td>

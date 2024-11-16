@@ -46,10 +46,22 @@ export interface OrderItem {
     quantity: number;
 }
 
+export interface OrderCreate {
+    dateTime: Date;
+    orderItems: {
+        productId: number;
+        quantity: number;
+    }[];
+    orderType: "CUSTOMER_ORDER" | "REPLENISHMENT_ORDER";
+    customerId: string;
+    sellerId: string;
+    destinationId: string;
+}
+
 export interface Order {
     id: string;
-    dateTime: Date;
     status: "PENDING" | "CONFIRMED" | "DONE";
+    dateTime: Date;
     orderItems: OrderItem[];
     price: number;
     orderType: "CUSTOMER_ORDER" | "REPLENISHMENT_ORDER";

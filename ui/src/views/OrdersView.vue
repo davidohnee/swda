@@ -1,26 +1,32 @@
 <script setup lang="ts">
-    import { ref, onMounted, computed } from "vue";
-    import { api } from "@/api";
-    import type { Order } from "@/types";
+    import CreateOrderDialog from "@/components/CreateOrderDialog.vue";
     import ErrorLoader from "@/components/ErrorLoader.vue";
-    import type { ApiResponse } from "@/api/helper";
+    import { useOrderStore } from "@/stores/orders";
+    import { ref } from "vue";
 
-    const response = ref<ApiResponse<Order[]>>();
-    const orders = computed(() => (response.value?.data ?? []) as Order[]);
+    const orders = useOrderStore();
 
-    const fetchOrders = async () => {
-        response.value = await api.orders.getAll();
+    const orderDialog = ref<typeof CreateOrderDialog>();
+
+    const order = () => {
+        orderDialog.value!.open();
     };
-
-    onMounted(() => {
-        fetchOrders();
-    });
 </script>
 <template>
     <div class="orders">
         <h1>Orders</h1>
-        <ErrorLoader :content="response">
+        <button
+            class="create"
+            @click="order"
+        >
+            Create order
+        </button>
+        <ErrorLoader :content="orders.response">
             <div>
+                <CreateOrderDialog
+                    @close="orders.refresh"
+                    ref="orderDialog"
+                />
                 <table>
                     <thead>
                         <tr>
@@ -34,10 +40,14 @@
                     </thead>
                     <tbody>
                         <tr
-                            v-for="item in orders"
+                            v-for="item in orders.orders"
                             :key="item.id"
                         >
-                            <td>{{ item.id }}</td>
+                            <td>
+                                <RouterLink :to="`/orders/${item.id}`">
+                                    {{ item.id }}
+                                </RouterLink>
+                            </td>
                             <td>
                                 <ul>
                                     <li
@@ -83,7 +93,7 @@
                 </table>
                 <p
                     class="muted center"
-                    v-if="orders.length === 0"
+                    v-if="orders.orders.length === 0"
                 >
                     <em> No orders found. </em>
                 </p>
@@ -91,3 +101,15 @@
         </ErrorLoader>
     </div>
 </template>
+
+<style scoped>
+    .orders {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .create {
+        margin-bottom: 1rem;
+        margin-left: auto;
+    }
+</style>
