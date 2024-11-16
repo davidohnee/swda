@@ -1,11 +1,12 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from "vue";
     import { api } from "@/api";
-    import type { ErrorResponse, Order } from "@/types";
+    import type { Order } from "@/types";
     import ErrorLoader from "@/components/ErrorLoader.vue";
+    import type { ApiResponse } from "@/api/helper";
 
-    const response = ref<ErrorResponse | Order[]>();
-    const orders = computed(() => response.value as Order[]);
+    const response = ref<ApiResponse<Order[]>>();
+    const orders = computed(() => (response.value?.data ?? []) as Order[]);
 
     const fetchOrders = async () => {
         response.value = await api.orders.getAll();

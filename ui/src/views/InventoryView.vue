@@ -1,12 +1,15 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from "vue";
     import { api } from "@/api";
-    import type { ErrorResponse, InventoryItem } from "@/types";
+    import type { InventoryItem } from "@/types";
     import EditInventoryItemDialog from "@/components/EditInventoryItemDialog.vue";
     import ErrorLoader from "@/components/ErrorLoader.vue";
+    import type { ApiResponse } from "@/api/helper";
 
-    const response = ref<InventoryItem[] | ErrorResponse>();
-    const inventory = computed(() => response.value as InventoryItem[]);
+    const response = ref<ApiResponse<InventoryItem[]>>();
+    const inventory = computed(
+        () => (response.value?.data ?? []) as InventoryItem[]
+    );
     const editDialog = ref<typeof EditInventoryItemDialog>();
 
     const fetchInventory = async () => {
@@ -95,8 +98,3 @@
         </ErrorLoader>
     </div>
 </template>
-
-<style>
-    .inventory {
-    }
-</style>

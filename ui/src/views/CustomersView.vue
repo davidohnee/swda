@@ -1,11 +1,14 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from "vue";
     import { api } from "@/api";
-    import type { Customer, ErrorResponse, Order } from "@/types";
+    import type { Customer } from "@/types";
     import ErrorLoader from "@/components/ErrorLoader.vue";
+    import type { ApiResponse } from "@/api/helper";
 
-    const response = ref<ErrorResponse | Customer[]>();
-    const customers = computed(() => response.value as Customer[]);
+    const response = ref<ApiResponse<Customer[]>>();
+    const customers = computed(
+        () => (response.value?.data ?? []) as Customer[]
+    );
 
     const fetchCustomers = async () => {
         response.value = await api.cutomers.getAll();

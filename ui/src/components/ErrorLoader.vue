@@ -1,20 +1,21 @@
 <script setup lang="ts">
+    import type { ApiResponse } from "@/api/helper";
+    import type { MicronautErrorResponse } from "@/types";
     import { computed, type PropType } from "vue";
-    import type { ErrorResponse } from "@/types";
 
     const props = defineProps({
         content: {
-            type: Object as PropType<ErrorResponse | any | undefined>,
+            type: Object as PropType<ApiResponse<any>>,
             required: false,
         },
     });
 
     const isErrorResponse = computed(() => {
-        return castedError.value._embedded !== undefined;
+        return props.content?.error != null;
     });
 
     const castedError = computed(() => {
-        return props.content as ErrorResponse;
+        return props.content?.error as MicronautErrorResponse;
     });
 </script>
 

@@ -1,10 +1,11 @@
-import type { Customer, ErrorResponse } from "@/types";
+import type { Customer } from "@/types";
+import { mapApiResponse } from "./helper";
 
 export const cutomers = {
-    async getAll(): Promise<Customer[] | ErrorResponse> {
-        return fetch("/api/v1/customers").then((res) => res.json());
+    async getAll() {
+        return fetch("/api/v1/customers").then(mapApiResponse<Customer[]>);
     },
-    async get(id: string): Promise<Customer | ErrorResponse> {
-        return fetch(`/api/v1/customers/${id}`).then((res) => res.json());
+    async get(id: string) {
+        return fetch(`/api/v1/customers/${id}`).then(mapApiResponse<Customer>);
     },
 };

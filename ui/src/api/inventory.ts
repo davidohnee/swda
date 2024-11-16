@@ -1,11 +1,14 @@
-import type { ErrorResponse, InventoryItem } from "@/types";
+import type { InventoryItem } from "@/types";
+import { mapApiResponse } from "./helper";
 
 export const inventory = {
-    async getAll(): Promise<InventoryItem[] | ErrorResponse> {
-        return fetch("/api/v1/inventory").then((res) => res.json());
+    async getAll() {
+        return fetch("/api/v1/inventory").then(mapApiResponse<InventoryItem[]>);
     },
-    async get(id: number): Promise<InventoryItem | ErrorResponse> {
-        return fetch(`/api/v1/inventory/${id}`).then((res) => res.json());
+    async get(id: number) {
+        return fetch(`/api/v1/inventory/${id}`).then(
+            mapApiResponse<InventoryItem>
+        );
     },
     async update(
         id: number,
@@ -20,6 +23,6 @@ export const inventory = {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(item),
-        }).then((res) => res.json());
+        }).then(mapApiResponse<any>);
     },
 };

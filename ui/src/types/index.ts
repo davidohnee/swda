@@ -57,7 +57,7 @@ export interface Order {
     seller: Employee;
 }
 
-export interface ErrorResponse {
+export interface MicronautErrorResponse {
     message: string;
     _links: {
         self: {

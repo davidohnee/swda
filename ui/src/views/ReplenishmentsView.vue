@@ -1,12 +1,13 @@
 <script setup lang="ts">
     import { ref, onMounted, computed } from "vue";
     import { api } from "@/api";
-    import type { ErrorResponse, ReplenishmentItem } from "@/types";
+    import type { ReplenishmentItem } from "@/types";
     import ErrorLoader from "@/components/ErrorLoader.vue";
+    import type { ApiResponse } from "@/api/helper";
 
-    const response = ref<ReplenishmentItem[] | ErrorResponse>();
+    const response = ref<ApiResponse<ReplenishmentItem[]>>();
     const replenishments = computed(
-        () => response.value as ReplenishmentItem[]
+        () => (response.value?.data ?? []) as ReplenishmentItem[]
     );
 
     const fetchReplenishments = async () => {
