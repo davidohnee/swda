@@ -42,10 +42,4 @@
         width: calc(100% - 1em);
         height: calc(100% - 2em);
     }
-
-    @media screen and (max-width: 750px) {
-        .body {
-            grid-template-columns: 1fr;
-        }
-    }
 </style>

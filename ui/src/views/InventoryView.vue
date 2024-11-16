@@ -38,7 +38,13 @@
                             v-for="item in inventory.inventory"
                             :key="item.product.id"
                         >
-                            <td>{{ item.product.id }}</td>
+                            <td>
+                                <RouterLink
+                                    :to="`/inventory/${item.product.id}`"
+                                >
+                                    {{ item.product.id }}
+                                </RouterLink>
+                            </td>
                             <td>{{ item.product.name }}</td>
                             <td>${{ item.product.price }}</td>
                             <td class="multi-line">

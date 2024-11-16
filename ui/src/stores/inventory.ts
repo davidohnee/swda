@@ -24,7 +24,7 @@ export const useInventoryStore = defineStore("inventory", () => {
         response,
         inventory,
         error,
-        getProductById: (id: number) =>
+        getByProductId: (id: number) =>
             inventory.value.find((o) => o.product.id === id),
         refresh: fetchInventory,
     };

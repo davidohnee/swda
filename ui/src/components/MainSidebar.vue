@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import Logo from "@/assets/logo.svg";
+    import { version } from "../../package.json";
 </script>
 <template>
     <div class="navigator">
