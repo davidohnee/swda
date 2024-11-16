@@ -66,6 +66,10 @@ public final class ReplenishmentService implements AutoCloseable {
         this.receiveGetAllReplenishmentOrderMessages();
     }
 
+    public void heartbeat() {
+        this.replenisher.onTimer();
+    }
+
     /**
      * @throws IOException
      */

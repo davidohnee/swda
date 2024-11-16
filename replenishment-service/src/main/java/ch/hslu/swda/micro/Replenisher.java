@@ -33,48 +33,45 @@ public class Replenisher {
         int inStock = this.stock.getItemCount(productId);
         OrderItemStatus status;
         int immediatelyAvailableQuantity;
-        ReplenishTask task;
+        ReplenishTaskReservation reservation = null;
+        LocalDate deliveryDate = null;
 
         LOG.debug("Replenishing product {} with count {} and in stock {}", productId, count, inStock);
 
         if (inStock < count) {
-            LOG.info("Not enough in stock for product {} ({} < {})", productId, inStock, count);
-
             // not enough in stock; reserve all and wait for replenishment
             String ticket = this.stock.reserveItem(productId, inStock);
 
             // check again next week??
-            LocalDate deliveryDate = LocalDate.now().plusWeeks(1);
+            var checkAgain = LocalDate.now().plusWeeks(1);
 
-            ReplenishTaskReservation reservation = new ReplenishTaskReservation(inStock, ticket, deliveryDate);
-            task = new ReplenishTask(productId, count, reservation, null);
-            tasks.add(task);
+            LOG.info("Not enough in stock for product {} ({} < {}), will check again on {}",
+                    productId, inStock, count, checkAgain);
 
-            this.inventoryItemGetter.getInventoryItem(productId, (inventoryItem) -> {
-                LOG.info("Received inventory item: {}", inventoryItem);
-                task.setProduct(inventoryItem.getProduct());
-            });
+            reservation = new ReplenishTaskReservation(inStock, ticket, checkAgain);
 
             immediatelyAvailableQuantity = 0;
             status = OrderItemStatus.PENDING;
         } else {
-            LOG.info("Enough in stock for product {} ({} >= {})", productId, inStock, count);
             // enough in stock; provide requested amount
             this.stock.orderItem(productId, count);
 
-            LocalDate deliveryDate = this.stock.getItemDeliveryDate(productId);
+            deliveryDate = this.stock.getItemDeliveryDate(productId);
 
-            task = new ReplenishTask(productId, count, deliveryDate);
-            tasks.add(task);
-
-            this.inventoryItemGetter.getInventoryItem(productId, (inventoryItem) -> {
-                LOG.info("Received inventory item: {}", inventoryItem);
-                task.setProduct(inventoryItem.getProduct());
-            });
+            LOG.info("Enough in stock for product {} ({} >= {}), will be delivered on {}",
+                    productId, inStock, count, deliveryDate);
 
             immediatelyAvailableQuantity = count;
             status = OrderItemStatus.CONFIRMED;
         }
+
+        var task = new ReplenishTask(productId, count, reservation, deliveryDate);
+        tasks.add(task);
+
+        this.inventoryItemGetter.getInventoryItem(productId, (inventoryItem) -> {
+            LOG.info("Received inventory item: {}", inventoryItem);
+            task.setProduct(inventoryItem.getProduct());
+        });
 
         return new OrderInfo(
                 productId,
@@ -88,12 +85,23 @@ public class Replenisher {
         LOG.debug("Checking replenishment tasks");
         List<ReplenishTask> doneTasks = new ArrayList<>();
         for (ReplenishTask task : tasks) {
-            if (task.shouldHaveArrived()) {
-                LOG.info("Replenishing task for product {} is due", task.getProductId());
-                this.stock.freeReservation(task.getReservation().getReservationTicket());
-                this.stock.orderItem(task.getProductId(), task.getCount());
-                doneTasks.add(task);
+            if (!task.getReservation().shouldHaveArrived()) {
+                continue;
             }
+
+            var nowInStock = this.stock.getItemCount(task.getProductId());
+            var missing = task.getCount() - task.getReservation().getReservedCount();
+            if (nowInStock < missing) {
+                task.getReservation().setCheckAgain(LocalDate.now().plusWeeks(1));
+                LOG.info("Still not enough items of {}, check again on {}",
+                        task.getProductId(), task.getReservation().getCheckAgain());
+                continue;
+            }
+
+            LOG.info("Item {} restocked", task.getProductId());
+            this.stock.freeReservation(task.getReservation().getReservationTicket());
+            this.stock.orderItem(task.getProductId(), task.getCount());
+            doneTasks.add(task);
         }
 
         for (ReplenishTask task : doneTasks) {
@@ -101,7 +109,7 @@ public class Replenisher {
             this.onItemReplenished.onItemReplenished(new ReplenishmentOrderResponse(
                     task.getTrackingId(),
                     task.getProductId(),
-                    ReplenishmentStatus.DONE,
+                    ReplenishmentStatus.CONFIRMED,
                     task.getCount(),
                     task.getDeliveryDate()
             ));

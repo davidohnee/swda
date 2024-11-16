@@ -20,12 +20,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Demo für Applikationsstart.
+ * Applikationsstart.
  */
 public final class Application {
 
@@ -71,7 +73,12 @@ public final class Application {
         if (!"OFF".equals(System.getenv("RABBIT"))) {
             if (waitForRabbitMQ()) {
                 final Timer timer = new Timer();
-                timer.schedule(new HeartBeat(), 0, 10000);
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR_OF_DAY, 2);
+                today.set(Calendar.MINUTE, 0);
+                today.set(Calendar.SECOND, 0);
+
+                timer.schedule(new HeartBeat(), 0, TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
             } else {
                 LOG.error("RabbitMQ not available, exiting application.");
             }
@@ -101,6 +108,7 @@ public final class Application {
 
         @Override
         public void run() {
+            this.service.heartbeat();
         }
     }
 }
