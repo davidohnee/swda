@@ -1,5 +1,7 @@
 package ch.hslu.swda.models;
 
+import ch.hslu.swda.common.entities.ReplenishmentOrder;
+import ch.hslu.swda.common.entities.SimpleReplenishmentOrder;
 import ch.hslu.swda.entities.Product;
 
 import java.time.LocalDate;
@@ -45,6 +47,16 @@ public class ReplenishTask {
         this(productId, count, null, deliveryDate);
     }
 
+    public static ReplenishTask fromSimpleReplenishmentOrder(SimpleReplenishmentOrder task) {
+        return new ReplenishTask(
+                task.getProductId(),
+                task.getQuantity(),
+                null,
+                task.getTrackingId(),
+                task.getDeliveryDate()
+        );
+    }
+
     public void setProduct(Product product) {
         this.product = product;
     }
@@ -82,6 +94,16 @@ public class ReplenishTask {
 
     public boolean shouldHaveArrived() {
         return deliveryDate.isBefore(LocalDate.now());
+    }
+
+    public SimpleReplenishmentOrder toSimpleReplenishmentOrder() {
+        return new SimpleReplenishmentOrder(
+                this.trackingId,
+                this.deliveryDate,
+                ReplenishmentOrder.StatusEnum.CONFIRMED,
+                this.productId,
+                this.count
+        );
     }
 
     @Override

@@ -24,6 +24,7 @@ import ch.hslu.swda.micro.senders.OnItemReplenishedSender;
 import ch.hslu.swda.stock.api.StockFactory;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +42,14 @@ public final class ReplenishmentService implements AutoCloseable {
     private final BusConnector bus;
     private final Replenisher replenisher;
     private final ObjectMapper mapper = new ObjectMapper();
+    private final MongoDatabase database;
 
     /**
      * @throws IOException      IO-Fehler.
      * @throws TimeoutException Timeout.
      */
-    ReplenishmentService() throws IOException, TimeoutException {
+    ReplenishmentService(MongoDatabase database) throws IOException, TimeoutException {
+        this.database = database;
         // thread info
         String threadName = Thread.currentThread().getName();
         LOG.debug("[Thread: {}] Service started", threadName);
@@ -59,7 +62,8 @@ public final class ReplenishmentService implements AutoCloseable {
         this.replenisher = new Replenisher(
                 StockFactory.getStock(),
                 new InventoryItemGetter(this.exchangeName, this.bus),
-                new OnItemReplenishedSender(this.exchangeName, this.bus));
+                new OnItemReplenishedSender(this.exchangeName, this.bus),
+                this.database);
 
         // start message receivers
         this.receiveCreateReplenishmentOrderMessages();
