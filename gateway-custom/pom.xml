@@ -18,16 +18,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ch.hslu.swda24fs.g99</groupId>
-    <artifactId>g99-gateway-sample</artifactId>
+    <groupId>ch.hslu.swda24fs.g09</groupId>
+    <artifactId>g09-gateway-custom</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>g99-gateway-sample</name>
+    <name>g09-gateway-custom</name>
     <description>
-        (Gateway-)Microservice basierend auf micronaut.io in Modul SWDA für Gruppe g99.
+        (Gateway-)Microservice basierend auf micronaut.io in Modul SWDA für Gruppe g09.
     </description>
-    <url>https://gitlab.switch.ch/${scm.group.name}/g99/${project.artifactId}</url>
+    <url>https://gitlab.switch.ch/${scm.group.name}/g09/${project.artifactId}</url>
 
     <organization>
         <name>Hochschule Luzern - Informatik</name>
@@ -86,7 +86,7 @@
         <scm.developer.uid>${user.name}</scm.developer.uid>
         <docker.user>${scm.developer.uid}</docker.user>
         <docker.base.image>amazoncorretto:21.0.4-alpine</docker.base.image>
-        <docker.image>swda-24hs/gateway-sample</docker.image>
+        <docker.image>swda-24hs/gateway-custom</docker.image>
         <docker.port>8090</docker.port>
         
         <project.build.targetJdk>21</project.build.targetJdk>

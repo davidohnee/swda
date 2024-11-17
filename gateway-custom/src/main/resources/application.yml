@@ -1,6 +1,6 @@
 micronaut:
     application:
-        name: gateway-sample
+        name: gateway-custom
     server:
         port: 8090
     router:

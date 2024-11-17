@@ -1,5 +1,5 @@
-# Modul SWDA - Gateway Microservice Sample
-Beispiel (Gateway-)Microservice für SWDA, basierend auf [micronaut.io](https://micronaut.io/) für g99.
+# Modul SWDA - Gateway Microservice
+Beispiel (Gateway-)Microservice für SWDA, basierend auf [micronaut.io](https://micronaut.io/) für g09.
 * Der Service nutzt [Logback](http://logback.qos.ch/) über die [SLF4J](http://www.slf4j.org/)-
   Schnittstelle für Logging.
 * Im Package `ch.hslu.swda.entities` befindet sich das (sehr kleine) Domain Model.
@@ -18,8 +18,8 @@ Beispiel (Gateway-)Microservice für SWDA, basierend auf [micronaut.io](https://
   zur Verfügung.
 
 ### Docker Build (nativ)
-* Erstellen des Docker-Images: `docker build . -t "swda/gateway-sample"`
-* Starten des Containers: `docker run -d --name swda-gateway -p 8090:8090 swda/gateway-sample`
+* Erstellen des Docker-Images: `docker build . -t "swda/gateway-custom"`
+* Starten des Containers: `docker run -d --name swda-gateway -p 8090:8090 swda/gateway-custom`
 * Logs verfolgen (tail): `docker logs swda-container`
 * Stoppen des Containers: `docker stop swda-container`
 Hinweis: Passen Sie das Portmapping wenn nötig an.

@@ -42,7 +42,7 @@ final class TCPingTestContainerIT {
 
     private static final Logger LOG = LoggerFactory.getLogger(TCPingTestContainerIT.class);
     private static final int PORT = 8090;
-    private static final String IMAGE = "swda-24hs/gateway-sample:latest";
+    private static final String IMAGE = "swda-24hs/gateway-custom:latest";
 
     @Container
     private final GenericContainer<?> container

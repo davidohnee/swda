@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 -->
-<site name="HSLU - swda_gateway_sample" xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<site name="HSLU - swda_gateway_custom" xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 http://maven.apache.org/xsd/site-2.0.0.xsd">
     <bannerLeft href="https://www.hslu.ch/informatik/">
         <image src="images/HSLU-Logo-21-klein.png" alt="Hochschule Luzern - Informatik" />
