@@ -1,8 +1,10 @@
 package ch.hslu.swda.models;
 
 import ch.hslu.swda.common.entities.ReplenishmentOrder;
+import ch.hslu.swda.common.entities.ReplenishmentReservation;
 import ch.hslu.swda.common.entities.SimpleReplenishmentOrder;
 import ch.hslu.swda.entities.Product;
+import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -12,31 +14,33 @@ public class ReplenishTask {
     private final UUID trackingId;
     private final int productId;
     private final int count;
-    private final ReplenishTaskReservation reservation;
+    private ReplenishmentReservation reservation;
     private Product product;
-    private final LocalDate deliveryDate;
+    private LocalDate deliveryDate;
+    private ObjectId id;
 
     public ReplenishTask(
             int productId,
             int count,
-            ReplenishTaskReservation reservation,
+            ReplenishmentReservation reservation,
             UUID orderId,
-            LocalDate deliveryDate
+            LocalDate deliveryDate, ObjectId id
     ) {
         this.trackingId = orderId;
         this.productId = productId;
         this.count = count;
         this.reservation = reservation;
         this.deliveryDate = deliveryDate;
+        this.id = id;
     }
 
     public ReplenishTask(
             int productId,
             int count,
-            ReplenishTaskReservation reservation,
+            ReplenishmentReservation reservation,
             LocalDate deliveryDate
     ) {
-        this(productId, count, reservation, UUID.randomUUID(), deliveryDate);
+        this(productId, count, reservation, UUID.randomUUID(), deliveryDate, new ObjectId());
     }
 
     public ReplenishTask(
@@ -51,9 +55,10 @@ public class ReplenishTask {
         return new ReplenishTask(
                 task.getProductId(),
                 task.getQuantity(),
-                null,
+                task.getReservation(),
                 task.getTrackingId(),
-                task.getDeliveryDate()
+                task.getDeliveryDate(),
+                task.getId()
         );
     }
 
@@ -69,8 +74,12 @@ public class ReplenishTask {
         return trackingId;
     }
 
-    public ReplenishTaskReservation getReservation() {
+    public ReplenishmentReservation getReservation() {
         return reservation;
+    }
+
+    public void setReservation(ReplenishmentReservation reservation) {
+        this.reservation = reservation;
     }
 
     public int getCount() {
@@ -83,6 +92,14 @@ public class ReplenishTask {
 
     public LocalDate getDeliveryDate() {
         return deliveryDate;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
+    }
+
+    public ObjectId getId() {
+        return id;
     }
 
     public boolean completed() {
@@ -102,7 +119,9 @@ public class ReplenishTask {
                 this.deliveryDate,
                 ReplenishmentOrder.StatusEnum.CONFIRMED,
                 this.productId,
-                this.count
+                this.count,
+                this.reservation,
+                this.id
         );
     }
 
@@ -116,5 +135,16 @@ public class ReplenishTask {
     @Override
     public int hashCode() {
         return Objects.hash(trackingId, productId, count, reservation);
+    }
+
+    @Override
+    public String toString() {
+        return "ReplenishTask [" +
+                "trackingId='" + this.trackingId + '\'' +
+                ", productId='" + this.productId + '\'' +
+                ", count='" + this.count + '\'' +
+                ", reservation='" + this.reservation + '\'' +
+                ", deliveryDate='" + this.deliveryDate + '\'' +
+                ']';
     }
 }

@@ -3,12 +3,12 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.common.database.ReplenishmentDAO;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemStatus;
+import ch.hslu.swda.common.entities.ReplenishmentReservation;
 import ch.hslu.swda.dto.replenishment.ReplenishmentOrderResponse;
 import ch.hslu.swda.entities.ReplenishmentStatus;
 import ch.hslu.swda.micro.senders.InventoryClient;
 import ch.hslu.swda.micro.senders.OnItemReplenished;
 import ch.hslu.swda.models.ReplenishTask;
-import ch.hslu.swda.models.ReplenishTaskReservation;
 import ch.hslu.swda.stock.api.Stock;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class Replenisher {
         int inStock = this.stock.getItemCount(productId);
         OrderItemStatus status;
         int immediatelyAvailableQuantity;
-        ReplenishTaskReservation reservation = null;
+        ReplenishmentReservation reservation = null;
         LocalDate deliveryDate = null;
 
         LOG.debug("Replenishing product {} with count {} and in stock {}", productId, count, inStock);
@@ -77,7 +77,7 @@ public class Replenisher {
             LOG.info("Not enough in stock for product {} ({} < {}), will check again on {}",
                     productId, inStock, count, checkAgain);
 
-            reservation = new ReplenishTaskReservation(inStock, ticket, checkAgain);
+            reservation = new ReplenishmentReservation(inStock, ticket, checkAgain);
 
             immediatelyAvailableQuantity = 0;
             status = OrderItemStatus.PENDING;
@@ -111,37 +111,56 @@ public class Replenisher {
         );
     }
 
+    private boolean checkTaskAgain(ReplenishTask task) {
+        if (task.getReservation() == null) {
+            return false;
+        }
+
+        if (task.getReservation().getCheckAgain().isBefore(LocalDate.now())) {
+            LOG.info("Checking replenishment task for product {} again", task.getProductId());
+            return true;
+        }
+
+        var nowInStock = this.stock.getItemCount(task.getProductId());
+        var missing = task.getCount() - task.getReservation().getReservedCount();
+        if (nowInStock < missing) {
+            task.getReservation().setCheckAgain(LocalDate.now().plusWeeks(1));
+            LOG.info("Still not enough items of {}, check again on {}",
+                    task.getProductId(), task.getReservation().getCheckAgain());
+            return true;
+        }
+
+        LOG.info("Item {} restocked", task.getProductId());
+        this.stock.freeReservation(task.getReservation().getReservationTicket());
+        task.setReservation(null);
+        this.stock.orderItem(task.getProductId(), task.getCount());
+        task.setDeliveryDate(this.stock.getItemDeliveryDate(task.getProductId()));
+        this.database.update(task.toSimpleReplenishmentOrder());
+        return true;
+    }
+
     public void onTimer() {
         LOG.debug("Checking replenishment tasks");
         List<ReplenishTask> doneTasks = new ArrayList<>();
         for (ReplenishTask task : tasks) {
-            var reservation = task.getReservation();
+            LOG.debug("Checking replenishment task {}", task.toString());
 
-            if (reservation == null || !reservation.shouldHaveArrived()) {
+            if (this.checkTaskAgain(task)) {
                 continue;
             }
 
-            var nowInStock = this.stock.getItemCount(task.getProductId());
-            var missing = task.getCount() - task.getReservation().getReservedCount();
-            if (nowInStock < missing) {
-                task.getReservation().setCheckAgain(LocalDate.now().plusWeeks(1));
-                LOG.info("Still not enough items of {}, check again on {}",
-                        task.getProductId(), task.getReservation().getCheckAgain());
-                continue;
+            if (task.completed()) {
+                doneTasks.add(task);
             }
-
-            LOG.info("Item {} restocked", task.getProductId());
-            this.stock.freeReservation(task.getReservation().getReservationTicket());
-            this.stock.orderItem(task.getProductId(), task.getCount());
-            doneTasks.add(task);
         }
 
         for (ReplenishTask task : doneTasks) {
             tasks.remove(task);
+            this.database.delete(task.getId());
             this.onItemReplenished.onItemReplenished(new ReplenishmentOrderResponse(
                     task.getTrackingId(),
                     task.getProductId(),
-                    ReplenishmentStatus.CONFIRMED,
+                    ReplenishmentStatus.DONE,
                     task.getCount(),
                     task.getDeliveryDate()
             ));
