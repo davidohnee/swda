@@ -2,11 +2,21 @@ package ch.hslu.swda.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.micronaut.core.annotation.Introspected;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.Random;
 
+@JsonPropertyOrder({
+        "id",
+        "name",
+        "price"
+})
+@JsonTypeName("Product")
+@Introspected
 public class Product {
     private int id;
     private String name;
@@ -68,7 +78,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product2 [" +
+        return "Product [" +
                 "id='" + this.id + '\'' +
                 ", name='" + this.name + '\'' +
                 ", price='" + this.price + '\'' +

@@ -87,12 +87,15 @@ public class ReplenishmentOrder {
     public static final String JSON_PROPERTY_QUANTITY = "quantity";
     private int quantity;
 
-    public ReplenishmentOrder(UUID trackingId, LocalDate deliveryDate, StatusEnum status, Product product, int quantity) {
+    private ReplenishmentReservation reservation;
+
+    public ReplenishmentOrder(UUID trackingId, LocalDate deliveryDate, StatusEnum status, Product product, int quantity, ReplenishmentReservation reservation) {
         this.trackingId = trackingId;
         this.deliveryDate = deliveryDate;
         this.status = status;
         this.product = product;
         this.quantity = quantity;
+        this.reservation = reservation;
     }
 
     public ReplenishmentOrder trackingId(UUID trackingId) {
@@ -200,6 +203,16 @@ public class ReplenishmentOrder {
     @JsonProperty(JSON_PROPERTY_QUANTITY)
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @JsonIgnore
+    public ReplenishmentReservation getReservation() {
+        return reservation;
+    }
+
+    @JsonIgnore
+    public void setReservation(ReplenishmentReservation reservation) {
+        this.reservation = reservation;
     }
 
     @Override

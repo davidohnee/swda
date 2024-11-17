@@ -52,21 +52,40 @@ public class SimpleReplenishmentOrder {
 
     private ObjectId id;
 
-    public SimpleReplenishmentOrder(UUID trackingId, LocalDate deliveryDate, ReplenishmentOrder.StatusEnum status, int productId, int quantity, ObjectId id) {
+    private ReplenishmentReservation reservation;
+
+    public SimpleReplenishmentOrder(
+        UUID trackingId,
+        LocalDate deliveryDate,
+        ReplenishmentOrder.StatusEnum status,
+        int productId,
+        int quantity,
+        ReplenishmentReservation reservation,
+        ObjectId id
+    ) {
         this.trackingId = trackingId;
         this.deliveryDate = deliveryDate;
         this.status = status;
         this.productId = productId;
         this.quantity = quantity;
+        this.reservation = reservation;
         this.id = id;
     }
 
-    public SimpleReplenishmentOrder(UUID trackingId, LocalDate deliveryDate, ReplenishmentOrder.StatusEnum status, int productId, int quantity) {
+    public SimpleReplenishmentOrder(
+        UUID trackingId,
+        LocalDate deliveryDate,
+        ReplenishmentOrder.StatusEnum status,
+        int productId,
+        int quantity,
+        ReplenishmentReservation reservation
+    ) {
         this.trackingId = trackingId;
         this.deliveryDate = deliveryDate;
         this.status = status;
         this.productId = productId;
         this.quantity = quantity;
+        this.reservation = reservation;
         this.id = new ObjectId();
     }
 
@@ -194,6 +213,16 @@ public class SimpleReplenishmentOrder {
 
     public void setId(ObjectId id) {
         this.id = id;
+    }
+
+    @JsonIgnore
+    public ReplenishmentReservation getReservation() {
+        return reservation;
+    }
+
+    @JsonIgnore
+    public void setReservation(ReplenishmentReservation reservation) {
+        this.reservation = reservation;
     }
 
     @Override
