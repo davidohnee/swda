@@ -1,5 +1,8 @@
 package ch.hslu.swda.common.entities;
 
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -8,7 +11,12 @@ public class ReplenishmentReservation {
     private final String reservationTicket;
     private LocalDate checkAgain;
 
-    public ReplenishmentReservation(int reservedCount, String reservationTicket, LocalDate checkAgain) {
+    @BsonCreator
+    public ReplenishmentReservation(
+        @BsonProperty("reservedCount") int reservedCount,
+        @BsonProperty("reservationTicket") String reservationTicket,
+        @BsonProperty("checkAgain") LocalDate checkAgain
+    ) {
         this.reservedCount = reservedCount;
         this.reservationTicket = reservationTicket;
         this.checkAgain = checkAgain;
