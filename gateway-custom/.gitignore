@@ -2,6 +2,7 @@
 /.settings/
 **/*.log
 /.idea/
+/.vscode/
 *.iml
 /.classpath
 /.project
