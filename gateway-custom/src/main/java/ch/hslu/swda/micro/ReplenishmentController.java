@@ -9,9 +9,6 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.model.InventoryItem;
-import ch.hslu.swda.model.InventoryItemUpdate;
-import ch.hslu.swda.model.InventoryProductIdPatchRequest;
 import ch.hslu.swda.model.ReplenishmentOrder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,13 +20,11 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.exceptions.HttpStatusException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -52,7 +47,11 @@ public class ReplenishmentController {
         summary = "Get replenishment",
         responses = {
             @ApiResponse(responseCode = "200", description = "Replenishment details", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))
+                @Content(
+                    mediaType = "application/json",
+                    array = @ArraySchema(schema =
+                        @Schema(implementation = ReplenishmentOrder.class)
+                ))
             })
         }
     )
@@ -70,8 +69,8 @@ public class ReplenishmentController {
 
             BusConnector bus = new BusConnector();
             bus.connect();
-
             String response = bus.talkSync(exchange, route, message);
+            bus.close();
 
             if (response == null) {
                 return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve inventory"));

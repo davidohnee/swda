@@ -26,10 +26,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
  */
 @OpenAPIDefinition(
         info = @Info(
-                title = "swda_gateway_template",
+                title = "SWDA",
                 version = "1.0",
                 license = @License(identifier = "Apache-2.0", name = "Apache License Version 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0")),
-        servers = @Server(url = "http://localhost:8090")
+        servers = {@Server(url = "http://localhost:8090"), @Server(url = "https://gw.rocky-linux-009.prod.swda.labservices.ch")}
 )
 public final class Application {
 

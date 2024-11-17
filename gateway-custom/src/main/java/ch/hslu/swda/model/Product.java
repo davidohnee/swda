@@ -24,9 +24,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * Product
  */
 @JsonPropertyOrder({
-  Product.JSON_PROPERTY_ID,
-  Product.JSON_PROPERTY_NAME,
-  Product.JSON_PROPERTY_PRICE
+        Product.JSON_PROPERTY_ID,
+        Product.JSON_PROPERTY_NAME,
+        Product.JSON_PROPERTY_PRICE
 })
 @JsonTypeName("Product")
 @Introspected
@@ -127,8 +127,8 @@ public class Product {
         }
         Product product = (Product) o;
         return Objects.equals(this.id, product.id) &&
-            Objects.equals(this.name, product.name) &&
-            Objects.equals(this.price, product.price);
+                Objects.equals(this.name, product.name) &&
+                Objects.equals(this.price, product.price);
     }
 
     @Override
@@ -159,4 +159,3 @@ public class Product {
     }
 
 }
-

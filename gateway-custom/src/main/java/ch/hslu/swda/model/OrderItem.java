@@ -13,8 +13,6 @@
 package ch.hslu.swda.model;
 
 import java.util.Objects;
-import java.util.Arrays;
-import ch.hslu.swda.model.Product;
 import com.fasterxml.jackson.annotation.*;
 
 import jakarta.validation.Valid;
@@ -26,8 +24,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * OrderItem
  */
 @JsonPropertyOrder({
-  OrderItem.JSON_PROPERTY_PRODUCT,
-  OrderItem.JSON_PROPERTY_QUANTITY
+        OrderItem.JSON_PROPERTY_PRODUCT,
+        OrderItem.JSON_PROPERTY_QUANTITY
 })
 @JsonTypeName("OrderItem")
 @Introspected
@@ -102,7 +100,7 @@ public class OrderItem {
         }
         OrderItem orderItem = (OrderItem) o;
         return Objects.equals(this.product, orderItem.product) &&
-            Objects.equals(this.quantity, orderItem.quantity);
+                Objects.equals(this.quantity, orderItem.quantity);
     }
 
     @Override
@@ -132,4 +130,3 @@ public class OrderItem {
     }
 
 }
-

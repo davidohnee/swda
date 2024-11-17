@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -50,12 +51,15 @@ public class InventoryController {
         summary = "Get inventory",
         responses = {
             @ApiResponse(responseCode = "200", description = "Inventory details", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))
+                    @Content(
+                        mediaType = "application/json",
+                        array = @ArraySchema(
+                            schema = @Schema(implementation = InventoryItem.class)
+                    ))
             })
-        }
-    )
-    @Get(uri="/inventory")
-    @Produces(value = {"application/json"})
+    })
+    @Get(uri = "/inventory")
+    @Produces(value = { "application/json" })
     public Mono<List<InventoryItem>> inventoryGet() {
         try {
             String route = MessageRoutes.INVENTORY_GET_ENTITYSET;
@@ -68,17 +72,19 @@ public class InventoryController {
 
             BusConnector bus = new BusConnector();
             bus.connect();
-
             String response = bus.talkSync(exchange, route, message);
+            bus.close();
 
             if (response == null) {
-                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve inventory"));
+                return Mono.error(
+                        new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve inventory"));
             }
 
             LOG.info("Received response: {}", response);
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.registerModule(new JavaTimeModule());
-            List<InventoryItem> inventory = objectMapper.readValue(response, new TypeReference<List<InventoryItem>>() {});
+            List<InventoryItem> inventory = objectMapper.readValue(response, new TypeReference<List<InventoryItem>>() {
+            });
 
             return Mono.just(inventory);
         } catch (Exception e) {
@@ -87,35 +93,37 @@ public class InventoryController {
         }
     }
 
-
     /**
      * Update product quantity in inventory
      *
-     * @param productId  (required)
-     * @param inventoryProductIdPatchRequest  (required)
+     * @param productId                      (required)
+     * @param inventoryProductIdPatchRequest (required)
      * @return InventoryItem
      */
     @Operation(
         operationId = "inventoryProductIdPatch",
         summary = "Update product quantity in inventory",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Inventory updated", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = InventoryItem.class))
+            @ApiResponse(
+                responseCode = "200",
+                description = "Inventory updated",
+                content = {
+                    @Content(
+                        mediaType = "application/json",
+                        schema = @Schema(implementation = InventoryItem.class)
+                    )
             }),
             @ApiResponse(responseCode = "404", description = "Product not found")
-        },
-        parameters = {
+    }, parameters = {
             @Parameter(name = "productId", required = true),
             @Parameter(name = "inventoryProductIdPatchRequest", required = true)
-        }
-    )
-    @Patch(uri="/inventory/{productId}")
-    @Produces(value = {"application/json"})
-    @Consumes(value = {"application/json"})
+    })
+    @Patch(uri = "/inventory/{productId}")
+    @Produces(value = { "application/json" })
+    @Consumes(value = { "application/json" })
     public Mono<InventoryItem> inventoryProductIdPatch(
-        @PathVariable(value="productId") @NotNull int productId,
-        @Body @NotNull @Valid InventoryProductIdPatchRequest inventoryProductIdPatchRequest
-    ) {
+            @PathVariable(value = "productId") @NotNull int productId,
+            @Body @NotNull @Valid InventoryProductIdPatchRequest inventoryProductIdPatchRequest) {
         try {
             String route = MessageRoutes.INVENTORY_PATCH;
 

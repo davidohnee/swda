@@ -25,8 +25,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * InventoryItem
  */
 @JsonPropertyOrder({
-  InventoryItem.JSON_PROPERTY_PRODUCT,
-  InventoryItem.JSON_PROPERTY_QUANTITY
+        InventoryItem.JSON_PROPERTY_PRODUCT,
+        InventoryItem.JSON_PROPERTY_QUANTITY,
+        InventoryItem.JSON_PROPERTY_REPLENISHMENT_THRESHOLD
 })
 @JsonTypeName("InventoryItem")
 @Introspected
@@ -53,21 +54,16 @@ public class InventoryItem {
         return this;
     }
 
-    /**
-     * Get product
-     * @return product
-     */
     @Valid
     @NotNull
-    @Schema(name = "product", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "product",
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            implementation = Product.class)
     @JsonProperty(JSON_PROPERTY_PRODUCT)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public Product getProduct() {
         return product;
     }
 
-    @JsonProperty(JSON_PROPERTY_PRODUCT)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public void setProduct(Product product) {
         this.product = product;
     }
@@ -121,8 +117,8 @@ public class InventoryItem {
         }
         InventoryItem inventoryItem = (InventoryItem) o;
         return Objects.equals(this.product, inventoryItem.product) &&
-            Objects.equals(this.quantity, inventoryItem.quantity) &&
-            Objects.equals(this.replenishmentThreshold, inventoryItem.replenishmentThreshold);
+                Objects.equals(this.quantity, inventoryItem.quantity) &&
+                Objects.equals(this.replenishmentThreshold, inventoryItem.replenishmentThreshold);
     }
 
     @Override
@@ -152,4 +148,3 @@ public class InventoryItem {
         return o.toString().replace("\n", "\n    ");
     }
 }
-

@@ -122,20 +122,12 @@ public class ReplenishmentOrder {
         return this;
     }
 
-    /**
-     * Get status
-     * @return status
-     */
     @NotNull
     @Schema(name = "status", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_STATUS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public StatusEnum getStatus() {
         return status;
     }
-
-    @JsonProperty(JSON_PROPERTY_STATUS)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public void setStatus(StatusEnum status) {
         this.status = status;
     }
@@ -145,14 +137,11 @@ public class ReplenishmentOrder {
         return this;
     }
 
-    /**
-     * Get product
-     * @return product
-     */
     @NotNull
-    @Schema(name = "product", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = JSON_PROPERTY_PRODUCT,
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            implementation = Product.class)
     @JsonProperty(JSON_PROPERTY_PRODUCT)
-    @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public Product getProduct() {
         return product;
     }
@@ -180,7 +169,11 @@ public class ReplenishmentOrder {
         this.quantity = quantity;
     }
 
-    @Schema(name = "deliveryDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(
+        name = "deliveryDate",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+        type = "string",
+        format = "date")
     @JsonProperty(JSON_PROPERTY_DELIERY_DATE)
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public LocalDate getDeliveryDate() {
