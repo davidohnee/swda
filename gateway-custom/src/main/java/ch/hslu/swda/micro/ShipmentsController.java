@@ -61,8 +61,34 @@ public class ShipmentsController {
     @Get(uri="/shipments")
     @Produces(value = {"application/json"})
     public Mono<List<Shipment>> shipmentsGet() {
-        // TODO implement shipmentsGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.SHIPMENT_GET_ENTITYSET;
+            String message = "";
+
+            LOG.info("Sending message to route {}", route);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to retrieve shipments"));
+            }
+
+            LOG.info("Received response: {}", response);
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            List<Shipment> shipments = objectMapper.readValue(response, new TypeReference<List<Shipment>>() {});
+
+            return Mono.just(shipments);
+        } catch (Exception e) {
+            LOG.error("Error retrieving shipments", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
@@ -90,8 +116,35 @@ public class ShipmentsController {
     public Mono<Shipment> shipmentsShipmentIdGet(
             @PathVariable(value="shipmentId") @NotNull UUID shipmentId
     ) {
-        // TODO implement shipmentsShipmentIdGet();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.SHIPMENT_GET_ENTITY;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String message = objectMapper.writeValueAsString(shipmentId);
+
+            LOG.info("Sending message to route {} with shipmentId {}", route, shipmentId);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null) {
+                return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Shipment not found"));
+            }
+
+            LOG.info("Received response: {}", response);
+            Shipment shipment = objectMapper.readValue(response, Shipment.class);
+
+            return Mono.just(shipment);
+        } catch (Exception e) {
+            LOG.error("Error retrieving shipment", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 
@@ -121,8 +174,35 @@ public class ShipmentsController {
     public Mono<Shipment> shipmentsPost(
             @Body @NotNull @Valid ShipmentCreate shipmentCreate
     ) {
-        // TODO implement shipmentsPost();
-        return Mono.error(new HttpStatusException(HttpStatus.NOT_IMPLEMENTED, null));
+        try {
+            String route = MessageRoutes.SHIPMENT_CREATE;
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            String message = objectMapper.writeValueAsString(shipmentCreate);
+
+            LOG.info("Sending message to route {} with shipmentCreate {}", route, shipmentCreate);
+
+            RabbitMqConfig config = new RabbitMqConfig();
+            String exchange = config.getExchange();
+
+            BusConnector bus = new BusConnector();
+            bus.connect();
+
+            String response = bus.talkSync(exchange, route, message);
+
+            if (response == null || response.equals("Error processing request")) {
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create shipment"));
+            }
+
+            LOG.info("Received response: {}", response);
+            Shipment shipment = objectMapper.readValue(response, Shipment.class);
+
+            return Mono.just(shipment);
+        } catch (Exception e) {
+            LOG.error("Error creating shipment", e);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
     }
 
 }
