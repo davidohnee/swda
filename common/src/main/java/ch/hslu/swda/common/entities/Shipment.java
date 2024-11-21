@@ -12,24 +12,25 @@
 
 package ch.hslu.swda.common.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.micronaut.core.annotation.Introspected;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import java.util.Objects;
+import java.util.Arrays;
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.*;
+import java.time.OffsetDateTime;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import io.micronaut.core.annotation.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Shipment
  */
 @JsonPropertyOrder({
-  Shipment.JSON_PROPERTY_ID,
-  Shipment.JSON_PROPERTY_CUSTOMER_ORDER
+        Shipment.JSON_PROPERTY_ID,
+        Shipment.JSON_PROPERTY_CUSTOMER_ORDER,
+        Shipment.JSON_PROPERTY_DEPARTURE,
+        Shipment.JSON_PROPERTY_ESTIMATED_ARRIVAL
 })
 @JsonTypeName("Shipment")
 @Introspected
@@ -40,10 +41,18 @@ public class Shipment {
     public static final String JSON_PROPERTY_CUSTOMER_ORDER = "customerOrder";
     private CustomerOrder customerOrder;
 
+    public static final String JSON_PROPERTY_DEPARTURE = "departure";
+    private OffsetDateTime departure;
+
+    public static final String JSON_PROPERTY_ESTIMATED_ARRIVAL = "estimatedArrival";
+    private OffsetDateTime estimatedArrival;
+
     public Shipment(UUID id, CustomerOrder customerOrder) {
         this.id = id;
         this.customerOrder = customerOrder;
     }
+
+    public Shipment() {}
 
     public Shipment id(UUID id) {
         this.id = id;
@@ -92,6 +101,56 @@ public class Shipment {
         this.customerOrder = customerOrder;
     }
 
+    public Shipment departure(OffsetDateTime departure) {
+        this.departure = departure;
+        return this;
+    }
+
+    /**
+     * The date and time when the shipment departs
+     * @return departure
+     */
+    @Nullable
+    @Schema(name = "departure", description = "The date and time when the shipment departs", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_DEPARTURE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    public OffsetDateTime getDeparture() {
+        return departure;
+    }
+
+    @JsonProperty(JSON_PROPERTY_DEPARTURE)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    public void setDeparture(OffsetDateTime departure) {
+        this.departure = departure;
+    }
+
+    public Shipment estimatedArrival(OffsetDateTime estimatedArrival) {
+        this.estimatedArrival = estimatedArrival;
+        return this;
+    }
+
+    /**
+     * The estimated date and time of arrival for the shipment
+     * @return estimatedArrival
+     */
+    @Nullable
+    @Schema(name = "estimatedArrival", description = "The estimated date and time of arrival for the shipment", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    public OffsetDateTime getEstimatedArrival() {
+        return estimatedArrival;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    public void setEstimatedArrival(OffsetDateTime estimatedArrival) {
+        this.estimatedArrival = estimatedArrival;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -102,12 +161,14 @@ public class Shipment {
         }
         Shipment shipment = (Shipment) o;
         return Objects.equals(this.id, shipment.id) &&
-            Objects.equals(this.customerOrder, shipment.customerOrder);
+                Objects.equals(this.customerOrder, shipment.customerOrder) &&
+                Objects.equals(this.departure, shipment.departure) &&
+                Objects.equals(this.estimatedArrival, shipment.estimatedArrival);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerOrder);
+        return Objects.hash(id, customerOrder, departure, estimatedArrival);
     }
 
     @Override
@@ -116,6 +177,8 @@ public class Shipment {
         sb.append("class Shipment {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    customerOrder: ").append(toIndentedString(customerOrder)).append("\n");
+        sb.append("    departure: ").append(toIndentedString(departure)).append("\n");
+        sb.append("    estimatedArrival: ").append(toIndentedString(estimatedArrival)).append("\n");
         sb.append("}");
         return sb.toString();
     }
@@ -132,4 +195,3 @@ public class Shipment {
     }
 
 }
-
