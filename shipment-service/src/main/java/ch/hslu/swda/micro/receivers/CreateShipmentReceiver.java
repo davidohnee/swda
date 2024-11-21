@@ -41,6 +41,7 @@ public final class CreateShipmentReceiver implements MessageReceiver {
             ShipmentCreate shipmentCreate = this.mapper.readValue(message, ShipmentCreate.class);
             LOG.debug("Received shipmentCreate: {}", shipmentCreate);
 
+
             String orderId = shipmentCreate.getOrderId().toString();
             LOG.debug("Validating order with id: {}", orderId);
             String response = bus.talkSync(exchangeName, MessageRoutes.SHIPMENT_VALIDATE, orderId);
