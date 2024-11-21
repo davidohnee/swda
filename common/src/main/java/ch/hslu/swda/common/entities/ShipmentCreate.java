@@ -7,12 +7,10 @@
 package ch.hslu.swda.common.entities;
 
 import java.util.Objects;
-import java.util.Arrays;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.*;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import io.micronaut.core.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -81,14 +79,14 @@ public class ShipmentCreate {
     @Schema(name = "departure", description = "The date and time when the shipment will depart", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_DEPARTURE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public OffsetDateTime getDeparture() {
         return departure;
     }
 
     @JsonProperty(JSON_PROPERTY_DEPARTURE)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setDeparture(OffsetDateTime departure) {
         this.departure = departure;
     }
@@ -106,14 +104,14 @@ public class ShipmentCreate {
     @Schema(name = "estimatedArrival", description = "The estimated date and time of arrival for the shipment", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public OffsetDateTime getEstimatedArrival() {
         return estimatedArrival;
     }
 
     @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setEstimatedArrival(OffsetDateTime estimatedArrival) {
         this.estimatedArrival = estimatedArrival;
     }
