@@ -11,8 +11,6 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.entities.Shipment;
 import ch.hslu.swda.common.entities.ShipmentCreate;
-import ch.hslu.swda.model.CustomerCreate;
-import ch.hslu.swda.model.Order;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -24,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
-import ch.hslu.swda.model.Customer;
 
 import ch.hslu.swda.common.routing.MessageRoutes;
 
@@ -133,7 +130,7 @@ public class ShipmentsController {
 
             String response = bus.talkSync(exchange, route, message);
 
-            if (response == null) {
+            if (response == null || response.isEmpty()) {
                 return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Shipment not found"));
             }
 
