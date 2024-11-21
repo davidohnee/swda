@@ -147,15 +147,15 @@ public class Shipment {
     @Nullable
     @Schema(name = "departure", description = "The date and time when the shipment departs", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty(JSON_PROPERTY_DEPARTURE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public OffsetDateTime getDeparture() {
         return departure;
     }
 
     @JsonProperty(JSON_PROPERTY_DEPARTURE)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setDeparture(OffsetDateTime departure) {
         this.departure = departure;
     }
@@ -172,15 +172,15 @@ public class Shipment {
     @Nullable
     @Schema(name = "estimatedArrival", description = "The estimated date and time of arrival for the shipment", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public OffsetDateTime getEstimatedArrival() {
         return estimatedArrival;
     }
 
     @JsonProperty(JSON_PROPERTY_ESTIMATED_ARRIVAL)
-    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setEstimatedArrival(OffsetDateTime estimatedArrival) {
         this.estimatedArrival = estimatedArrival;
     }
