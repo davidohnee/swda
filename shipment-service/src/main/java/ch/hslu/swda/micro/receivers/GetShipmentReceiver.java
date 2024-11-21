@@ -40,7 +40,7 @@ public final class GetShipmentReceiver implements MessageReceiver {
                     String cleanedMessage = message.trim().replaceAll("^\"|\"$", "");
                     var shipmentId = UUID.fromString(cleanedMessage);
                     var shipment = shipmentDAO.findByUUID(shipmentId);
-                    yield (shipment != null) ? mapper.writeValueAsString(shipment) : "Shipment not found";
+                    yield (shipment != null) ? mapper.writeValueAsString(shipment) : "";
                 }
 
                 case MessageRoutes.SHIPMENT_GET_ENTITYSET -> {

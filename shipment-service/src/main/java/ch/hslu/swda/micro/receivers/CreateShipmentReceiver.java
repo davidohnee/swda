@@ -34,6 +34,7 @@ public final class CreateShipmentReceiver implements MessageReceiver {
     @Override
     public void onMessageReceived(String route, String replyTo, String corrId, String message) {
         LOG.debug("Received message with routing [{}]", route);
+
         try {
             LOG.debug("Received message: {}", message);
             ShipmentCreate shipmentCreate = this.mapper.readValue(message, ShipmentCreate.class);
