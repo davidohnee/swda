@@ -27,7 +27,7 @@ public class ShipmentDAO extends GenericDAO<Shipment> {
         return shipment;
     }
 
-    public List<Shipment> findAllByUUID() {
+    public List<Shipment> findAll() {
         List<Shipment> shipments = collection.find().into(new ArrayList<>());
         for (Shipment shipment : shipments) {
             Order order = orderDAO.findByUUID(shipment.getOrderId());
