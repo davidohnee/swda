@@ -25,6 +25,11 @@ public final class MessageRoutes {
     public static final String REPLENISHMENT_PATCH = "replenishment.patch";
     public static final String REPLENISHMENT_ON_REPLENISH = "replenishment.on.replenish";
 
+    public static final String SHIPMENT_CREATE = "shipment.create";
+    public static final String SHIPMENT_GET_ENTITY = "shipment.entity";
+    public static final String SHIPMENT_GET_ENTITYSET = "shipment.entityset";
+    public static final String SHIPMENT_VALIDATE = "shipment.validate";
+
     /**
      * No instance allowed.
      */

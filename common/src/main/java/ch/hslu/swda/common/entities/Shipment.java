@@ -27,10 +27,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * Shipment
  */
 @JsonPropertyOrder({
-        Shipment.JSON_PROPERTY_ID,
-        Shipment.JSON_PROPERTY_CUSTOMER_ORDER,
-        Shipment.JSON_PROPERTY_DEPARTURE,
-        Shipment.JSON_PROPERTY_ESTIMATED_ARRIVAL
+    Shipment.JSON_PROPERTY_ID,
+    Shipment.JSON_PROPERTY_ORDER_ID,
+    Shipment.JSON_PROPERTY_CUSTOMER_ORDER,
+    Shipment.JSON_PROPERTY_DEPARTURE,
+    Shipment.JSON_PROPERTY_ESTIMATED_ARRIVAL
 })
 @JsonTypeName("Shipment")
 @Introspected
@@ -38,8 +39,11 @@ public class Shipment {
     public static final String JSON_PROPERTY_ID = "id";
     private UUID id;
 
+    public static final String JSON_PROPERTY_ORDER_ID = "orderId";
+    private UUID orderId;
+
     public static final String JSON_PROPERTY_CUSTOMER_ORDER = "customerOrder";
-    private CustomerOrder customerOrder;
+    private transient Order customerOrder;
 
     public static final String JSON_PROPERTY_DEPARTURE = "departure";
     private OffsetDateTime departure;
@@ -47,7 +51,14 @@ public class Shipment {
     public static final String JSON_PROPERTY_ESTIMATED_ARRIVAL = "estimatedArrival";
     private OffsetDateTime estimatedArrival;
 
-    public Shipment(UUID id, CustomerOrder customerOrder) {
+    public Shipment(UUID id, UUID orderId, OffsetDateTime departure, OffsetDateTime estimatedArrival) {
+        this.id = id;
+        this.orderId = orderId;
+        this.departure = departure;
+        this.estimatedArrival = estimatedArrival;
+    }
+
+    public Shipment(UUID id, Order customerOrder) {
         this.id = id;
         this.customerOrder = customerOrder;
     }
@@ -77,8 +88,31 @@ public class Shipment {
         this.id = id;
     }
 
-    public Shipment customerOrder(CustomerOrder customerOrder) {
+    public Shipment customerOrder(Order customerOrder) {
         this.customerOrder = customerOrder;
+        return this;
+    }
+
+    /**
+     * Get order
+     * @return orderId
+     */
+    @NotNull
+    @Schema(name = "orderId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_ORDER_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public UUID getOrderId() {
+        return orderId;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ORDER_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public void setOrderId(UUID orderId) {
+        this.orderId = orderId;
+    }
+
+    public Shipment orderId(UUID orderId) {
+        this.orderId = orderId;
         return this;
     }
 
@@ -91,13 +125,13 @@ public class Shipment {
     @Schema(name = "customerOrder", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public CustomerOrder getCustomerOrder() {
+    public Order getCustomerOrder() {
         return customerOrder;
     }
 
     @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCustomerOrder(CustomerOrder customerOrder) {
+    public void setCustomerOrder(Order customerOrder) {
         this.customerOrder = customerOrder;
     }
 
