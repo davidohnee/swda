@@ -69,6 +69,14 @@ export interface Order {
     seller: Employee;
 }
 
+export interface Shipment {
+    id: string;
+    orderId: string;
+    order: Order;
+    departure: Date;
+    estimatedArrival: Date;
+}
+
 export interface MicronautErrorResponse {
     message: string;
     _links: {

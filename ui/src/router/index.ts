@@ -38,6 +38,11 @@ const router = createRouter({
             name: "replenishments",
             component: () => import("../views/ReplenishmentsView.vue"),
         },
+        {
+            path: "/shipments",
+            name: "shipments",
+            component: () => import("../views/ShipmentsView.vue"),
+        },
     ],
 });
 

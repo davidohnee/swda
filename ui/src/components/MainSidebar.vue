@@ -29,8 +29,14 @@
             </RouterLink>
             <RouterLink to="/replenishments">
                 <div class="entry">
-                    <span class="material-symbols-rounded">local_shipping</span>
+                    <span class="material-symbols-rounded">warehouse</span>
                     <span class="title">Replenishments</span>
+                </div>
+            </RouterLink>
+            <RouterLink to="/shipments">
+                <div class="entry">
+                    <span class="material-symbols-rounded">local_shipping</span>
+                    <span class="title">Shipments</span>
                 </div>
             </RouterLink>
         </div>
