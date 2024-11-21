@@ -38,7 +38,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Controller
+@Controller("/api/v1")
 @Tag(name = "Shipments", description = "The Shipments API")
 public class ShipmentsController {
 
