@@ -1,83 +1,95 @@
-/*
- * Copyright 2024 Roland Christen, HSLU Informatik, Switzerland
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ch.hslu.swda.micro;
 
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeoutException;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Demo für Applikationsstart.
- */
+import ch.hslu.swda.common.database.MongoDBConnectionManager;
+import ch.hslu.swda.common.config.ApplicationConfig;
+
+import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private static final int RESTART_DELAY_MS = 5000;
 
-    /**
-     * TimerTask für periodische Ausführung.
-     */
-    private static final class HeartBeat extends TimerTask {
+    private static ScheduledExecutorService executorService;
+    private static ShipmentService shipmentService;
 
-        private static final Logger LOG = LoggerFactory.getLogger(HeartBeat.class);
+    private static MongoDatabase database;
 
-        private ServiceTemplate service;
+    private Application() {}
 
-        HeartBeat() {
-            try {
-                this.service = new ServiceTemplate();
-            } catch (IOException | TimeoutException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
+    public static void main(final String[] args) {
+        LOG.info("Application starting...");
 
-        @Override
-        public void run() {
-            try {
-                service.registerStudent();
-                service.askAboutUniverse();
-            } catch (IOException | InterruptedException e) {
-                LOG.error(e.getMessage(), e);
-            }
-        }
-    }
+        LOG.info("Creating database connection...");
+        MongoDBConnectionManager connectionManager = MongoDBConnectionManager.getInstance(
+            ApplicationConfig.getConnectionString(),
+            ApplicationConfig.getDatabaseName()
+        );
 
-    /**
-     * Privater Konstruktor.
-     */
-    private Application() {
-    }
+        database = connectionManager.getDatabase();
 
-    /**
-     * main-Methode. Startet einen Timer für den HeartBeat.
-     *
-     * @param args not used.
-     */
-    public static void main(final String[] args) throws InterruptedException {
-        final long startTime = System.currentTimeMillis();
-        LOG.info("Service starting...");
         if (!"OFF".equals(System.getenv("RABBIT"))) {
-            final Timer timer = new Timer();
-            timer.schedule(new HeartBeat(), 0, 10000);
+            executorService = Executors.newSingleThreadScheduledExecutor();
+            startAndMonitorService();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(Application::shutdown));
         } else {
             LOG.atWarn().log("RabbitMQ disabled for testing.");
         }
-        LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
-        Thread.sleep(60_000);
+    }
+
+    private static void startAndMonitorService() {
+        executorService.schedule(Application::attemptServiceStart, 0, TimeUnit.MILLISECONDS);
+    }
+
+    private static void attemptServiceStart() {
+        try {
+            if (shipmentService == null || !shipmentService.isRunning()) {
+                LOG.info("Creating new ShipmentService...");
+                shipmentService = new ShipmentService(database);
+                shipmentService.start();
+                LOG.info("ShipmentService started successfully.");
+            }
+        } catch (IOException | TimeoutException e) {
+            LOG.error("ShipmentService encountered an error and will retry: {}", e.getMessage(), e);
+            stopService();
+        } catch (Exception ex) {
+            LOG.error("Unexpected error in ShipmentService, retrying: {}", ex.getMessage(), ex);
+            stopService();
+        } finally {
+            executorService.schedule(Application::attemptServiceStart, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private static void stopService() {
+        if (shipmentService != null) {
+            shipmentService.stop();
+            shipmentService = null;
+        }
+    }
+
+    private static void shutdown() {
+        LOG.info("Shutting down application...");
+        stopService();
+        if (executorService != null) {
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+        LOG.info("Application shutdown complete.");
     }
 }
