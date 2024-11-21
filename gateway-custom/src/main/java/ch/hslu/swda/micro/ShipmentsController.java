@@ -9,12 +9,11 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
-import ch.hslu.swda.common.entities.Shipment;
-import ch.hslu.swda.common.entities.ShipmentCreate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micronaut.http.annotation.*;
+import io.micronaut.serde.annotation.SerdeImport;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -24,6 +23,12 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.exceptions.HttpStatusException;
 
 import ch.hslu.swda.common.routing.MessageRoutes;
+
+//import ch.hslu.swda.common.entities.ShipmentCreate;
+import ch.hslu.swda.model.ShipmentCreate;
+
+//import ch.hslu.swda.common.entities.Shipment;
+import ch.hslu.swda.model.Shipment;
 
 import java.util.UUID;
 import java.util.List;
