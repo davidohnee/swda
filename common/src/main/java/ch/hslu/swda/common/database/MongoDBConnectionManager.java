@@ -5,9 +5,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.bson.UuidRepresentation;
+import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecRegistry;
-import static org.bson.codecs.configuration.CodecRegistries.*;
 import org.bson.codecs.pojo.PojoCodecProvider;
+
+import java.time.OffsetDateTime;
+
+import static org.bson.codecs.configuration.CodecRegistries.*;
 
 public class MongoDBConnectionManager {
     private static volatile MongoDBConnectionManager instance;
@@ -16,15 +20,16 @@ public class MongoDBConnectionManager {
 
     private MongoDBConnectionManager(String connectionString, String databaseName) {
         CodecRegistry pojoCodecRegistry = fromRegistries(
-            MongoClientSettings.getDefaultCodecRegistry(),
-            fromProviders(PojoCodecProvider.builder().automatic(true).build())
+                fromCodecs(new OffsetDateTimeCodec()),
+                MongoClientSettings.getDefaultCodecRegistry(),
+                fromProviders(PojoCodecProvider.builder().automatic(true).build())
         );
 
         MongoClientSettings settings = MongoClientSettings.builder()
-            .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
-            .codecRegistry(pojoCodecRegistry)
-            .uuidRepresentation(UuidRepresentation.STANDARD)
-            .build();
+                .applyConnectionString(new com.mongodb.ConnectionString(connectionString))
+                .codecRegistry(pojoCodecRegistry)
+                .uuidRepresentation(UuidRepresentation.STANDARD)
+                .build();
 
         this.mongoClient = MongoClients.create(settings);
         this.database = mongoClient.getDatabase(databaseName);

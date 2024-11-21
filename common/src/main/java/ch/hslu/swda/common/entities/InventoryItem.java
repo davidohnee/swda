@@ -12,14 +12,12 @@
 
 package ch.hslu.swda.common.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -50,15 +48,28 @@ public final class InventoryItem {
     public static final String JSON_PROPERTY_REPLENISHMENT_TRACKING_ID = "replenishmentTrackingId";
     private UUID replenishmentTrackingId;
 
-    public InventoryItem(Product product, int quantity, int replenishmentThreshold, UUID replenishmentTrackingId) {
+    private ObjectId id;
+
+    public InventoryItem(
+        Product product,
+        int quantity,
+        int replenishmentThreshold,
+        UUID replenishmentTrackingId,
+        ObjectId id
+    ) {
         this.product = product;
         this.quantity = quantity;
         this.replenishmentThreshold = replenishmentThreshold;
         this.replenishmentTrackingId = replenishmentTrackingId;
+        this.id = id;
     }
 
     public InventoryItem(Product product, int quantity) {
-        this(product, quantity, DEFAULT_REPLENISHMENT_THRESHOLD, null);
+        this(product, quantity, DEFAULT_REPLENISHMENT_THRESHOLD, null, null);
+    }
+
+    public InventoryItem() {
+        this(new Product(), 0, DEFAULT_REPLENISHMENT_THRESHOLD, null, null);
     }
 
     public InventoryItem product(Product product) {
@@ -139,16 +150,22 @@ public final class InventoryItem {
      * Get replenishmentTrackingId
      * @return replenishmentTrackingId
      */
-    @Schema(name = "replenishmentTrackingId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_TRACKING_ID)
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
+    @JsonIgnore
     public UUID getReplenishmentTrackingId() {
         return replenishmentTrackingId;
     }
 
-    @JsonProperty(JSON_PROPERTY_REPLENISHMENT_TRACKING_ID)
     public void setReplenishmentTrackingId(UUID replenishmentTrackingId) {
         this.replenishmentTrackingId = replenishmentTrackingId;
+    }
+
+    @JsonIgnore
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
     public boolean isStockReplenishment(OrderInfo info) {
@@ -180,6 +197,7 @@ public final class InventoryItem {
         sb.append("    quantity: ").append(toIndentedString(quantity)).append("\n");
         sb.append("    replenishmentThreshold: ").append(toIndentedString(replenishmentThreshold)).append("\n");
         sb.append("    replenishmentTrackingId: ").append(toIndentedString(replenishmentTrackingId)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("}");
         return sb.toString();
     }
