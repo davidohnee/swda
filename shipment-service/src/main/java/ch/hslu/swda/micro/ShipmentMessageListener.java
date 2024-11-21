@@ -2,6 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.ShipmentDAO;
+import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.micro.receivers.CreateShipmentReceiver;
 import ch.hslu.swda.micro.receivers.GetShipmentReceiver;

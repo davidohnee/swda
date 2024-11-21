@@ -3,8 +3,6 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.database.ShipmentDAO;
-import ch.hslu.swda.common.entities.Order;
-import ch.hslu.swda.common.entities.Shipment;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ public final class ShipmentService {
     private final BusConnector bus;
 
     private final ShipmentDAO shipmentDAO;
-    private final ExecutorService orderProcessingPool;
+    private final ExecutorService shipmentProcessingPool;
 
     private boolean running;
 
@@ -31,7 +29,7 @@ public final class ShipmentService {
         this.bus = new BusConnector();
         this.shipmentDAO = new ShipmentDAO(database);
         this.running = false;
-        this.orderProcessingPool = Executors.newCachedThreadPool();
+        this.shipmentProcessingPool = Executors.newCachedThreadPool();
     }
 
     public void start() throws IOException, TimeoutException {

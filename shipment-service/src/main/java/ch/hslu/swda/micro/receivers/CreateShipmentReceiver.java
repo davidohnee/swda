@@ -5,6 +5,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.ShipmentDAO;
 import ch.hslu.swda.common.entities.*;
+import ch.hslu.swda.common.routing.MessageRoutes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -40,9 +41,20 @@ public final class CreateShipmentReceiver implements MessageReceiver {
             ShipmentCreate shipmentCreate = this.mapper.readValue(message, ShipmentCreate.class);
             LOG.debug("Received shipmentCreate: {}", shipmentCreate);
 
-            //this.shipmentDAO.create(unvalidatedOrder);
+            String orderId = shipmentCreate.getOrderId().toString();
+            LOG.debug("Validating order with id: {}", orderId);
+            String response = bus.talkSync(exchangeName, MessageRoutes.SHIPMENT_VALIDATE, orderId);
+
+            if (!response.equals("true")) {
+                    sendErrorResponse(replyTo, corrId, "Order is not valid");
+                return;
+            }
+
+            Shipment shipment = new Shipment(UUID.randomUUID(), shipmentCreate.getOrderId(), shipmentCreate.getDeparture(), shipmentCreate.getEstimatedArrival());
+            this.shipmentDAO.create(shipment);
+
             sendResponse(replyTo, corrId, new Shipment());
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             LOG.error("Error processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
         }
