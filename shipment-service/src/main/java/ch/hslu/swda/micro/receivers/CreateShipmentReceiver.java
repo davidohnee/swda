@@ -46,14 +46,14 @@ public final class CreateShipmentReceiver implements MessageReceiver {
             String response = bus.talkSync(exchangeName, MessageRoutes.SHIPMENT_VALIDATE, orderId);
 
             if (!response.equals("true")) {
-                    sendErrorResponse(replyTo, corrId, "Order is not valid");
+                sendErrorResponse(replyTo, corrId, "Order is not valid");
                 return;
             }
 
             Shipment shipment = new Shipment(UUID.randomUUID(), shipmentCreate.getOrderId(), shipmentCreate.getDeparture(), shipmentCreate.getEstimatedArrival());
             this.shipmentDAO.create(shipment);
 
-            sendResponse(replyTo, corrId, new Shipment());
+            sendResponse(replyTo, corrId, shipment);
         } catch (IOException | InterruptedException e) {
             LOG.error("Error processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
