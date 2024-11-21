@@ -37,6 +37,7 @@ public final class CreateShipmentReceiver implements MessageReceiver {
         try {
             LOG.debug("Received message: {}", message);
             ShipmentCreate shipmentCreate = this.mapper.readValue(message, ShipmentCreate.class);
+            LOG.debug("Received shipmentCreate: {}", shipmentCreate);
 
             //this.shipmentDAO.create(unvalidatedOrder);
             sendResponse(replyTo, corrId, new Shipment());
