@@ -42,8 +42,8 @@ public class Shipment {
     public static final String JSON_PROPERTY_ORDER_ID = "orderId";
     private UUID orderId;
 
-    public static final String JSON_PROPERTY_CUSTOMER_ORDER = "customerOrder";
-    private transient Order customerOrder;
+    public static final String JSON_PROPERTY_CUSTOMER_ORDER = "order";
+    private transient Order order;
 
     public static final String JSON_PROPERTY_DEPARTURE = "departure";
     private OffsetDateTime departure;
@@ -58,9 +58,9 @@ public class Shipment {
         this.estimatedArrival = estimatedArrival;
     }
 
-    public Shipment(UUID id, Order customerOrder) {
+    public Shipment(UUID id, Order order) {
         this.id = id;
-        this.customerOrder = customerOrder;
+        this.order = order;
     }
 
     public Shipment() {}
@@ -88,8 +88,8 @@ public class Shipment {
         this.id = id;
     }
 
-    public Shipment customerOrder(Order customerOrder) {
-        this.customerOrder = customerOrder;
+    public Shipment order(Order order) {
+        this.order = order;
         return this;
     }
 
@@ -117,22 +117,22 @@ public class Shipment {
     }
 
     /**
-     * Get customerOrder
-     * @return customerOrder
+     * Get order
+     * @return order
      */
     @Valid
     @NotNull
-    @Schema(name = "customerOrder", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "order", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public Order getCustomerOrder() {
-        return customerOrder;
+        return order;
     }
 
     @JsonProperty(JSON_PROPERTY_CUSTOMER_ORDER)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCustomerOrder(Order customerOrder) {
-        this.customerOrder = customerOrder;
+    public void setCustomerOrder(Order order) {
+        this.order = order;
     }
 
     public Shipment departure(OffsetDateTime departure) {
@@ -195,14 +195,14 @@ public class Shipment {
         }
         Shipment shipment = (Shipment) o;
         return Objects.equals(this.id, shipment.id) &&
-                Objects.equals(this.customerOrder, shipment.customerOrder) &&
+                Objects.equals(this.order, shipment.order) &&
                 Objects.equals(this.departure, shipment.departure) &&
                 Objects.equals(this.estimatedArrival, shipment.estimatedArrival);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, customerOrder, departure, estimatedArrival);
+        return Objects.hash(id, order, departure, estimatedArrival);
     }
 
     @Override
@@ -210,7 +210,7 @@ public class Shipment {
         StringBuilder sb = new StringBuilder();
         sb.append("class Shipment {\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    customerOrder: ").append(toIndentedString(customerOrder)).append("\n");
+        sb.append("    order: ").append(toIndentedString(order)).append("\n");
         sb.append("    departure: ").append(toIndentedString(departure)).append("\n");
         sb.append("    estimatedArrival: ").append(toIndentedString(estimatedArrival)).append("\n");
         sb.append("}");
