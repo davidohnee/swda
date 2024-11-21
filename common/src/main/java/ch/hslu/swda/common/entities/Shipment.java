@@ -65,6 +65,7 @@ public class Shipment {
 
     public Shipment() {}
 
+
     public Shipment id(UUID id) {
         this.id = id;
         return this;
