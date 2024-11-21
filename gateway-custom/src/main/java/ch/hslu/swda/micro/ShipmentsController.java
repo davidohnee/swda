@@ -193,8 +193,13 @@ public class ShipmentsController {
 
             String response = bus.talkSync(exchange, route, message);
 
+            // This error handling is iffy af, gotta be redone ...
             if (response == null || response.equals("Error processing request")) {
                 return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to create shipment"));
+            }
+
+            if (response.equals("Order is not valid")) {
+                return Mono.error(new HttpStatusException(HttpStatus.NOT_FOUND, "Order is not valid"));
             }
 
             LOG.info("Received response: {}", response);
