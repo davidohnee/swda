@@ -6,6 +6,7 @@ import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.micro.receivers.CreateOrderReceiver;
 import ch.hslu.swda.micro.receivers.GetOrderReceiver;
+import ch.hslu.swda.micro.receivers.OrderValidationReceiver;
 import ch.hslu.swda.micro.receivers.UpdateOrderReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,36 +48,45 @@ public class OrderMessageListener {
 
     public void start() throws IOException {
         LOG.info("OrderService is now listening for messages...");
+
         this.bus.listenFor(
-                this.exchangeName,
-                "OrderService <- order.get.entityset",
-                MessageRoutes.ORDER_GET_ENTITYSET,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
+            this.exchangeName,
+            "OrderService <- order.get.entityset",
+            MessageRoutes.ORDER_GET_ENTITYSET,
+            new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
 
         this.bus.listenFor(
-                this.exchangeName,
-                "OrderService <- order.get.entity",
-                MessageRoutes.ORDER_GET_ENTITY,
-                new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
+            this.exchangeName,
+            "OrderService <- order.get.entity",
+            MessageRoutes.ORDER_GET_ENTITY,
+            new GetOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
 
         this.bus.listenFor(
+            this.exchangeName,
+            "OrderService <- order.create",
+            MessageRoutes.ORDER_CREATE,
+            new CreateOrderReceiver(
                 this.exchangeName,
-                "OrderService <- order.create",
-                MessageRoutes.ORDER_CREATE,
-                new CreateOrderReceiver(
-                        this.exchangeName,
-                        this.bus,
-                        this.orderDAO,
-                        this::notifyUnvalidatedOrderListener)
+                this.bus,
+                this.orderDAO,
+                this::notifyUnvalidatedOrderListener
+            )
         );
 
         this.bus.listenFor(
-                this.exchangeName,
-                "OrderService <- order.update.from.inventory",
-                MessageRoutes.INVENTORY_ON_AVAILABLE,
-                new UpdateOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
+            this.exchangeName,
+            "OrderService <- order.update.from.inventory",
+            MessageRoutes.INVENTORY_ON_AVAILABLE,
+            new UpdateOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
+        );
+
+        this.bus.listenFor(
+            this.exchangeName,
+            "OrderService <- shipment.validate",
+            MessageRoutes.SHIPMENT_VALIDATE,
+            new OrderValidationReceiver(this.exchangeName, this.bus, this.orderDAO)
         );
     }
 }
