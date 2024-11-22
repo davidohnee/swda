@@ -3,9 +3,11 @@
     import CreateShipmentDialog from "@/components/CreateShipmentDialog.vue";
     import ErrorLoader from "@/components/ErrorLoader.vue";
     import { useOrderStore } from "@/stores/orders";
+    import { useShipmentStore } from "@/stores/shipments";
     import { ref } from "vue";
 
     const orders = useOrderStore();
+    const shipments = useShipmentStore();
 
     const orderDialog = ref<typeof CreateOrderDialog>();
     const shipmentDialog = ref<typeof CreateShipmentDialog>();
@@ -34,7 +36,7 @@
                     ref="orderDialog"
                 />
                 <CreateShipmentDialog
-                    @close="orders.refresh"
+                    @close="shipments.refresh"
                     ref="shipmentDialog"
                 />
                 <table>
