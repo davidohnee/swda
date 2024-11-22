@@ -35,4 +35,13 @@ export const shipments = {
                 };
             });
     },
+    async create(shipment: { orderId: string; departure: string; estimatedArrival: string }): Promise<ApiResponse<Shipment>> {
+        return fetch("/api/v1/shipments", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(shipment),
+        }).then(mapApiResponse<any>);
+    },
 };

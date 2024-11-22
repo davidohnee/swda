@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import CreateOrderDialog from "@/components/CreateOrderDialog.vue";
+    import CreateShipmentDialog from "@/components/CreateShipmentDialog.vue";
     import ErrorLoader from "@/components/ErrorLoader.vue";
     import { useOrderStore } from "@/stores/orders";
     import { ref } from "vue";
@@ -7,9 +8,14 @@
     const orders = useOrderStore();
 
     const orderDialog = ref<typeof CreateOrderDialog>();
+    const shipmentDialog = ref<typeof CreateShipmentDialog>();
 
     const order = () => {
         orderDialog.value!.open();
+    };
+
+    const createShipment = (orderId: string) => {
+        shipmentDialog.value!.open(orderId);
     };
 </script>
 <template>
@@ -27,6 +33,10 @@
                     @close="orders.refresh"
                     ref="orderDialog"
                 />
+                <CreateShipmentDialog
+                    @close="orders.refresh"
+                    ref="shipmentDialog"
+                />
                 <table>
                     <thead>
                         <tr>
@@ -36,6 +46,7 @@
                             <th>Customer</th>
                             <th>Employee</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,6 +98,9 @@
                                 >
                                     {{ item.status }}
                                 </div>
+                            </td>
+                            <td>
+                                <button @click="createShipment(item.id)">Create Shipment</button>
                             </td>
                         </tr>
                     </tbody>

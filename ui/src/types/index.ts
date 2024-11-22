@@ -77,6 +77,12 @@ export interface Shipment {
     estimatedArrival: Date;
 }
 
+export interface ShipmentCreate {
+    orderId: string;
+    departure: string;
+    estimatedArrival: string;
+}
+
 export interface MicronautErrorResponse {
     message: string;
     _links: {
