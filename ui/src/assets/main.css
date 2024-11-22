@@ -80,6 +80,36 @@ select {
         }
     }
 
+    &.secondary.success {
+        background: var(--bg);
+        border-color: var(--green);
+
+        &:hover {
+            background-color: var(--bg-mute);
+            border-color: var(--green-dk);
+        }
+    }
+
+    &.error {
+        background-color: var(--red);
+        color: white;
+
+        &:hover {
+            background-color: var(--red-dk);
+            border-color: var(--red-dk);
+        }
+    }
+
+    &.secondary.error {
+        background: var(--bg);
+        border-color: var(--red);
+
+        &:hover {
+            background-color: var(--bg-mute);
+            border-color: var(--red-dk);
+        }
+    }
+
     &:disabled {
         background-color: var(--bg-mute);
         color: var(--border);
@@ -235,4 +265,32 @@ table {
     justify-content: center;
     align-items: center;
     width: 100%;
+}
+
+dialog[open] {
+    border-radius: 1em;
+    border: 1px solid var(--border);
+
+    &::backdrop {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    & h1 {
+        font-size: 2rem;
+        margin-bottom: 0;
+    }
+
+    .close {
+        position: absolute;
+        top: 0.75em;
+        right: 0.75em;
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: var(--fg-mute);
+        transition: color 0.1s;
+
+        &:hover {
+            color: var(--fg);
+        }
+    }
 }

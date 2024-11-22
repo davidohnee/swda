@@ -134,19 +134,6 @@
     </dialog>
 </template>
 <style scoped>
-    dialog .close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: 0.5rem;
-        cursor: pointer;
-    }
-
-    dialog[open] {
-        border-radius: 1em;
-        border: 1px solid var(--border);
-    }
-
     dialog[open],
     dialog[open] > div {
         outline: none;
@@ -160,10 +147,6 @@
         & input {
             width: unset;
         }
-    }
-
-    dialog::backdrop {
-        background: rgba(0, 0, 0, 0.7);
     }
 
     .options {
