@@ -96,7 +96,6 @@ dialog {
   border: none;
   border-radius: 1em;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  background-color: var(--bg-base);
   padding: 2em;
   max-width: 500px;
   width: 90%;
@@ -112,7 +111,7 @@ dialog[open] {
 }
 
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .close {
