@@ -13,7 +13,7 @@ public final class PersistedOrder {
     private UUID orderId;
     private OffsetDateTime dateTime;
     private Order.StatusEnum status;
-    private List<OrderItemCreate> orderItems;
+    private List<OrderInfo> orderItems;
     private BigDecimal price;
     private Order.OrderTypeEnum orderType;
     private UUID customerId;
@@ -25,7 +25,7 @@ public final class PersistedOrder {
             UUID orderId,
             OffsetDateTime dateTime,
             Order.StatusEnum status,
-            List<OrderItemCreate> orderItems,
+            List<OrderInfo> orderItems,
             BigDecimal price,
             Order.OrderTypeEnum orderType,
             UUID customerId,
@@ -79,11 +79,11 @@ public final class PersistedOrder {
         this.status = status;
     }
 
-    public List<OrderItemCreate> getOrderItems() {
+    public List<OrderInfo> getOrderItems() {
         return this.orderItems;
     }
 
-    public void setOrderItems(List<OrderItemCreate> orderItems) {
+    public void setOrderItems(List<OrderInfo> orderItems) {
         this.orderItems = orderItems;
     }
 
