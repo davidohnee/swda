@@ -9,9 +9,7 @@ import org.bson.types.Decimal128;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -43,18 +41,10 @@ public class OrderDAO extends GenericDAO<Document> {
                                         .append("product", new Document()
                                                 .append("id", "$$item.productId")
                                                 .append("name", new Document("$arrayElemAt", Arrays.asList(
-                                                        new Document("$filter", new Document()
-                                                                .append("input", "$productDetails")
-                                                                .append("as", "prod")
-                                                                .append("cond", new Document("$eq", Arrays.asList("$$prod.product._id", "$$item.productId")))
-                                                        ), 0
+                                                        "$productDetails.product.name", 0
                                                 )))
                                                 .append("price", new Document("$arrayElemAt", Arrays.asList(
-                                                        new Document("$filter", new Document()
-                                                                .append("input", "$productDetails")
-                                                                .append("as", "prod")
-                                                                .append("cond", new Document("$eq", Arrays.asList("$$prod.product._id", "$$item.productId")))
-                                                        ), 0
+                                                        "$productDetails.product.price", 0
                                                 )))
                                         )
                                         .append("quantity", "$$item.quantity")
@@ -115,14 +105,17 @@ public class OrderDAO extends GenericDAO<Document> {
         return items.stream().map(item -> {
             OrderItem orderItem = new OrderItem();
             Document productDoc = item.get("product", Document.class);
-            Product product = new Product();
-            product.setId(productDoc.getInteger("id"));
-            Document nameDoc = productDoc.get("name", Document.class);
-            product.setName(nameDoc != null ? nameDoc.getString("name") : null);
-            Document priceDoc = productDoc.get("price", Document.class);
-            product.setPrice(priceDoc != null ? priceDoc.get("price", BigDecimal.class) : null);
-            orderItem.setProduct(product);
-            orderItem.setQuantity(item.getInteger("quantity"));
+            if (productDoc != null) {
+                Product product = new Product();
+                product.setId(productDoc.getInteger("id"));
+                product.setName(productDoc.getString("name"));
+                Object priceObj = productDoc.get("price");
+                if (priceObj instanceof Decimal128) {
+                    product.setPrice(((Decimal128) priceObj).bigDecimalValue());
+                }
+                orderItem.setProduct(product);
+            }
+            orderItem.setQuantity(item.getInteger("quantity", 0)); // Default to 0 if null
             return orderItem;
         }).collect(Collectors.toList());
     }
