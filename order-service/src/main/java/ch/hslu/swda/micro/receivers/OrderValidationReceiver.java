@@ -3,6 +3,7 @@ package ch.hslu.swda.micro.receivers;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.database.PersistedOrderDAO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -16,13 +17,13 @@ public class OrderValidationReceiver implements MessageReceiver {
 
     private final String exchangeName;
     private final BusConnector bus;
-    private final OrderDAO orderDAO;
+    private final PersistedOrderDAO persistedOrderDAO;
     private final ObjectMapper mapper;
 
-    public OrderValidationReceiver(final String exchangeName, final BusConnector bus, final OrderDAO orderDAO) {
+    public OrderValidationReceiver(final String exchangeName, final BusConnector bus, final PersistedOrderDAO persistedOrderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.orderDAO = orderDAO;
+        this.persistedOrderDAO = persistedOrderDAO;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());;
     }
 
@@ -48,7 +49,7 @@ public class OrderValidationReceiver implements MessageReceiver {
     }
 
     private boolean isOrderValid(final UUID orderId) {
-        var response = orderDAO.findByUUID(orderId);
+        var response = persistedOrderDAO.findByUUID(orderId);
         return response != null;
     }
 

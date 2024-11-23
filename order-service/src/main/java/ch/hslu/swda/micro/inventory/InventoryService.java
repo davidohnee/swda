@@ -1,6 +1,7 @@
 package ch.hslu.swda.micro.inventory;
 
 
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface InventoryService {
      * Takes items from the inventory.
      *
      * @param orderItems The order items.
-     * @return The response.
+     * @return An array of {@link OrderInfo} objects.
      */
-    CompletableFuture<Boolean> takeItems(List<OrderItemCreate> orderItems);
+    CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems);
 }

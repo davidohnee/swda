@@ -1,9 +1,11 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
-import ch.hslu.swda.common.database.OrderDAO;
+import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
+import ch.hslu.swda.common.entities.PersistedOrder;
 import ch.hslu.swda.micro.customer.CustomerService;
 import ch.hslu.swda.micro.customer.CustomerServiceImpl;
 import ch.hslu.swda.micro.customer.CustomerValidateException;
@@ -22,18 +24,18 @@ public class OrderProcessingWorker {
     private static final int TIMEOUT_CUSTOMER_VALIDATION = 30;
     private static final int TIMEOUT_INVENTORY_RESERVATION = 30;
     private static final Logger LOG = LoggerFactory.getLogger(OrderProcessingWorker.class);
-    private final OrderDAO orderDAO;
+    private final PersistedOrderDAO persistedOrderDAO;
     private final CustomerService customerService;
     private final InventoryService inventoryService;
 
-    public OrderProcessingWorker(String exchangeName, BusConnector bus, OrderDAO orderDAO) {
-        this.orderDAO = orderDAO;
+    public OrderProcessingWorker(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
+        this.persistedOrderDAO = persistedOrderDAO;
         this.customerService = new CustomerServiceImpl(bus, exchangeName);
         this.inventoryService = new InventoryServiceImpl(bus, exchangeName);
     }
 
-    public void processOrder(Order order) {
-        UUID customerId = order.getCustomer().getId();
+    public void processOrder(PersistedOrder order) {
+        UUID customerId = order.getCustomerId();
 
         customerService.validateCustomer(customerId)
                 .orTimeout(TIMEOUT_CUSTOMER_VALIDATION, TimeUnit.SECONDS)  // Add a timeout of 5 seconds for customer validation
@@ -44,28 +46,28 @@ public class OrderProcessingWorker {
                     }
                     LOG.info("Customer {} validated. Proceeding with inventory reservation.", customerId);
                     List<OrderItemCreate> orderItems = order.getOrderItems().stream()
-                            .map(orderItem -> new OrderItemCreate(orderItem.getProduct().getId(), orderItem.getQuantity()))
+                            .map(orderItem -> new OrderItemCreate(orderItem.getProductId(), orderItem.getQuantity()))
                             .toList();
                     order.setStatus(Order.StatusEnum.PENDING);
-                    LOG.info("Updating order {} status to PENDING.", order.getId());
-                    //this.orderDAO.update(order.getId(), order);
+                    LOG.info("Updating order {} status to PENDING.", order.getOrderId());
+                    this.persistedOrderDAO.update(order.getId(), order);
                     return inventoryService.takeItems(orderItems)
                             .orTimeout(TIMEOUT_INVENTORY_RESERVATION, TimeUnit.SECONDS);  // Add a timeout of 10 seconds for inventory reservation
                 })
-                .thenAccept(reserved -> {
-                    if (reserved) {
-                        LOG.info("Inventory successfully reserved for order {}", order.getId());
-                        completeOrderProcessing(order);
+                .thenAccept(orderInfos -> {
+                    if (orderInfos != null) {
+                        LOG.info("Inventory successfully reserved for order {}", order.getOrderId());
+                        completeOrderProcessing(order, orderInfos);
                     } else {
-                        LOG.warn("Inventory reservation failed for order {}", order.getId());
+                        LOG.warn("Inventory reservation failed for order {}", order.getOrderId());
                         handleOrderFailure(order);
                     }
                 })
                 .exceptionally(ex -> {
                     if (ex.getCause() instanceof TimeoutException) {
-                        LOG.error("Order processing timed out for order {}: {}", order.getId(), ex.getMessage());
+                        LOG.error("Order processing timed out for order {}: {}", order.getOrderId(), ex.getMessage());
                     } else {
-                        LOG.error("Order processing failed for order {}: {}", order.getId(), ex.getMessage());
+                        LOG.error("Order processing failed for order {}: {}", order.getOrderId(), ex.getMessage());
                     }
                     handleOrderFailure(order);
                     return null;
@@ -73,15 +75,16 @@ public class OrderProcessingWorker {
     }
 
 
-    private void completeOrderProcessing(Order order) {
+    private void completeOrderProcessing(PersistedOrder order, OrderInfo[] orderInfos) {
         order.setStatus(Order.StatusEnum.CONFIRMED);
-        LOG.info("Updating order {} status to CONFIRMED.", order.getId());
-        //this.orderDAO.update(order.getId(), order);
-        LOG.info("Order {} processed successfully.", order.getId());
-
+        LOG.info("Updating order {} status to CONFIRMED.", order.getOrderId());
+        order.setOrderItems(List.of(orderInfos));
+        this.persistedOrderDAO.update(order.getId(), order);
+        LOG.debug("Order {} updated in database.", order.getOrderId());
+        LOG.info("Order {} processed successfully.", order.getOrderId());
     }
 
-    private void handleOrderFailure(Order order) {
+    private void handleOrderFailure(PersistedOrder order) {
         LOG.error("Failed to process order {}.", order.getId());
     }
 }

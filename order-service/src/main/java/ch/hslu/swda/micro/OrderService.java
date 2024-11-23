@@ -3,7 +3,8 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.database.OrderDAO;
-import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.database.PersistedOrderDAO;
+import ch.hslu.swda.common.entities.PersistedOrder;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ public final class OrderService {
     private static final Logger LOG = LoggerFactory.getLogger(OrderService.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final PersistedOrderDAO persistedOrderDAO;
     private final OrderDAO orderDAO;
     private final ExecutorService orderProcessingPool;
     private boolean running;
@@ -26,8 +28,9 @@ public final class OrderService {
         LOG.debug("Initializing OrderService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
+        this.persistedOrderDAO = new PersistedOrderDAO(database);
         this.orderDAO = new OrderDAO(database);
-        new OrdersMemory().getAllOrders().forEach(orderDAO::create); // load dummy data into database
+//        new OrdersMemory().getAllOrders().forEach(orderDAO::create); // load dummy data into database
         this.running = false;
         this.orderProcessingPool = Executors.newCachedThreadPool();
     }
@@ -40,6 +43,7 @@ public final class OrderService {
             OrderMessageListener messageListener = new OrderMessageListener(
                     this.exchangeName,
                     this.bus,
+                    this.persistedOrderDAO,
                     this.orderDAO
             );
             messageListener.addUnvalidatedOrderListener(this::processOrder);
@@ -53,12 +57,12 @@ public final class OrderService {
         }
     }
 
-    private void processOrder(Order order) {
+    private void processOrder(PersistedOrder order) {
         LOG.info("Processing order: {}", order.getId());
         this.orderProcessingPool.submit(() -> new OrderProcessingWorker(
                 this.exchangeName,
                 this.bus,
-                this.orderDAO
+                this.persistedOrderDAO
         ).processOrder(order));
     }
 

@@ -2,29 +2,25 @@ package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.common.database.OrderDAO;
-import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.OrderInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class UpdateOrderReceiver implements MessageReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdateOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
-    private final OrderDAO orderDAO;
+    private final PersistedOrderDAO persistedOrderDAO;
     private final ObjectMapper mapper;
 
-    public UpdateOrderReceiver(String exchangeName, BusConnector bus, OrderDAO orderDAO) {
+    public UpdateOrderReceiver(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
-        this.orderDAO = orderDAO;
+        this.persistedOrderDAO = persistedOrderDAO;
         this.mapper = new ObjectMapper();
     }
 

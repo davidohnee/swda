@@ -1,6 +1,7 @@
 package ch.hslu.swda.micro.inventory;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
 import ch.hslu.swda.dto.InventoryTakeItemsRequest;
 import ch.hslu.swda.common.routing.MessageRoutes;
@@ -24,8 +25,8 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public CompletableFuture<Boolean> takeItems(List<OrderItemCreate> orderItems) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
+    public CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems) {
+        CompletableFuture<OrderInfo[]> future = new CompletableFuture<>();
         LOG.debug("Taking items from inventory");
         String request = createTakeItemsRequest(new InventoryTakeItemsRequest(orderItems));
         return sendRequest(request, future);
@@ -41,7 +42,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
     }
 
-    private CompletableFuture<Boolean> sendRequest(String request, CompletableFuture<Boolean> future) {
+    private CompletableFuture<OrderInfo[]> sendRequest(String request, CompletableFuture<OrderInfo[]> future) {
         try {
             bus.talkAsync(
                     this.exchangeName,

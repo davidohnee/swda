@@ -2,7 +2,8 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.OrderDAO;
-import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.database.PersistedOrderDAO;
+import ch.hslu.swda.common.entities.PersistedOrder;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.micro.receivers.CreateOrderReceiver;
 import ch.hslu.swda.micro.receivers.GetOrderReceiver;
@@ -19,12 +20,14 @@ public class OrderMessageListener {
     private static final Logger LOG = LoggerFactory.getLogger(OrderMessageListener.class);
     private final String exchangeName;
     private final BusConnector bus;
+    private final PersistedOrderDAO persistedOrderDAO;
     private final OrderDAO orderDAO;
     private final List<UnvalidatedOrderListener> unvalidatedOrderListener;
 
-    public OrderMessageListener(String exchangeName, BusConnector bus, OrderDAO orderDAO) {
+    public OrderMessageListener(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO, OrderDAO orderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
+        this.persistedOrderDAO = persistedOrderDAO;
         this.orderDAO = orderDAO;
         this.unvalidatedOrderListener = new ArrayList<>();
     }
@@ -40,7 +43,7 @@ public class OrderMessageListener {
         this.unvalidatedOrderListener.remove(listener);
     }
 
-    private void notifyUnvalidatedOrderListener(Order order) {
+    private void notifyUnvalidatedOrderListener(PersistedOrder order) {
         for (UnvalidatedOrderListener listener : this.unvalidatedOrderListener) {
             listener.onUnvalidatedOrder(order);
         }
@@ -70,6 +73,7 @@ public class OrderMessageListener {
             new CreateOrderReceiver(
                 this.exchangeName,
                 this.bus,
+                this.persistedOrderDAO,
                 this.orderDAO,
                 this::notifyUnvalidatedOrderListener
             )
@@ -79,14 +83,14 @@ public class OrderMessageListener {
             this.exchangeName,
             "OrderService <- order.update.from.inventory",
             MessageRoutes.INVENTORY_ON_AVAILABLE,
-            new UpdateOrderReceiver(this.exchangeName, this.bus, this.orderDAO)
+            new UpdateOrderReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
         );
 
         this.bus.listenFor(
             this.exchangeName,
             "OrderService <- shipment.validate",
             MessageRoutes.SHIPMENT_VALIDATE,
-            new OrderValidationReceiver(this.exchangeName, this.bus, this.orderDAO)
+            new OrderValidationReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
         );
     }
 }

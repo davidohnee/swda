@@ -4,6 +4,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.entities.OrderInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +12,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class InventoryTakeItemsResponseReceiver implements MessageReceiver {
     private static final Logger LOG = LoggerFactory.getLogger(InventoryTakeItemsResponseReceiver.class);
-    private final CompletableFuture<Boolean> future;
+    private final CompletableFuture<OrderInfo[]> future;
 
-    public InventoryTakeItemsResponseReceiver(CompletableFuture<Boolean> future) {
+    public InventoryTakeItemsResponseReceiver(CompletableFuture<OrderInfo[]> future) {
         this.future = future;
     }
 
@@ -29,10 +30,10 @@ public class InventoryTakeItemsResponseReceiver implements MessageReceiver {
     public void onMessageReceived(String route, String replyTo, String corrId, String message) {
         LOG.info("Received message from inventory service: {}", message);
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             OrderInfo[] response = mapper.readValue(message, OrderInfo[].class);
             LOG.info("Parsed response from inventory service: {}", response);
-            future.complete(true);
+            future.complete(response);
         } catch (JsonProcessingException e) {
             LOG.error("Error while parsing take items response", e);
             future.completeExceptionally(new InventoryTakeItemsException("Error while parsing take items response", e));
