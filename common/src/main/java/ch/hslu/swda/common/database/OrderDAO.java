@@ -5,8 +5,11 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +18,9 @@ import java.util.stream.Collectors;
 
 
 public class OrderDAO extends GenericDAO<Document> {
+    private static final Logger LOG = LoggerFactory.getLogger(OrderDAO.class);
+
+
     public OrderDAO(MongoDatabase database) {
         super(database, "orders", Document.class);
     }
@@ -74,6 +80,7 @@ public class OrderDAO extends GenericDAO<Document> {
                         )
                 )
         )).first();
+        LOG.info("Found order: {}", result);
 
         if (result == null) {
             return null;
@@ -91,7 +98,9 @@ public class OrderDAO extends GenericDAO<Document> {
     private Order convertDocumentToOrder(Document doc) {
         Order order = new Order();
         order.setId(doc.get("id", UUID.class));
-        order.setDateTime(doc.getDate("dateTime").toInstant().atOffset(ZoneOffset.UTC));
+        LOG.info("Received date: {}", doc.getString("dateTime"));
+        order.setDateTime(OffsetDateTime.parse(doc.getString("dateTime")));
+//        order.setDateTime(doc.getString("dateTime").toInstant().atOffset(ZoneOffset.UTC));
         order.setStatus(Order.StatusEnum.valueOf(doc.getString("status")));
         order.setOrderItems(convertOrderItems(doc.getList("orderItems", Document.class)));
         order.setPrice(doc.get("price", BigDecimal.class));
