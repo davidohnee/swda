@@ -5,11 +5,13 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.Decimal128;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -25,8 +27,24 @@ public class OrderDAO extends GenericDAO<Document> {
     }
 
     public Order findByUUID(UUID orderId) {
-        Document result = collection.aggregate(Arrays.asList(
-                Aggregates.match(Filters.eq("orderId", orderId)),
+        Document result = collection.aggregate(getAggregation(orderId)).first();
+        if (result == null) {
+            return null;
+        }
+        return convertDocumentToOrder(result);
+    }
+
+    public List<Order> findAll() {
+        List<Document> results = collection.aggregate(getAggregation(null)).into(new ArrayList<>());
+        return results.stream().map(this::convertDocumentToOrder).toList();
+    }
+
+    private List<Bson> getAggregation(UUID orderId) {
+        List<Bson> aggregation = new ArrayList<>();
+        if (orderId != null) {
+            aggregation.add(Aggregates.match(Filters.eq("orderId", orderId)));
+        }
+        aggregation.addAll(Arrays.asList(
                 Aggregates.lookup("customers", "customerId", "_id", "customerDetails"),
                 Aggregates.unwind("$customerDetails"),
                 Aggregates.lookup("inventory", "orderItems.productId", "product._id", "productDetails"),
@@ -84,20 +102,9 @@ public class OrderDAO extends GenericDAO<Document> {
                                 .append("type", "LOCAL")
                         )
                 )
-        )).first();
-        LOG.info("Found order: {}", result);
-
-        if (result == null) {
-            return null;
-        }
-
-        return convertDocumentToOrder(result);
+        ));
+        return aggregation;
     }
-
-
-//    public List<Order> findAll() {
-//        return
-//    }
 
 
     private Order convertDocumentToOrder(Document doc) {
