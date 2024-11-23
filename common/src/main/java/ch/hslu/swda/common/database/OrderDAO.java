@@ -40,12 +40,26 @@ public class OrderDAO extends GenericDAO<Document> {
                                 .append("in", new Document()
                                         .append("product", new Document()
                                                 .append("id", "$$item.productId")
-                                                .append("name", new Document("$arrayElemAt", Arrays.asList(
-                                                        "$productDetails.product.name", 0
-                                                )))
-                                                .append("price", new Document("$arrayElemAt", Arrays.asList(
-                                                        "$productDetails.product.price", 0
-                                                )))
+                                                .append("name", new Document("$let", new Document()
+                                                        .append("vars", new Document("productDetail", new Document("$arrayElemAt", Arrays.asList(
+                                                                new Document("$filter", new Document()
+                                                                        .append("input", "$productDetails")
+                                                                        .append("as", "pd")
+                                                                        .append("cond", new Document("$eq", Arrays.asList("$$pd.product._id", "$$item.productId")))
+                                                                ), 0
+                                                        ))))
+                                                        .append("in", "$$productDetail.product.name")
+                                                ))
+                                                .append("price", new Document("$let", new Document()
+                                                        .append("vars", new Document("productDetail", new Document("$arrayElemAt", Arrays.asList(
+                                                                new Document("$filter", new Document()
+                                                                        .append("input", "$productDetails")
+                                                                        .append("as", "pd")
+                                                                        .append("cond", new Document("$eq", Arrays.asList("$$pd.product._id", "$$item.productId")))
+                                                                ), 0
+                                                        ))))
+                                                        .append("in", "$$productDetail.product.price")
+                                                ))
                                         )
                                         .append("quantity", "$$item.quantity")
                                 )
