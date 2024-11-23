@@ -98,9 +98,8 @@ public class OrderDAO extends GenericDAO<Document> {
     private Order convertDocumentToOrder(Document doc) {
         Order order = new Order();
         order.setId(doc.get("id", UUID.class));
-        LOG.info("Received date: {}", doc.getString("dateTime"));
         order.setDateTime(OffsetDateTime.parse(doc.getString("dateTime")));
-//        order.setDateTime(doc.getString("dateTime").toInstant().atOffset(ZoneOffset.UTC));
+        System.out.println("DateTime of order: " + order.getDateTime());
         order.setStatus(Order.StatusEnum.valueOf(doc.getString("status")));
         order.setOrderItems(convertOrderItems(doc.getList("orderItems", Document.class)));
         order.setPrice(doc.get("price", BigDecimal.class));
@@ -117,8 +116,10 @@ public class OrderDAO extends GenericDAO<Document> {
             Document productDoc = item.get("product", Document.class);
             Product product = new Product();
             product.setId(productDoc.getInteger("id"));
-            product.setName(productDoc.getString("name"));
-            product.setPrice(productDoc.get("price", BigDecimal.class));
+            Document nameDoc = productDoc.get("name", Document.class);
+            product.setName(nameDoc.getString("name"));
+            Document priceDoc = productDoc.get("price", Document.class);
+            product.setPrice(priceDoc.get("price", BigDecimal.class));
             orderItem.setProduct(product);
             orderItem.setQuantity(item.getInteger("quantity"));
             return orderItem;
