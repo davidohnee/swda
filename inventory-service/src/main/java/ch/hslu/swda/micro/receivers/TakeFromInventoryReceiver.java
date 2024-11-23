@@ -22,6 +22,7 @@ import ch.hslu.swda.dto.inventory.InventoryTakeRequest;
 import ch.hslu.swda.dto.inventory.InventoryUpdateRequest;
 import ch.hslu.swda.inventory.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public final class TakeFromInventoryReceiver implements MessageReceiver {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.inventory = inventory;
-        this.mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     /**
