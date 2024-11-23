@@ -40,14 +40,14 @@ public class OrderDAO extends GenericDAO<Document> {
                                                                 .append("input", "$productDetails")
                                                                 .append("as", "prod")
                                                                 .append("cond", new Document("$eq", Arrays.asList("$$prod.product._id", "$$item.productId")))
-                                                        ), 0, "$$REMOVE"
+                                                        ), 0
                                                 )))
                                                 .append("price", new Document("$arrayElemAt", Arrays.asList(
                                                         new Document("$filter", new Document()
                                                                 .append("input", "$productDetails")
                                                                 .append("as", "prod")
                                                                 .append("cond", new Document("$eq", Arrays.asList("$$prod.product._id", "$$item.productId")))
-                                                        ), 0, "$$REMOVE"
+                                                        ), 0
                                                 )))
                                         )
                                         .append("quantity", "$$item.quantity")
@@ -86,7 +86,6 @@ public class OrderDAO extends GenericDAO<Document> {
 //    public List<Order> findAll() {
 //        return
 //    }
-
 
 
     private Order convertDocumentToOrder(Document doc) {
