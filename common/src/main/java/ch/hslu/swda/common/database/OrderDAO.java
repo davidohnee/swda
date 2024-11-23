@@ -7,8 +7,6 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Decimal128;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
@@ -19,8 +17,6 @@ import java.util.stream.Collectors;
 
 
 public class OrderDAO extends GenericDAO<Document> {
-    private static final Logger LOG = LoggerFactory.getLogger(OrderDAO.class);
-
 
     public OrderDAO(MongoDatabase database) {
         super(database, "orders", Document.class);
@@ -111,7 +107,6 @@ public class OrderDAO extends GenericDAO<Document> {
         Order order = new Order();
         order.setId(doc.get("id", UUID.class));
         order.setDateTime(OffsetDateTime.parse(doc.getString("dateTime")));
-        System.out.println("DateTime of order: " + order.getDateTime());
         order.setStatus(Order.StatusEnum.valueOf(doc.getString("status")));
         order.setOrderItems(convertOrderItems(doc.getList("orderItems", Document.class)));
         order.setPrice(doc.get("price", Decimal128.class).bigDecimalValue());
