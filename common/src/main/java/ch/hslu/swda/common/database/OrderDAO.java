@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.types.Decimal128;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,7 +103,7 @@ public class OrderDAO extends GenericDAO<Document> {
         System.out.println("DateTime of order: " + order.getDateTime());
         order.setStatus(Order.StatusEnum.valueOf(doc.getString("status")));
         order.setOrderItems(convertOrderItems(doc.getList("orderItems", Document.class)));
-        order.setPrice(doc.get("price", BigDecimal.class));
+        order.setPrice(doc.get("price", Decimal128.class).bigDecimalValue());
         order.setOrderType(Order.OrderTypeEnum.valueOf(doc.getString("orderType")));
         order.setCustomer(convertCustomer(doc.get("customer", Document.class)));
         order.setSeller(convertSeller(doc.get("seller", Document.class)));
