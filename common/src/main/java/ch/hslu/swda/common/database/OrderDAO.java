@@ -117,9 +117,9 @@ public class OrderDAO extends GenericDAO<Document> {
             Product product = new Product();
             product.setId(productDoc.getInteger("id"));
             Document nameDoc = productDoc.get("name", Document.class);
-            product.setName(nameDoc.getString("name"));
+            product.setName(nameDoc != null ? nameDoc.getString("name") : null);
             Document priceDoc = productDoc.get("price", Document.class);
-            product.setPrice(priceDoc.get("price", BigDecimal.class));
+            product.setPrice(priceDoc != null ? priceDoc.get("price", BigDecimal.class) : null);
             orderItem.setProduct(product);
             orderItem.setQuantity(item.getInteger("quantity"));
             return orderItem;
