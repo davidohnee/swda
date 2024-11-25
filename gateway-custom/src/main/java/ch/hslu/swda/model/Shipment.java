@@ -116,10 +116,6 @@ public class Shipment {
         return this;
     }
 
-    /**
-     * Get order
-     * @return order
-     */
     @Valid
     @NotNull
     @Schema(name = "order", requiredMode = Schema.RequiredMode.REQUIRED)
