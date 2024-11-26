@@ -4,20 +4,21 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.OrderInfo;
+import ch.hslu.swda.common.entities.PersistedOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateOrderReceiver implements MessageReceiver {
+public class InventoryAvailableReceiver implements MessageReceiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UpdateOrderReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InventoryAvailableReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
     private final PersistedOrderDAO persistedOrderDAO;
     private final ObjectMapper mapper;
 
-    public UpdateOrderReceiver(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
+    public InventoryAvailableReceiver(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.persistedOrderDAO = persistedOrderDAO;
@@ -45,7 +46,19 @@ public class UpdateOrderReceiver implements MessageReceiver {
     }
 
     private void updateOrder(OrderInfo orderInfo) {
-        // TODO: Implement update order -> get order from database based on trackingId
-        LOG.debug("Updating order with trackingId: {}", orderInfo.getTrackingId());
+        PersistedOrder order = persistedOrderDAO.findByTrackingId(orderInfo.getTrackingId());
+        if (order == null) {
+            LOG.error("Order with trackingId: {} not found", orderInfo.getTrackingId());
+            return;
+        }
+        for (OrderInfo item : order.getOrderItems()) {
+            if (item.getProductId() == orderInfo.getProductId()) {
+                item.setStatus(orderInfo.getStatus());
+                item.setDeliveryDate(orderInfo.getDeliveryDate());
+                break;
+            }
+        }
+        persistedOrderDAO.update(order.getId(), order);
+        LOG.debug("Updated order with trackingId: {}", orderInfo.getTrackingId());
     }
 }
