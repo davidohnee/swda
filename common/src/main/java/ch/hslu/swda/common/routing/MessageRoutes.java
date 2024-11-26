@@ -30,6 +30,7 @@ public final class MessageRoutes {
     public static final String SHIPMENT_GET_ENTITYSET = "shipment.entityset";
     public static final String SHIPMENT_VALIDATE = "shipment.validate";
 
+    public static final String NOTFICATION_SEND = "notification.send";
     /**
      * No instance allowed.
      */
