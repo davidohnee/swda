@@ -7,9 +7,9 @@ import java.util.UUID;
 public final class OrderInfo {
     private final UUID trackingId;
     private final int productId;
-    private final OrderItemStatus status;
     private final int quantity;
-    private final LocalDate deliveryDate;
+    private OrderItemStatus status;
+    private LocalDate deliveryDate;
 
     public OrderInfo(UUID trackingId, int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate) {
         this.trackingId = trackingId;
@@ -21,9 +21,10 @@ public final class OrderInfo {
 
     /**
      * Constructor for OrderInfo, trackingId is generated
-     * @param productId product id
-     * @param status status of the order
-     * @param quantity quantity of the product
+     *
+     * @param productId    product id
+     * @param status       status of the order
+     * @param quantity     quantity of the product
      * @param deliveryDate delivery date
      */
     public OrderInfo(int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate) {
@@ -32,9 +33,10 @@ public final class OrderInfo {
 
     /**
      * Constructor for OrderInfo, trackingId is generated, delivery date is set to today
+     *
      * @param productId product id
-     * @param status status of the order
-     * @param quantity quantity of the product
+     * @param status    status of the order
+     * @param quantity  quantity of the product
      */
     public OrderInfo(int productId, OrderItemStatus status, int quantity) {
         this(UUID.randomUUID(), productId, status, quantity, LocalDate.now());
@@ -56,12 +58,20 @@ public final class OrderInfo {
         return status;
     }
 
+    public void setStatus(OrderItemStatus status) {
+        this.status = status;
+    }
+
     public int getQuantity() {
         return quantity;
     }
 
     public LocalDate getDeliveryDate() {
         return deliveryDate;
+    }
+
+    public void setDeliveryDate(LocalDate deliveryDate) {
+        this.deliveryDate = deliveryDate;
     }
 
     @Override

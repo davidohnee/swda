@@ -15,4 +15,8 @@ public class PersistedOrderDAO extends GenericDAO<PersistedOrder> {
     public PersistedOrder findByUUID(UUID orderId) {
         return collection.find(eq("orderId", orderId)).first();
     }
+
+    public PersistedOrder findByTrackingId(UUID trackingId) {
+        return collection.find(eq("orderItems.trackingId", trackingId)).first();
+    }
 }
