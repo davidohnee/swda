@@ -47,14 +47,15 @@ public class InMemoryInventory implements Inventory {
             return new OrderInfo(
                     productId,
                     OrderItemStatus.NOT_FOUND,
-                    quantity
+                    quantity,
+                    null
             );
         }
 
         if (quantity <= item.getQuantity()) {
             this.update(productId, item.getQuantity() - quantity, item.getReplenishmentThreshold());
             return new OrderInfo(
-                    item.getProduct().getId(),
+                    item.getProduct(),
                     OrderItemStatus.DONE,
                     quantity
             );
@@ -63,7 +64,7 @@ public class InMemoryInventory implements Inventory {
         this.update(productId, 0);
 
         return new OrderInfo(
-                item.getProduct().getId(),
+                item.getProduct(),
                 OrderItemStatus.CONFIRMED,
                 quantity - item.getQuantity()
         );

@@ -73,7 +73,8 @@ public class PersistentInventory implements Inventory {
             return new OrderInfo(
                     productId,
                     OrderItemStatus.NOT_FOUND,
-                    0);
+                    0,
+                    null);
         }
 
         if (quantity <= item.getQuantity()) {
@@ -81,14 +82,14 @@ public class PersistentInventory implements Inventory {
                     productId,
                     item.getQuantity() - quantity);
             return new OrderInfo(
-                    item.getProduct().getId(),
+                    item.getProduct(),
                     OrderItemStatus.DONE,
                     quantity
             );
         }
 
         return new OrderInfo(
-                productId,
+                item.getProduct(),
                 OrderItemStatus.DONE,
                 quantity);
     }
