@@ -11,6 +11,7 @@ import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -79,15 +80,29 @@ public class OrderProcessingWorker {
     }
 
     private void completeOrderProcessing(PersistedOrder order, OrderInfo[] orderInfos) {
+        order.setOrderItems(List.of(orderInfos));
+        updateOrderStatusAfterInventoryReserve(order, orderInfos);
+        updateOrderPrice(order, orderInfos);
+        persistedOrderDAO.update(order.getId(), order);
+        LOG.info("Order {} processed successfully.", order.getOrderId());
+    }
+
+    private void updateOrderStatusAfterInventoryReserve(PersistedOrder order, OrderInfo[] orderInfos) {
         long confirmedCount = Arrays.stream(orderInfos)
                 .filter(item -> item.getStatus() == OrderItemStatus.DONE || item.getStatus() == OrderItemStatus.NOT_FOUND)
                 .count();
         if (confirmedCount == orderInfos.length) {
             updateOrderStatus(order, Order.StatusEnum.CONFIRMED);
         }
-        order.setOrderItems(List.of(orderInfos));
-        persistedOrderDAO.update(order.getId(), order);
-        LOG.info("Order {} processed successfully.", order.getOrderId());
+    }
+
+    private void updateOrderPrice(PersistedOrder order, OrderInfo[] orderInfos) {
+        BigDecimal totalPrice = Arrays.stream(orderInfos)
+                .filter(item -> item.getStatus() != OrderItemStatus.NOT_FOUND)
+                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        order.setPrice(totalPrice);
+        LOG.info("Order {} total price updated to {}.", order.getOrderId(), totalPrice);
     }
 
     private void handleProcessingException(PersistedOrder order, Throwable ex) {

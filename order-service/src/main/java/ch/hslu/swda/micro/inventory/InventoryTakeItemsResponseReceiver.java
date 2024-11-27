@@ -32,7 +32,6 @@ public class InventoryTakeItemsResponseReceiver implements MessageReceiver {
         try {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             OrderInfo[] response = mapper.readValue(message, OrderInfo[].class);
-            LOG.info("Parsed response from inventory service: {}", response);
             future.complete(response);
         } catch (JsonProcessingException e) {
             LOG.error("Error while parsing take items response", e);

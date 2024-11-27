@@ -25,7 +25,7 @@ public final class OrderService {
     private boolean running;
 
     public OrderService(MongoDatabase database) throws IOException, TimeoutException {
-        LOG.debug("Initializing OrderService...");
+        LOG.info("Initializing OrderService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
         this.persistedOrderDAO = new PersistedOrderDAO(database);

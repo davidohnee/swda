@@ -27,7 +27,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems) {
         CompletableFuture<OrderInfo[]> future = new CompletableFuture<>();
-        LOG.debug("Taking items from inventory");
+        LOG.info("Taking items from inventory");
         String request = createTakeItemsRequest(new InventoryTakeItemsRequest(orderItems));
         return sendRequest(request, future);
     }

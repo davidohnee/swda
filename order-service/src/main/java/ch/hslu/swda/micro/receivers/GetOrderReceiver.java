@@ -29,9 +29,9 @@ public final class GetOrderReceiver implements MessageReceiver {
 
     @Override
     public void onMessageReceived(String route, String replyTo, String corrId, String message) {
-        LOG.debug("Received message with routing [{}]", route);
+        LOG.info("Received message with routing [{}]", route);
         try {
-            LOG.debug("Received message: {}", message);
+            LOG.info("Received message: {}", message);
 
             String data = switch (route) {
                 case MessageRoutes.ORDER_GET_ENTITY -> {
@@ -50,7 +50,7 @@ public final class GetOrderReceiver implements MessageReceiver {
                 }
             };
 
-            LOG.debug("Sending response: {}", data);
+            LOG.info("Sending response: {}", data);
             bus.reply(exchangeName, replyTo, corrId, data);
 
         } catch (IllegalArgumentException e) {

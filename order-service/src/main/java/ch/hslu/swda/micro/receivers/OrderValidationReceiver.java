@@ -30,16 +30,16 @@ public class OrderValidationReceiver implements MessageReceiver {
 
     @Override
     public void onMessageReceived(final String route, final String replyTo, final String corrId, final String message) {
-        LOG.debug("Received message with routing [{}]", route);
+        LOG.info("Received message with routing [{}]", route);
 
         try {
             String cleanedMessage = message.trim().replaceAll("^\"|\"$", "");
-            LOG.debug("Received message: {}", cleanedMessage);
+            LOG.info("Received message: {}", cleanedMessage);
             UUID orderId = UUID.fromString(cleanedMessage);
             var isValid = isOrderValid(orderId);
             String data = isValid ? "true" : "false";
 
-            LOG.debug("Sending response: {}", data);
+            LOG.info("Sending response: {}", data);
             bus.reply(exchangeName, replyTo, corrId, data);
 
         } catch (IOException e) {

@@ -27,15 +27,6 @@ public class InventoryAvailableReceiver implements MessageReceiver {
         this.mapper = new ObjectMapper();
     }
 
-    private static void updateOrderStatus(PersistedOrder order) {
-        long confirmedCount = order.getOrderItems().stream()
-                .filter(item -> item.getStatus() == OrderItemStatus.DONE || item.getStatus() == OrderItemStatus.NOT_FOUND)
-                .count();
-        if (confirmedCount == order.getOrderItems().size()) {
-            order.setStatus(Order.StatusEnum.CONFIRMED);
-        }
-    }
-
     /**
      * Listener Methode für Messages.
      *
@@ -46,9 +37,9 @@ public class InventoryAvailableReceiver implements MessageReceiver {
      */
     @Override
     public void onMessageReceived(String route, String replyTo, String corrId, String message) {
-        LOG.debug("Received message with routing [{}]", route);
+        LOG.info("Received message with routing [{}]", route);
         try {
-            LOG.debug("Received message: {}", message);
+            LOG.info("Received message: {}", message);
             OrderInfo orderInfo = this.mapper.readValue(message, OrderInfo.class);
             updateOrder(orderInfo);
         } catch (JsonProcessingException e) {
@@ -71,6 +62,15 @@ public class InventoryAvailableReceiver implements MessageReceiver {
         }
         updateOrderStatus(order);
         persistedOrderDAO.update(order.getId(), order);
-        LOG.debug("Updated order with trackingId: {}", orderInfo.getTrackingId());
+        LOG.info("Updated order with trackingId: {}", orderInfo.getTrackingId());
+    }
+
+    private void updateOrderStatus(PersistedOrder order) {
+        long confirmedCount = order.getOrderItems().stream()
+                .filter(item -> item.getStatus() == OrderItemStatus.DONE || item.getStatus() == OrderItemStatus.NOT_FOUND)
+                .count();
+        if (confirmedCount == order.getOrderItems().size()) {
+            order.setStatus(Order.StatusEnum.CONFIRMED);
+        }
     }
 }
