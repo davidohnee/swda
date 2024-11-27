@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -54,10 +55,33 @@ public final class CreateShipmentReceiver implements MessageReceiver {
             Shipment shipment = new Shipment(UUID.randomUUID(), shipmentCreate.getOrderId(), shipmentCreate.getDeparture(), shipmentCreate.getEstimatedArrival());
             this.shipmentDAO.create(shipment);
 
+            sendShipmentNotification(shipment);
+
             sendResponse(replyTo, corrId, shipment);
         } catch (IOException | InterruptedException e) {
             LOG.error("Error processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
+        }
+    }
+
+    private void sendShipmentNotification(Shipment shipment) {
+        try {
+            UUID customerUUID = this.shipmentDAO.getCustomerUUIDOfShipment(shipment.getId());
+
+            Notification notification = new Notification(
+                UUID.randomUUID(),
+                "Your order is on its way!",
+                new Recipient(Recipient.TypeEnum.CUSTOMER, customerUUID),
+                OffsetDateTime.now()
+            );
+
+            String data = this.mapper.writeValueAsString(notification);
+
+            LOG.debug("Sending notification: {}", data);
+            bus.talkAsync(exchangeName, MessageRoutes.NOTIFICATION_SEND, data);
+
+        } catch (IOException e) {
+            LOG.error("Error sending notification", e);
         }
     }
 
