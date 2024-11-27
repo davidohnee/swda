@@ -4,6 +4,7 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
+import ch.hslu.swda.common.entities.Order;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -49,8 +50,8 @@ public class OrderValidationReceiver implements MessageReceiver {
     }
 
     private boolean isOrderValid(final UUID orderId) {
-        var response = persistedOrderDAO.findByUUID(orderId);
-        return response != null;
+        var status  = persistedOrderDAO.getOrderStatus(orderId);
+        return status == Order.StatusEnum.CONFIRMED;
     }
 
     private void sendErrorResponse(String replyTo, String corrId, String errorMessage) {

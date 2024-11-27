@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class OrderProcessingWorker {
+
     private static final int TIMEOUT_CUSTOMER_VALIDATION = 30;
     private static final int TIMEOUT_INVENTORY_RESERVATION = 30;
     private static final Logger LOG = LoggerFactory.getLogger(OrderProcessingWorker.class);
+
     private final PersistedOrderDAO persistedOrderDAO;
     private final CustomerService customerService;
     private final InventoryService inventoryService;
@@ -37,54 +39,73 @@ public class OrderProcessingWorker {
     public void processOrder(PersistedOrder order) {
         UUID customerId = order.getCustomerId();
 
-        customerService.validateCustomer(customerId)
-                .orTimeout(TIMEOUT_CUSTOMER_VALIDATION, TimeUnit.SECONDS)  // Add a timeout of 5 seconds for customer validation
-                .thenCompose(isValid -> {
-                    if (!isValid) {
-                        LOG.warn("Customer {} validation failed.", customerId);
-                        return CompletableFuture.failedFuture(new CustomerValidateException("Customer validation failed"));
-                    }
-                    LOG.info("Customer {} validated. Proceeding with inventory reservation.", customerId);
-                    List<OrderItemCreate> orderItems = order.getOrderItems().stream()
-                            .map(orderItem -> new OrderItemCreate(orderItem.getProductId(), orderItem.getQuantity()))
-                            .toList();
-                    order.setStatus(Order.StatusEnum.PENDING);
-                    LOG.info("Updating order {} status to PENDING.", order.getOrderId());
-                    this.persistedOrderDAO.update(order.getId(), order);
-                    return inventoryService.takeItems(orderItems)
-                            .orTimeout(TIMEOUT_INVENTORY_RESERVATION, TimeUnit.SECONDS);  // Add a timeout of 10 seconds for inventory reservation
-                })
-                .thenAccept(orderInfos -> {
-                    if (orderInfos != null) {
-                        LOG.info("Inventory successfully reserved for order {}", order.getOrderId());
-                        completeOrderProcessing(order, orderInfos);
-                    } else {
-                        LOG.warn("Inventory reservation failed for order {}", order.getOrderId());
-                        handleOrderFailure(order);
-                    }
-                })
+        validateCustomer(customerId)
+                .thenCompose(isValid -> reserveInventory(order))
+                .thenAccept(orderInfos -> completeOrderProcessing(order, orderInfos))
                 .exceptionally(ex -> {
-                    if (ex.getCause() instanceof TimeoutException) {
-                        LOG.error("Order processing timed out for order {}: {}", order.getOrderId(), ex.getMessage());
-                    } else {
-                        LOG.error("Order processing failed for order {}: {}", order.getOrderId(), ex.getMessage());
-                    }
-                    handleOrderFailure(order);
+                    handleProcessingException(order, ex);
                     return null;
                 });
     }
 
+    private CompletableFuture<Boolean> validateCustomer(UUID customerId) {
+        return customerService.validateCustomer(customerId)
+                .orTimeout(TIMEOUT_CUSTOMER_VALIDATION, TimeUnit.SECONDS)
+                .thenApply(isValid -> {
+                    if (!isValid) {
+                        LOG.warn("Customer {} validation failed.", customerId);
+                        throw new CustomerValidateException("Customer validation failed");
+                    }
+                    LOG.info("Customer {} validated successfully.", customerId);
+                    return true;
+                });
+    }
+
+    private CompletableFuture<OrderInfo[]> reserveInventory(PersistedOrder order) {
+        List<OrderItemCreate> orderItems = order.getOrderItems().stream()
+                .map(item -> new OrderItemCreate(item.getProductId(), item.getQuantity()))
+                .toList();
+
+        updateOrderStatus(order, Order.StatusEnum.PENDING);
+
+        return inventoryService.takeItems(orderItems)
+                .orTimeout(TIMEOUT_INVENTORY_RESERVATION, TimeUnit.SECONDS)
+                .thenCompose(orderInfos -> {
+                    if (orderInfos == null) {
+                        LOG.warn("Inventory reservation failed for order {}.", order.getOrderId());
+                        return CompletableFuture.failedFuture(new RuntimeException("Inventory reservation failed"));
+                    }
+                    LOG.info("Inventory reserved successfully for order {}.", order.getOrderId());
+                    return CompletableFuture.completedFuture(orderInfos);
+                });
+    }
 
     private void completeOrderProcessing(PersistedOrder order, OrderInfo[] orderInfos) {
-        order.setStatus(Order.StatusEnum.CONFIRMED);
-        LOG.info("Updating order {} status to CONFIRMED.", order.getOrderId());
+        updateOrderStatus(order, Order.StatusEnum.CONFIRMED);
         order.setOrderItems(List.of(orderInfos));
-        this.persistedOrderDAO.update(order.getId(), order);
-        LOG.debug("Order {} updated in database.", order.getOrderId());
+        persistedOrderDAO.update(order.getId(), order);
         LOG.info("Order {} processed successfully.", order.getOrderId());
     }
 
+    private void handleProcessingException(PersistedOrder order, Throwable ex) {
+        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+        if (cause instanceof TimeoutException) {
+            LOG.error("Processing timed out for order {}: {}", order.getOrderId(), cause.getMessage());
+        } else if (cause instanceof CustomerValidateException) {
+            LOG.error("Customer validation failed for order {}: {}", order.getOrderId(), cause.getMessage());
+        } else {
+            LOG.error("Processing failed for order {}: {}", order.getOrderId(), cause.getMessage());
+        }
+        handleOrderFailure(order);
+    }
+
+    private void updateOrderStatus(PersistedOrder order, Order.StatusEnum status) {
+        order.setStatus(status);
+        persistedOrderDAO.update(order.getId(), order);
+        LOG.info("Order {} status updated to {}.", order.getOrderId(), status);
+    }
+
     private void handleOrderFailure(PersistedOrder order) {
-        LOG.error("Failed to process order {}.", order.getId());
+        LOG.error("Order {} processing failed.", order.getOrderId());
     }
 }
