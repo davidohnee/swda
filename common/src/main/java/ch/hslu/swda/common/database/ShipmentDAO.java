@@ -36,6 +36,16 @@ public class ShipmentDAO extends GenericDAO<Shipment> {
         return shipments;
     }
 
+    public UUID getCustomerUUIDOfShipment(UUID shipmentId) {
+        Shipment shipment = collection.find(eq("_id", shipmentId)).first();
+        if (shipment != null) {
+            Order order = orderDAO.findByUUID(shipment.getOrderId());
+            return order.getCustomer().getId();
+        }
+
+        return null;
+    }
+
     @Override
     public void create(Shipment shipment) {
         shipment.setCustomerOrder(null);
