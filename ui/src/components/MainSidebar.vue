@@ -39,6 +39,12 @@
                     <span class="title">Shipments</span>
                 </div>
             </RouterLink>
+            <RouterLink to="/notifications">
+                <div class="entry">
+                    <span class="material-symbols-rounded">notifications</span>
+                    <span class="title">Notifications</span>
+                </div>
+            </RouterLink>
         </div>
     </div>
 </template>

@@ -96,3 +96,13 @@ export interface MicronautErrorResponse {
         }[];
     };
 }
+
+export interface Notification {
+    id: string;
+    message: string;
+    recipient: {
+        type: "CUSTOMER";
+        id: string;
+    };
+    sent: Date;
+}
