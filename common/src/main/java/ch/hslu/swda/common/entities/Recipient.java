@@ -72,6 +72,8 @@ public class Recipient {
         this.id = id;
     }
 
+    public Recipient() {}
+
     public Recipient type(TypeEnum type) {
         this.type = type;
         return this;
