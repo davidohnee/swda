@@ -1,78 +1,95 @@
 package ch.hslu.swda.micro;
 
-import ch.hslu.swda.bus.BusConnector;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.hslu.swda.common.database.MongoDBConnectionManager;
+import ch.hslu.swda.common.config.ApplicationConfig;
+
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
-    private static final int RETRY_DELAY_MS = 2000;
-    private static final int MAX_RETRIES = 60; // 2 minutes of retries
+    private static final int RESTART_DELAY_MS = 5000;
 
-    /**
-     * Privater Konstruktor.
-     */
-    private Application() {
-    }
+    private static ScheduledExecutorService executorService;
+    private static NotificationService notificationService;
 
-    private static boolean waitForRabbitMQ() {
-        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-            try (BusConnector connector = new BusConnector()) {
-                connector.connect();
-                LOG.info("RabbitMQ available on attempt {}/{}.", attempt, MAX_RETRIES);
-                return true;
-            } catch (IOException | TimeoutException e) {
-                LOG.error("Failed to connect to RabbitMQ. Retrying in {}ms. Attempt {}/{}.", RETRY_DELAY_MS, attempt, MAX_RETRIES);
-                try {
-                    Thread.sleep(RETRY_DELAY_MS);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    LOG.error("Interrupted while waiting for RabbitMQ.", ex);
-                    return false;
-                }
-            }
-        }
-        LOG.error("Failed to connect to RabbitMQ after {} attempts.", MAX_RETRIES);
-        return false;
-    }
+    private static MongoDatabase database;
 
-    /**
-     * main-Methode. Startet einen Timer für den HeartBeat.
-     *
-     * @param args not used.
-     */
-    public static void main(final String[] args) throws InterruptedException {
-        final long startTime = System.currentTimeMillis();
-        LOG.info("Service starting...");
+    private Application() {}
+
+    public static void main(final String[] args) {
+        LOG.info("Application starting...");
+
+        LOG.info("Creating database connection...");
+        MongoDBConnectionManager connectionManager = MongoDBConnectionManager.getInstance(
+            ApplicationConfig.getConnectionString(),
+            ApplicationConfig.getDatabaseName()
+        );
+
+        database = connectionManager.getDatabase();
+
         if (!"OFF".equals(System.getenv("RABBIT"))) {
-            if (waitForRabbitMQ()) {
-                var customerServiceThread = new Thread(new ServiceWrapper());
-                customerServiceThread.start();
-            } else {
-                LOG.error("RabbitMQ not available, exiting application.");
-            }
+            executorService = Executors.newSingleThreadScheduledExecutor();
+            startAndMonitorService();
+
+            Runtime.getRuntime().addShutdownHook(new Thread(Application::shutdown));
         } else {
             LOG.atWarn().log("RabbitMQ disabled for testing.");
         }
-        LOG.atInfo().addArgument(System.currentTimeMillis() - startTime).log("Service started in {}ms.");
-        Thread.sleep(60_000);
     }
 
-    private static final class ServiceWrapper implements Runnable {
-        private static  final  Logger LOG = LoggerFactory.getLogger(ServiceWrapper.class);
-        ServiceWrapper() {}
+    private static void startAndMonitorService() {
+        executorService.schedule(Application::attemptServiceStart, 0, TimeUnit.MILLISECONDS);
+    }
 
-        @Override
-        public void run() {
+    private static void attemptServiceStart() {
+        try {
+            if (notificationService == null || !notificationService.isRunning()) {
+                LOG.info("Creating new NotificationService...");
+                notificationService = new NotificationService(database);
+                notificationService.start();
+                LOG.info("NotificationService started successfully.");
+            }
+        } catch (IOException | TimeoutException e) {
+            LOG.error("NotificationService encountered an error and will retry: {}", e.getMessage(), e);
+            stopService();
+        } catch (Exception ex) {
+            LOG.error("Unexpected error in NotificationService, retrying: {}", ex.getMessage(), ex);
+            stopService();
+        } finally {
+            executorService.schedule(Application::attemptServiceStart, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private static void stopService() {
+        if (notificationService != null) {
+            notificationService.stop();
+            notificationService = null;
+        }
+    }
+
+    private static void shutdown() {
+        LOG.info("Shutting down application...");
+        stopService();
+        if (executorService != null) {
+            executorService.shutdown();
             try {
-                new NotificationService();
-            } catch (IOException | TimeoutException e) {
-                LOG.error(e.getMessage(), e);
+                if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
             }
         }
+        LOG.info("Application shutdown complete.");
     }
 }
