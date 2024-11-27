@@ -36,7 +36,7 @@ public final class CreateNotificationReceiver implements MessageReceiver {
             Notification notification = this.mapper.readValue(message, Notification.class);
             LOG.debug("Received notification: {}", notification);
             this.notificationDAO.create(notification);
-            sendResponse(replyTo, corrId, notification);
+            //sendResponse(replyTo, corrId, notification);
         } catch (IOException e) {
             LOG.error("Error processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
