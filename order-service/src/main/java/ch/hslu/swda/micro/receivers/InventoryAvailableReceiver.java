@@ -3,7 +3,9 @@ package ch.hslu.swda.micro.receivers;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
+import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.entities.OrderInfo;
+import ch.hslu.swda.common.entities.OrderItemStatus;
 import ch.hslu.swda.common.entities.PersistedOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +25,15 @@ public class InventoryAvailableReceiver implements MessageReceiver {
         this.bus = bus;
         this.persistedOrderDAO = persistedOrderDAO;
         this.mapper = new ObjectMapper();
+    }
+
+    private static void updateOrderStatus(PersistedOrder order) {
+        long confirmedCount = order.getOrderItems().stream()
+                .filter(item -> item.getStatus() == OrderItemStatus.DONE || item.getStatus() == OrderItemStatus.NOT_FOUND)
+                .count();
+        if (confirmedCount == order.getOrderItems().size()) {
+            order.setStatus(Order.StatusEnum.CONFIRMED);
+        }
     }
 
     /**
@@ -58,6 +69,7 @@ public class InventoryAvailableReceiver implements MessageReceiver {
                 break;
             }
         }
+        updateOrderStatus(order);
         persistedOrderDAO.update(order.getId(), order);
         LOG.debug("Updated order with trackingId: {}", orderInfo.getTrackingId());
     }

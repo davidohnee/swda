@@ -2,10 +2,7 @@ package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
-import ch.hslu.swda.common.entities.Order;
-import ch.hslu.swda.common.entities.OrderInfo;
-import ch.hslu.swda.common.entities.OrderItemCreate;
-import ch.hslu.swda.common.entities.PersistedOrder;
+import ch.hslu.swda.common.entities.*;
 import ch.hslu.swda.micro.customer.CustomerService;
 import ch.hslu.swda.micro.customer.CustomerServiceImpl;
 import ch.hslu.swda.micro.customer.CustomerValidateException;
@@ -14,6 +11,7 @@ import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -81,7 +79,12 @@ public class OrderProcessingWorker {
     }
 
     private void completeOrderProcessing(PersistedOrder order, OrderInfo[] orderInfos) {
-        updateOrderStatus(order, Order.StatusEnum.CONFIRMED);
+        long confirmedCount = Arrays.stream(orderInfos)
+                .filter(item -> item.getStatus() == OrderItemStatus.DONE || item.getStatus() == OrderItemStatus.NOT_FOUND)
+                .count();
+        if (confirmedCount == orderInfos.length) {
+            updateOrderStatus(order, Order.StatusEnum.CONFIRMED);
+        }
         order.setOrderItems(List.of(orderInfos));
         persistedOrderDAO.update(order.getId(), order);
         LOG.info("Order {} processed successfully.", order.getOrderId());
