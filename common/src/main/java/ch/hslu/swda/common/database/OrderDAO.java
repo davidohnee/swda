@@ -89,8 +89,8 @@ public class OrderDAO extends GenericDAO<Document> {
                         )
                         .append("seller", new Document()
                                 .append("id", "$employeeId")
-                                .append("firstName", null)
-                                .append("familyName", null)
+                                .append("firstName", "Bob") // dummy values
+                                .append("familyName", "Smith")
                                 .append("role", "SALES")
                         )
                         .append("destination", new Document()
