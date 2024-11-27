@@ -49,6 +49,8 @@ public class Notification {
         this.sent = sent;
     }
 
+    public Notification() {}
+
     public Notification id(UUID id) {
         this.id = id;
         return this;
