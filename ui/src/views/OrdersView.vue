@@ -102,7 +102,17 @@
                                 </div>
                             </td>
                             <td>
-                                <button @click="createShipment(item.id)">Create Shipment</button>
+                                <button
+                                    :disabled="item.status !== 'CONFIRMED'"
+                                    :title="
+                                        item.status !== 'CONFIRMED'
+                                            ? 'Order must be confirmed to create shipment'
+                                            : 'Create a shipment for this order'
+                                    "
+                                    @click="createShipment(item.id)"
+                                >
+                                    Create Shipment
+                                </button>
                             </td>
                         </tr>
                     </tbody>
