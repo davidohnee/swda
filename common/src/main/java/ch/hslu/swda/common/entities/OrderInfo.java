@@ -1,5 +1,6 @@
 package ch.hslu.swda.common.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
@@ -10,13 +11,15 @@ public final class OrderInfo {
     private final int quantity;
     private OrderItemStatus status;
     private LocalDate deliveryDate;
+    private final BigDecimal unitPrice;
 
-    public OrderInfo(UUID trackingId, int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate) {
+    public OrderInfo(UUID trackingId, int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate, BigDecimal unitPrice) {
         this.trackingId = trackingId;
         this.productId = productId;
         this.status = status;
         this.quantity = quantity;
         this.deliveryDate = deliveryDate;
+        this.unitPrice = unitPrice;
     }
 
     /**
@@ -27,8 +30,8 @@ public final class OrderInfo {
      * @param quantity     quantity of the product
      * @param deliveryDate delivery date
      */
-    public OrderInfo(int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate) {
-        this(UUID.randomUUID(), productId, status, quantity, deliveryDate);
+    public OrderInfo(int productId, OrderItemStatus status, int quantity, LocalDate deliveryDate, BigDecimal unitPrice) {
+        this(UUID.randomUUID(), productId, status, quantity, deliveryDate, unitPrice);
     }
 
     /**
@@ -38,12 +41,16 @@ public final class OrderInfo {
      * @param status    status of the order
      * @param quantity  quantity of the product
      */
-    public OrderInfo(int productId, OrderItemStatus status, int quantity) {
-        this(UUID.randomUUID(), productId, status, quantity, LocalDate.now());
+    public OrderInfo(int productId, OrderItemStatus status, int quantity, BigDecimal unitPrice) {
+        this(UUID.randomUUID(), productId, status, quantity, LocalDate.now(), unitPrice);
+    }
+
+    public OrderInfo(Product product, OrderItemStatus status, int quantity) {
+        this(product.getId(), status, quantity, LocalDate.now(), product.getPrice());
     }
 
     public OrderInfo() {
-        this(0, OrderItemStatus.NOT_FOUND, 0, LocalDate.now());
+        this(0, OrderItemStatus.NOT_FOUND, 0, LocalDate.now(), BigDecimal.ZERO);
     }
 
     public UUID getTrackingId() {
@@ -74,20 +81,23 @@ public final class OrderInfo {
         this.deliveryDate = deliveryDate;
     }
 
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof OrderInfo that)) return false;
         return productId == that.productId &&
                 Objects.equals(trackingId, that.trackingId) &&
-                status == that.status &&
                 quantity == that.quantity &&
-                Objects.equals(deliveryDate, that.deliveryDate);
+                Objects.equals(unitPrice, that.unitPrice);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(trackingId, productId, status, quantity, deliveryDate);
+        return Objects.hash(trackingId, productId, quantity, unitPrice);
     }
 
     public String toString() {
@@ -97,6 +107,7 @@ public final class OrderInfo {
                 ", status=" + status +
                 ", quantity=" + quantity +
                 ", deliveryDate=" + deliveryDate +
+                ", unitPrice=" + unitPrice +
                 '}';
     }
 }
