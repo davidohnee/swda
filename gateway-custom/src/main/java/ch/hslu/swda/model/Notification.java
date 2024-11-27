@@ -132,14 +132,14 @@ public class Notification {
     @Schema(name = "sent", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_SENT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public OffsetDateTime getSent() {
         return sent;
     }
 
     @JsonProperty(JSON_PROPERTY_SENT)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXX")
     public void setSent(OffsetDateTime sent) {
         this.sent = sent;
     }
