@@ -66,8 +66,10 @@ public class Order {
         UNVALIDATED("UNVALIDATED"),
         PENDING("PENDING"),
         CONFIRMED("CONFIRMED"),
+        SHIPPED("SHIPPED"),
         AWAITING_PAYMENT("AWAITING_PAYMENT"),
-        DONE("DONE");
+        DONE("DONE"),
+        CANCELLED("CANCELLED");
 
         private String value;
 
