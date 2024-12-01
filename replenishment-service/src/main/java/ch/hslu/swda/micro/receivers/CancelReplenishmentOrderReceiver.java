@@ -17,7 +17,6 @@ package ch.hslu.swda.micro.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.common.entities.InventoryItem;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.entities.FullReplenishmentOrder;
 import ch.hslu.swda.micro.Replenisher;
@@ -36,15 +35,15 @@ import java.util.UUID;
  * Expects: null
  * Returns: FullReplenishmentOrder[]
  */
-public final class GetReplenishmentOrderReceiver implements MessageReceiver {
+public final class CancelReplenishmentOrderReceiver implements MessageReceiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GetReplenishmentOrderReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CancelReplenishmentOrderReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
     private final Replenisher replenisher;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public GetReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus, Replenisher replenisher) {
+    public CancelReplenishmentOrderReceiver(final String exchangeName, final BusConnector bus, Replenisher replenisher) {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.replenisher = replenisher;
@@ -62,23 +61,12 @@ public final class GetReplenishmentOrderReceiver implements MessageReceiver {
         try {
             LOG.debug("received chat message with replyTo property [{}]: [{}]", replyTo, message);
 
-            String data = switch (route) {
-                case MessageRoutes.REPLENISHMENT_GET_ENTITY -> {
-                    String cleanedMessage = message.trim().replaceAll("^\"|\"$", "");
-                    UUID trackingId = UUID.fromString(cleanedMessage);
-                    ReplenishTask order = replenisher.getTask(trackingId);
-                    yield (order != null) ? mapper.writeValueAsString(order) : "Replenishment not found";
-                }
-                case MessageRoutes.REPLENISHMENT_GET_ENTITYSET -> {
-                    var tasks = replenisher.getTasks();
-                    var orders = FullReplenishmentOrder.fromReplenishTasks(tasks);
-                    yield mapper.writeValueAsString(orders);
-                }
-                default -> {
-                    LOG.warn("Unknown route: {}", route);
-                    yield "Unknown route";
-                }
-            };
+            String cleanedMessage = message.trim().replaceAll("^\"|\"$", "");
+            UUID trackingId = UUID.fromString(cleanedMessage);
+
+            var response = replenisher.cancelTask(trackingId);
+
+            String data = (response != null) ? mapper.writeValueAsString(response) : "Replenishment not found";
 
             LOG.debug("sending answer [{}] with topic [{}] according to replyTo-property", data, replyTo);
 

@@ -3,7 +3,9 @@ package ch.hslu.swda.models;
 import ch.hslu.swda.common.entities.ReplenishmentOrder;
 import ch.hslu.swda.common.entities.ReplenishmentReservation;
 import ch.hslu.swda.common.entities.SimpleReplenishmentOrder;
+import ch.hslu.swda.dto.replenishment.ReplenishmentOrderResponse;
 import ch.hslu.swda.entities.Product;
+import ch.hslu.swda.entities.ReplenishmentStatus;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
@@ -123,6 +125,10 @@ public class ReplenishTask {
                 this.reservation,
                 this.id
         );
+    }
+
+    public ReplenishmentOrderResponse toReplenishmentOrderResponse(ReplenishmentStatus status) {
+        return new ReplenishmentOrderResponse(getTrackingId(), getProductId(), status, getCount(), getDeliveryDate());
     }
 
     @Override

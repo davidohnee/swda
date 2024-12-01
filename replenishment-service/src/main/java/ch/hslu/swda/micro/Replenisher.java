@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Replenisher {
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(Replenisher.class);
@@ -107,7 +108,8 @@ public class Replenisher {
                 productId,
                 status,
                 immediatelyAvailableQuantity,
-                task.getDeliveryDate()
+                task.getDeliveryDate(),
+                null
         );
     }
 
@@ -157,17 +159,43 @@ public class Replenisher {
         for (ReplenishTask task : doneTasks) {
             tasks.remove(task);
             this.database.delete(task.getId());
-            this.onItemReplenished.onItemReplenished(new ReplenishmentOrderResponse(
-                    task.getTrackingId(),
-                    task.getProductId(),
-                    ReplenishmentStatus.DONE,
-                    task.getCount(),
-                    task.getDeliveryDate()
-            ));
+            this.onItemReplenished.onItemReplenished(
+                task.toReplenishmentOrderResponse(ReplenishmentStatus.DONE)
+            );
         }
     }
 
     public List<ReplenishTask> getTasks() {
         return tasks;
+    }
+
+    public ReplenishTask getTask(UUID trackingId) {
+        for (ReplenishTask task : tasks) {
+            if (task.getTrackingId().equals(trackingId)) {
+                return task;
+            }
+        }
+        return null;
+    }
+
+    public ReplenishmentOrderResponse cancelTask(UUID trackingId) {
+        ReplenishTask task = this.getTask(trackingId);
+        if (task == null) {
+            return null;
+        }
+
+        if (task.getReservation() != null) {
+            this.stock.freeReservation(task.getReservation().getReservationTicket());
+        }
+        this.tasks.remove(task);
+        this.database.delete(task.getId());
+
+        var response = task.toReplenishmentOrderResponse(ReplenishmentStatus.CANCELLED);
+
+        this.onItemReplenished.onItemReplenished(
+            response
+        );
+
+        return response;
     }
 }

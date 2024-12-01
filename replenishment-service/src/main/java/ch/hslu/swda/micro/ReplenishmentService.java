@@ -16,7 +16,9 @@
 package ch.hslu.swda.micro;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.bus.RabbitMqConfig;
+import ch.hslu.swda.micro.receivers.CancelReplenishmentOrderReceiver;
 import ch.hslu.swda.micro.receivers.CreateReplenishmentOrderReceiver;
 import ch.hslu.swda.micro.receivers.GetReplenishmentOrderReceiver;
 import ch.hslu.swda.micro.senders.InventoryItemGetter;
@@ -67,7 +69,8 @@ public final class ReplenishmentService implements AutoCloseable {
 
         // start message receivers
         this.receiveCreateReplenishmentOrderMessages();
-        this.receiveGetAllReplenishmentOrderMessages();
+        this.receiveGetReplenishmentOrderMessages();
+        this.receiveCancelReplenishmentOrderMessages();
     }
 
     public void heartbeat() {
@@ -85,13 +88,32 @@ public final class ReplenishmentService implements AutoCloseable {
     /**
      * @throws IOException
      */
-    private void receiveGetAllReplenishmentOrderMessages() throws IOException {
+    private void receiveGetReplenishmentOrderMessages() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_GET_ENTITY);
         LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_GET_ENTITYSET);
+        MessageReceiver receiver = new GetReplenishmentOrderReceiver(exchangeName, bus, replenisher);
         bus.listenFor(
             exchangeName,
             "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_GET_ENTITYSET,
             MessageRoutes.REPLENISHMENT_GET_ENTITYSET,
-            new GetReplenishmentOrderReceiver(exchangeName, bus, replenisher));
+            receiver);
+        bus.listenFor(
+            exchangeName,
+            "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_GET_ENTITY,
+            MessageRoutes.REPLENISHMENT_GET_ENTITY,
+            receiver);
+    }
+
+    /**
+     * @throws IOException
+     */
+    private void receiveCancelReplenishmentOrderMessages() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.REPLENISHMENT_CANCEL);
+        bus.listenFor(
+            exchangeName,
+            "ReplenishmentService <- " + MessageRoutes.REPLENISHMENT_CANCEL,
+            MessageRoutes.REPLENISHMENT_CANCEL,
+            new CancelReplenishmentOrderReceiver(exchangeName, bus, replenisher));
     }
 
     /**
