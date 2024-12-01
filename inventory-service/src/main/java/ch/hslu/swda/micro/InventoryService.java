@@ -22,10 +22,7 @@ import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.inventory.InMemoryInventory;
 import ch.hslu.swda.inventory.Inventory;
 import ch.hslu.swda.inventory.PersistentInventory;
-import ch.hslu.swda.micro.receivers.GetInventoryReceiver;
-import ch.hslu.swda.micro.receivers.OnItemReplenishedReceiver;
-import ch.hslu.swda.micro.receivers.TakeFromInventoryReceiver;
-import ch.hslu.swda.micro.receivers.UpdateInventoryReceiver;
+import ch.hslu.swda.micro.receivers.*;
 import ch.hslu.swda.micro.senders.OnItemAvailableSender;
 import ch.hslu.swda.micro.senders.ReplenishmentClientSender;
 import com.mongodb.client.MongoDatabase;
@@ -75,6 +72,17 @@ public final class InventoryService implements AutoCloseable {
         this.receiveUpdateInventoryMessages();
         this.receiveTakeFromInventoryMessages();
         this.receiveOnItemReplenishedMessages();
+        this.receiveCancelOrderMessages();
+    }
+
+    private void receiveCancelOrderMessages() throws IOException {
+        LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_CANCEL);
+        bus.listenFor(
+                exchangeName,
+                "InventoryService <- " + MessageRoutes.INVENTORY_CANCEL,
+                MessageRoutes.INVENTORY_CANCEL,
+                new CancelOrderReceiver(exchangeName, bus, this.inventory)
+        );
     }
 
     private void receiveTakeFromInventoryMessages() throws IOException {

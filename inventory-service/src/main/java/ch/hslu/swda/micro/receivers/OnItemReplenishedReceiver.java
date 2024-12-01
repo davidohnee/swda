@@ -19,6 +19,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.inventory.Inventory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +55,7 @@ public final class OnItemReplenishedReceiver implements MessageReceiver {
             LOG.debug("sending answer with topic [{}] according to replyTo-property", replyTo);
 
             ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
 
             OrderInfo item = mapper.readValue(message, OrderInfo.class);
 

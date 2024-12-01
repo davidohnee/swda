@@ -153,7 +153,8 @@ public class PersistentInventory implements Inventory {
             throw new IllegalArgumentException("Product not found");
         }
 
-        if (inventoryItem.isStockReplenishment(item)) {
+        if (item.getStatus() == OrderItemStatus.DONE &&
+                inventoryItem.isStockReplenishment(item)) {
             inventoryItem.handleReplenishment(item);
             this.database.update(inventoryItem);
             LOG.debug("Product {} replenished", item.getProductId());
