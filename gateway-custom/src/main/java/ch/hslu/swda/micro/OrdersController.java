@@ -243,17 +243,20 @@ public class OrdersController {
                 return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process request"));
             }
             LOG.info("Received response: {}", response);
-            try {
-                U responseObj = this.objectMapper.readValue(response, responseClass);
-                return Mono.just(responseObj);
-            } catch (IOException e) {
-                // If parsing fails, assume it's an error message string
-                LOG.warn("Response is not of expected type. Treating as error message: {}", response);
-                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, response));
-            }
+            return getMono(responseClass, response);
         } catch (Exception e) {
             LOG.error(errorMessage, e);
             return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage));
+        }
+    }
+
+    private <U> Mono<U> getMono(TypeReference<U> responseClass, String response) {
+        try {
+            U responseObj = this.objectMapper.readValue(response, responseClass);
+            return Mono.just(responseObj);
+        } catch (IOException e) {
+            LOG.warn("Response is not of expected type. Treating as error message: {}", response);
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, response));
         }
     }
 }
