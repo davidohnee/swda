@@ -913,6 +913,10 @@
             <id>gitlab-maven-swda-stock</id>
             <url>https://gitlab.com/api/v4/projects/39090453/packages/maven</url>
         </repository>
+        <repository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
@@ -920,5 +924,13 @@
             <id>gitlab-site</id>
             <url>https://hslu.pages.switch.ch/edu/bachelor-computer-science/somewhere/${project.artifactId}</url>
         </site>
+        <repository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>gitlab-maven-common</id>
+            <url>https://gitlab.switch.ch/api/v4/projects/8189/packages/maven</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
