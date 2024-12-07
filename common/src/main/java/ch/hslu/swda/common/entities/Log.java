@@ -10,7 +10,7 @@
  * Do not edit the class manually.
  */
 
-package ch.hslu.swda.model;
+package ch.hslu.swda.common.entities;
 
 import com.fasterxml.jackson.annotation.*;
 import io.micronaut.core.annotation.Introspected;
