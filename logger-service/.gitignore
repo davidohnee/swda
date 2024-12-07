@@ -9,4 +9,5 @@
 /nbproject/
 /dependency-reduced-pom.xml
 .envrc
+.direnv
 *.nix

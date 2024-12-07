@@ -82,7 +82,7 @@
         <scm.developer.uid>${user.name}</scm.developer.uid>
         <docker.user>${scm.developer.uid}</docker.user>
         <docker.base.image>amazoncorretto:21.0.4-alpine</docker.base.image>
-        <docker.image>swda-24hs/service-sample</docker.image>
+        <docker.image>swda-24hs/logger-service</docker.image>
         <docker.port>8090</docker.port>
 
         <project.build.targetJdk>21</project.build.targetJdk>
@@ -229,6 +229,11 @@
                 <version>${testcontainers.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>ch.hslu.swda24hs.g09</groupId>
+                <artifactId>g09-common</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -279,6 +284,15 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.11.3</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.hslu.swda24hs.g09</groupId>
+            <artifactId>g09-common</artifactId>
         </dependency>
     </dependencies>
 
