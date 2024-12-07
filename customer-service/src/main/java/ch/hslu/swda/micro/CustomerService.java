@@ -37,6 +37,7 @@ public final class CustomerService implements AutoCloseable {
         this.receiveEntityRequest();
         this.receiveCreateRequest();
         this.receiveValidationRequest();
+        this.receiveUpdateRequest();
     }
 
     private void receiveEntitysetRequest() throws IOException {
@@ -57,6 +58,11 @@ public final class CustomerService implements AutoCloseable {
     private void receiveValidationRequest() throws IOException {
         LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_VALIDATE);
         bus.listenFor(exchangeName, "CustomerService <- customer.validate", MessageRoutes.CUSTOMER_VALIDATE, new CustomerValidationReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
+    }
+
+    private void receiveUpdateRequest() throws IOException {
+        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_UPDATE);
+        bus.listenFor(exchangeName, "CustomerService <- customer.update", MessageRoutes.CUSTOMER_UPDATE, new CustomerUpdateReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
     }
 
     @Override
