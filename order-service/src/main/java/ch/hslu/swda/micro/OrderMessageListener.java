@@ -5,10 +5,7 @@ import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.PersistedOrder;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.micro.receivers.CreateOrderReceiver;
-import ch.hslu.swda.micro.receivers.GetOrderReceiver;
-import ch.hslu.swda.micro.receivers.InventoryAvailableReceiver;
-import ch.hslu.swda.micro.receivers.OrderValidationReceiver;
+import ch.hslu.swda.micro.receivers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +88,27 @@ public class OrderMessageListener {
                 "OrderService <- shipment.validate",
                 MessageRoutes.SHIPMENT_VALIDATE,
                 new OrderValidationReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
+        );
+
+        this.bus.listenFor(
+                this.exchangeName,
+                "OrderService <- order.update.items",
+                MessageRoutes.ORDER_UPDATE_ITEMS,
+                new OrderItemsUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
+        );
+
+        this.bus.listenFor(
+                this.exchangeName,
+                "OrderService <- order.update.status",
+                MessageRoutes.ORDER_UPDATE_STATUS,
+                new OrderStatusUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO, this.orderDAO)
+        );
+
+        this.bus.listenFor(
+                this.exchangeName,
+                "OrderService <- order.update.customer",
+                MessageRoutes.ORDER_UPDATE_CUSTOMER,
+                new OrderCustomerUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
         );
     }
 }

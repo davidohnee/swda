@@ -45,8 +45,8 @@ public final class CreateOrderReceiver implements MessageReceiver {
     @Override
     public void onMessageReceived(String route, String replyTo, String corrId, String message) {
         LOG.info("Received message with routing [{}]", route);
+        LOG.info("Received message: {}", message);
         try {
-            LOG.info("Received message: {}", message);
             OrderCreate orderCreate = this.mapper.readValue(message, OrderCreate.class);
             PersistedOrder unvalidatedOrder = createUnvalidatedOrder(orderCreate);
             this.persistedOrderDAO.create(unvalidatedOrder);
