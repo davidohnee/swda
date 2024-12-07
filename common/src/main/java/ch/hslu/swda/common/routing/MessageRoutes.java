@@ -38,6 +38,10 @@ public final class MessageRoutes {
     public static final String NOTIFICATION_GET_ENTITY = "notification.entity";
     public static final String NOTIFICATION_GET_ENTITYSET = "notification.entityset";
     public static final String NOTIFICATION_SEND = "notification.send";
+
+    public static final String LOGGER_GET_ENTITY = "logger.entity";
+    public static final String LOGGER_GET_ENTITYSET = "logger.entityset";
+    public static final String LOGGER_PERSIST_LOG = "logger.log";
     /**
      * No instance allowed.
      */
