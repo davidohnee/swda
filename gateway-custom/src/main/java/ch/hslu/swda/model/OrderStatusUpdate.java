@@ -16,29 +16,55 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Schema for updating the status of an order
  */
+@Serdeable
 @Schema(name = "OrderStatusUpdate", description = "Schema for updating the status of an order")
 @JsonPropertyOrder({
+        OrderStatusUpdate.JSON_PROPERTY_ORDER_ID,
         OrderStatusUpdate.JSON_PROPERTY_ORDER_STATUS,
 })
 
 @Introspected
 public class OrderStatusUpdate {
 
+    public static final String JSON_PROPERTY_ORDER_ID = "orderId";
     public static final String JSON_PROPERTY_ORDER_STATUS = "status";
+    private UUID orderId = null;
     private Order.StatusEnum status = null;
 
-    public OrderStatusUpdate(Order.StatusEnum status) {
+    public OrderStatusUpdate(UUID orderId, Order.StatusEnum status) {
+        this.orderId = orderId;
         this.status = status;
     }
 
     public OrderStatusUpdate() {
+        this(null, null);
+    }
+
+    public OrderStatusUpdate orderId(UUID orderId) {
+        this.orderId = orderId;
+        return this;
+    }
+
+    @Schema(name = "orderId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @JsonProperty(JSON_PROPERTY_ORDER_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public UUID getOrderId() {
+        return this.orderId;
+    }
+
+    @JsonProperty(JSON_PROPERTY_ORDER_ID)
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public void setOrderId(UUID orderId) {
+        this.orderId = orderId;
     }
 
     public OrderStatusUpdate status(Order.StatusEnum status) {
@@ -65,19 +91,21 @@ public class OrderStatusUpdate {
             return true;
         }
         return (object instanceof OrderStatusUpdate that)
-                && Objects.equals(that.status, this.status);
+                &&
+                Objects.equals(that.orderId, this.orderId)
+                && status == that.status;
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(this.status);
+        return Objects.hash(orderId, status);
     }
 
     @Override
     public String toString() {
         return "OrderStatusUpdate [" +
-                "status=" + this.status +
-                ']';
+                "orderId=" + this.orderId + ", " +
+                "status=" + this.status + ']';
     }
 }
 

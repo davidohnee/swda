@@ -179,7 +179,7 @@ public class OrdersController {
             },
             parameters = {
                     @Parameter(name = "orderId", required = true),
-                    @Parameter(name = "orderStatusUpdate", required = true)
+                    @Parameter(name = "status", required = true)
             }
     )
     @Patch(uri = "/orders/{orderId}/status")
@@ -187,9 +187,9 @@ public class OrdersController {
     @Consumes(value = {"application/json"})
     public Mono<Order> updateOrderStatus(
             @PathVariable(value = "orderId") @NotNull UUID orderId,
-            @Body @NotNull @Valid OrderStatusUpdate orderStatusUpdate
+            @Body @NotNull @Valid OrderStatusUpdate status
     ) {
-        return talkToBus(MessageRoutes.ORDER_UPDATE_STATUS, orderStatusUpdate, new TypeReference<Order>() {
+        return talkToBus(MessageRoutes.ORDER_UPDATE_STATUS, new OrderStatusUpdate(orderId, status.getStatus()), new TypeReference<Order>() {
         }, "Error updating order status");
     }
 
@@ -243,11 +243,17 @@ public class OrdersController {
                 return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to process request"));
             }
             LOG.info("Received response: {}", response);
-            U responseObj = this.objectMapper.readValue(response, responseClass);
-            return Mono.just(responseObj);
+            try {
+                U responseObj = this.objectMapper.readValue(response, responseClass);
+                return Mono.just(responseObj);
+            } catch (IOException e) {
+                // If parsing fails, assume it's an error message string
+                LOG.warn("Response is not of expected type. Treating as error message: {}", response);
+                return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, response));
+            }
         } catch (Exception e) {
             LOG.error(errorMessage, e);
-            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+            return Mono.error(new HttpStatusException(HttpStatus.INTERNAL_SERVER_ERROR, errorMessage));
         }
     }
 }
