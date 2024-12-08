@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -41,14 +42,14 @@ final class ContainerServerStartIT {
     @Container
     private final GenericContainer<?> container
             = new GenericContainer<>(DockerImageName.parse(IMAGE))
-                    .withStartupTimeout(Duration.ofSeconds(20))
-                    .withEnv("RABBIT", "OFF")
-                    .waitingFor(Wait.forLogMessage(".*Service started.*\\n", 1));
+            .withStartupTimeout(Duration.ofSeconds(20))
+            .withEnv("RABBIT", "OFF")
+            .waitingFor(Wait.forLogMessage(".*Application starting...*\\n", 1));
 
     @Test
     void testContainerStartable() throws Exception {
         final String logs = container.getLogs();
         LOG.info(logs);
-        assertThat(logs).contains("Service started");
+        assertThat(logs).contains("Application starting...");
     }
 }
