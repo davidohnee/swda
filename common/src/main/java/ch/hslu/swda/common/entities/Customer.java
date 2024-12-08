@@ -63,7 +63,7 @@ public class Customer {
 
     public Customer() {}
 
-    public Customer id(UUID id) {
+    public Customer customerId(UUID id) {
         this.customerId = id;
         return this;
     }
