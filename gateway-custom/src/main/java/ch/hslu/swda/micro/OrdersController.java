@@ -194,38 +194,6 @@ public class OrdersController {
     }
 
     /**
-     * Update order customer
-     *
-     * @param orderId             (required)
-     * @param orderCustomerUpdate (required)
-     * @return Order
-     */
-    @Operation(
-            operationId = "ordersOrderIdPatchCustomer",
-            summary = "Update order customer",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Order customer updated", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = Order.class))
-                    }),
-                    @ApiResponse(responseCode = "404", description = "Order not found")
-            },
-            parameters = {
-                    @Parameter(name = "orderId", required = true),
-                    @Parameter(name = "orderCustomerUpdate", required = true)
-            }
-    )
-    @Patch(uri = "/orders/{orderId}/customer")
-    @Produces(value = {"application/json"})
-    @Consumes(value = {"application/json"})
-    public Mono<Order> updateOrderCustomer(
-            @PathVariable(value = "orderId") @NotNull UUID orderId,
-            @Body @NotNull @Valid OrderCustomerUpdate orderCustomerUpdate
-    ) {
-        return talkToBus(MessageRoutes.ORDER_UPDATE_CUSTOMER, orderCustomerUpdate, new TypeReference<Order>() {
-        }, "Error updating order customer");
-    }
-
-    /**
      * Generic method to send a message to the bus and receive a response
      *
      * @param route         The route to send the message to
