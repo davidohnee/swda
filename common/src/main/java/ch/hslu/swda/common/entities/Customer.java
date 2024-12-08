@@ -35,8 +35,8 @@ import java.util.UUID;
 @JsonTypeName("Customer")
 @Introspected
 public class Customer {
-    public static final String JSON_PROPERTY_ID = "id";
-    private UUID id;
+    public static final String JSON_PROPERTY_ID = "customerId";
+    private UUID customerId;
 
     public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
     private String firstName;
@@ -50,21 +50,21 @@ public class Customer {
     public static final String JSON_PROPERTY_CONTACT_INFO = "contactInfo";
     private ContactInfo contactInfo;
 
-    private ObjectId objectId;
+    private ObjectId id;
 
-    public Customer(UUID id, String firstName, String familyName, Address address, ContactInfo contactInfo, ObjectId objectId) {
-        this.id = id;
+    public Customer(UUID customerId, String firstName, String familyName, Address address, ContactInfo contactInfo, ObjectId id) {
+        this.customerId = customerId;
         this.firstName = firstName;
         this.familyName = familyName;
         this.address = address;
         this.contactInfo = contactInfo;
-        this.objectId = objectId;
+        this.id = id;
     }
 
     public Customer() {}
 
     public Customer id(UUID id) {
-        this.id = id;
+        this.customerId = id;
         return this;
     }
 
@@ -76,14 +76,14 @@ public class Customer {
     @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public UUID getId() {
-        return id;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setId(UUID id) {
-        this.id = id;
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public Customer firstName(String firstName) {
@@ -181,12 +181,17 @@ public class Customer {
     }
 
     @JsonIgnore
-    public ObjectId getObjectId() {
-        return this.objectId;
+    public ObjectId getId() {
+        return this.id;
     }
 
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public Customer id(ObjectId id) {
+        this.id = id;
+        return this;
     }
 
     @Override
@@ -198,29 +203,29 @@ public class Customer {
             return false;
         }
         Customer customer = (Customer) o;
-        return Objects.equals(this.id, customer.id) &&
+        return Objects.equals(this.customerId, customer.customerId) &&
                 Objects.equals(this.firstName, customer.firstName) &&
                 Objects.equals(this.familyName, customer.familyName) &&
                 Objects.equals(this.address, customer.address) &&
                 Objects.equals(this.contactInfo, customer.contactInfo) &&
-                Objects.equals(this.objectId, customer.objectId);
+                Objects.equals(this.id, customer.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, familyName, address, contactInfo);
+        return Objects.hash(customerId, firstName, familyName, address, contactInfo, id);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Customer {\n");
-        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("    id: ").append(toIndentedString(customerId)).append("\n");
         sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
         sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
         sb.append("    address: ").append(toIndentedString(address)).append("\n");
         sb.append("    contactInfo: ").append(toIndentedString(contactInfo)).append("\n");
-        sb.append("    objectId: ").append(toIndentedString(objectId)).append("\n");
+        sb.append("    objectId: ").append(toIndentedString(id)).append("\n");
         sb.append("}");
         return sb.toString();
     }

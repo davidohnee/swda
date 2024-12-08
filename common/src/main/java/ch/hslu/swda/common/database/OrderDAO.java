@@ -138,7 +138,7 @@ public class OrderDAO extends GenericDAO<Document> {
 
     private Customer convertCustomer(Document customerDoc) {
         Customer customer = new Customer();
-        customer.setId(customerDoc.get("id", UUID.class));
+        customer.setCustomerId(customerDoc.get("id", UUID.class));
         customer.setFirstName(customerDoc.getString("firstName"));
         customer.setFamilyName(customerDoc.getString("familyName"));
         customer.setAddress(convertAddress(customerDoc.get("address", Document.class)));
