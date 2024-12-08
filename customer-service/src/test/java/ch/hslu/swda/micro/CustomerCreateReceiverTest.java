@@ -14,6 +14,7 @@ import ch.qos.logback.core.read.ListAppender;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +58,7 @@ public class CustomerCreateReceiverTest {
 
         //Assert
         Customer responseCustomer = customerMapper.readValue(responseCaptor.getValue(), Customer.class);
-        Customer expectedCustomer = new Customer(responseCustomer.getId(),customerCreate.getFirstName(),customerCreate.getFamilyName(), customerCreate.getAddress(),customerCreate.getContactInfo());
+        Customer expectedCustomer = new Customer(responseCustomer.getCustomerId(),customerCreate.getFirstName(),customerCreate.getFamilyName(), customerCreate.getAddress(),customerCreate.getContactInfo(), new ObjectId());
         String expectedCustomerString = customerMapper.writeValueAsString(expectedCustomer);
         Assertions.assertThat(responseCaptor.getValue()).isEqualTo(expectedCustomerString);
     }

@@ -7,6 +7,7 @@ import ch.hslu.swda.common.database.CustomerDAO;
 import ch.hslu.swda.common.entities.CustomerCreate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,13 @@ public class CustomerCreateReceiver implements MessageReceiver {
 
         try {
             var createCustomer = MAPPER.readValue(message, CustomerCreate.class);
-            var customer = new Customer().id(UUID.randomUUID()).firstName(createCustomer.getFirstName()).familyName(createCustomer.getFamilyName()).address(createCustomer.getAddress()).contactInfo(createCustomer.getContactInfo());
+            var customer = new Customer()
+                    .id(new ObjectId())
+                    .customerId(UUID.randomUUID())
+                    .firstName(createCustomer.getFirstName())
+                    .familyName(createCustomer.getFamilyName())
+                    .address(createCustomer.getAddress())
+                    .contactInfo(createCustomer.getContactInfo());
             customerDAO.create(customer);
             String response = new ObjectMapper().writeValueAsString(customer);
             bus.reply(exchangeName, replyTo, corrId, response);

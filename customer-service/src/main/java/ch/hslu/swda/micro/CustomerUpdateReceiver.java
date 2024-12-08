@@ -41,9 +41,18 @@ public class CustomerUpdateReceiver implements MessageReceiver {
         try {
             Customer customer = this.mapper.readValue(message, Customer.class);
             LOG.info("Received customer: {}", customer);
-            // implement update customer -> Customer doesnt have an ObjectId yet :(
-        } catch(IOException e) {
-            LOG.error("Error while parsing message: {}", e.getMessage());
+            Customer persistedCustomer = this.customerDAO.findByUUID(customer.getCustomerId());
+            if (persistedCustomer == null) {
+                LOG.error("Customer with id: {} not found", customer.getId());
+                return;
+            }
+            persistedCustomer.setFirstName(customer.getFirstName());
+            persistedCustomer.familyName(customer.getFamilyName());
+            persistedCustomer.setAddress(customer.getAddress());
+            persistedCustomer.setContactInfo(customer.getContactInfo());
+            this.customerDAO.update(persistedCustomer.getId(), persistedCustomer);
+        } catch (IOException e) {
+            LOG.error("Error while processing customer update: {}", e.getMessage());
         }
     }
 
