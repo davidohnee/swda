@@ -5,6 +5,7 @@ public enum OrderItemStatus {
     NOT_FOUND,
     CONFIRMED,
     DONE,
-    CANCELLED
+    CANCELLED,
+    RETURNED
 }
 
