@@ -17,10 +17,11 @@ public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static final int RESTART_DELAY_MS = 5000;
+    private static final int MAX_RETRIES = 5;
 
     private static ScheduledExecutorService executorService;
     private static LogService logService;
-
+    private static int retries;
     private static MongoDatabase database;
 
     private Application() {}
@@ -57,6 +58,7 @@ public final class Application {
                 logService = new LogService(database);
                 logService.start();
                 LOG.info("LoggerService started successfully.");
+                retries = 0;
             }
         } catch (IOException | TimeoutException e) {
             LOG.error("LoggerService encountered an error and will retry: {}", e.getMessage(), e);
@@ -65,6 +67,11 @@ public final class Application {
             LOG.error("Unexpected error in LoggerService, retrying: {}", ex.getMessage(), ex);
             stopService();
         } finally {
+            retries++;
+            if (retries > MAX_RETRIES){
+                LOG.error("Restarting the service was not successful for to many times. Exiting...");
+               System.exit(-1);
+            }
             executorService.schedule(Application::attemptServiceStart, RESTART_DELAY_MS, TimeUnit.MILLISECONDS);
         }
     }
