@@ -95,6 +95,26 @@ public class PersistentInventory implements Inventory {
     }
 
     @Override
+    public OrderInfo add(int productId, int quantity) {
+        InventoryItem item = this.inventory.get(productId);
+        if (item == null) {
+            return new OrderInfo(
+                    productId,
+                    OrderItemStatus.NOT_FOUND,
+                    quantity,
+                    null
+            );
+        }
+
+        this.update(productId, item.getQuantity() + quantity, item.getReplenishmentThreshold());
+        return new OrderInfo(
+                item.getProduct(),
+                OrderItemStatus.DONE,
+                quantity
+        );
+    }
+
+    @Override
     public InventoryItem update(int productId, int newQuantity) {
         return this.update(productId, newQuantity, null);
     }

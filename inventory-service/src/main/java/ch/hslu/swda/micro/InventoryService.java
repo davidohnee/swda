@@ -71,8 +71,23 @@ public final class InventoryService implements AutoCloseable {
         this.receiveGetInventoryMessages();
         this.receiveUpdateInventoryMessages();
         this.receiveTakeFromInventoryMessages();
+        this.receiveAddToInventoryMessages();
         this.receiveOnItemReplenishedMessages();
         this.receiveCancelOrderMessages();
+    }
+
+    private void receiveAddToInventoryMessages() {
+        try {
+            LOG.debug("Starting listening for messages with routing [{}]", MessageRoutes.INVENTORY_ADD);
+            bus.listenFor(
+                    exchangeName,
+                    "InventoryService <- " + MessageRoutes.INVENTORY_ADD,
+                    MessageRoutes.INVENTORY_ADD,
+                    new AddToInventoryReceiver(exchangeName, bus, this.inventory)
+            );
+        } catch (IOException e) {
+            LOG.error("Error starting listener for [{}]", MessageRoutes.INVENTORY_ADD, e);
+        }
     }
 
     private void receiveCancelOrderMessages() throws IOException {
