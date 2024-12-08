@@ -12,14 +12,12 @@
 
 package ch.hslu.swda.common.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.*;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -52,12 +50,15 @@ public class Customer {
     public static final String JSON_PROPERTY_CONTACT_INFO = "contactInfo";
     private ContactInfo contactInfo;
 
-    public Customer(UUID id, String firstName, String familyName, Address address, ContactInfo contactInfo) {
+    private ObjectId objectId;
+
+    public Customer(UUID id, String firstName, String familyName, Address address, ContactInfo contactInfo, ObjectId objectId) {
         this.id = id;
         this.firstName = firstName;
         this.familyName = familyName;
         this.address = address;
         this.contactInfo = contactInfo;
+        this.objectId = objectId;
     }
 
     public Customer() {}
@@ -179,6 +180,15 @@ public class Customer {
         this.contactInfo = contactInfo;
     }
 
+    @JsonIgnore
+    public ObjectId getObjectId() {
+        return this.objectId;
+    }
+
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -192,7 +202,8 @@ public class Customer {
                 Objects.equals(this.firstName, customer.firstName) &&
                 Objects.equals(this.familyName, customer.familyName) &&
                 Objects.equals(this.address, customer.address) &&
-                Objects.equals(this.contactInfo, customer.contactInfo);
+                Objects.equals(this.contactInfo, customer.contactInfo) &&
+                Objects.equals(this.objectId, customer.objectId);
     }
 
     @Override
@@ -209,6 +220,7 @@ public class Customer {
         sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
         sb.append("    address: ").append(toIndentedString(address)).append("\n");
         sb.append("    contactInfo: ").append(toIndentedString(contactInfo)).append("\n");
+        sb.append("    objectId: ").append(toIndentedString(objectId)).append("\n");
         sb.append("}");
         return sb.toString();
     }
