@@ -41,7 +41,7 @@ public class OrderDAO extends GenericDAO<Document> {
             aggregation.add(Aggregates.match(Filters.eq("orderId", orderId)));
         }
         aggregation.addAll(Arrays.asList(
-                Aggregates.lookup("customers", "customerId", "_id", "customerDetails"),
+                Aggregates.lookup("customers", "customerId", "customerId", "customerDetails"),
                 Aggregates.unwind("$customerDetails"),
                 Aggregates.lookup("inventory", "orderItems.productId", "product._id", "productDetails"),
                 Aggregates.project(new Document()
