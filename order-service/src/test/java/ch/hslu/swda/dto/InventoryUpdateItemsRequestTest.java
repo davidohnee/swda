@@ -7,18 +7,18 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-class InventoryTakeItemsRequestTest {
+class InventoryUpdateItemsRequestTest {
 
     @Test
     void testInventoryTakeItemsRequest() {
         List<OrderItemCreate> orderItems = List.of(new OrderItemCreate(300_000, 10));
-        InventoryTakeItemsRequest request = new InventoryTakeItemsRequest(orderItems);
+        InventoryUpdateItemsRequest request = new InventoryUpdateItemsRequest(orderItems);
         Assertions.assertThat(request.getItems()).isEqualTo(orderItems);
     }
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(InventoryTakeItemsRequest.class).verify();
+        EqualsVerifier.forClass(InventoryUpdateItemsRequest.class).verify();
     }
 
 }

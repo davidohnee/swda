@@ -5,18 +5,23 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.Order;
+import ch.hslu.swda.common.entities.OrderItemCreate;
 import ch.hslu.swda.common.entities.OrderStatusUpdate;
 import ch.hslu.swda.common.entities.PersistedOrder;
+import ch.hslu.swda.common.routing.MessageRoutes;
+import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 public class OrderStatusUpdateReceiver implements MessageReceiver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OrderCustomerUpdateReceiver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrderStatusUpdateReceiver.class);
     private final String exchangeName;
     private final BusConnector bus;
     private final PersistedOrderDAO persistedOrderDAO;
@@ -45,26 +50,79 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         LOG.info("Received message: {}", message);
         try {
             OrderStatusUpdate orderStatusUpdate = this.mapper.readValue(message, OrderStatusUpdate.class);
-
             if (orderStatusUpdate.getStatus() != Order.StatusEnum.CANCELLED) {
                 LOG.error("Only status CANCELLED is supported");
                 sendErrorResponse(replyTo, corrId, "Only status CANCELLED is supported");
                 return;
             }
-
-            PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderStatusUpdate.getOrderId());
-            if (persistedOrder == null) {
-                LOG.error("Order not found: {}", orderStatusUpdate.getOrderId());
-                sendErrorResponse(replyTo, corrId, "Order not found");
-            } else {
-                persistedOrder.setStatus(orderStatusUpdate.getStatus());
-                this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
-                Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
-                sendResponse(replyTo, corrId, order);
-            }
+            cancelOrder(replyTo, corrId, orderStatusUpdate);
         } catch (IOException e) {
             LOG.error("Error while processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
+        }
+    }
+
+    private void cancelOrder(String replyTo, String corrId, OrderStatusUpdate orderStatusUpdate) throws IOException {
+        PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderStatusUpdate.getOrderId());
+        if (persistedOrder != null && persistedOrder.getStatus() != Order.StatusEnum.CANCELLED) {
+            persistedOrder.setStatus(orderStatusUpdate.getStatus());
+            this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
+            Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
+            sendResponse(replyTo, corrId, order);
+            notifyInventory(persistedOrder);
+        } else {
+            LOG.error("Order not found: {}", orderStatusUpdate.getOrderId());
+            sendErrorResponse(replyTo, corrId, "Order not found");
+        }
+    }
+
+    private void notifyInventory(PersistedOrder persistedOrder) {
+        cancelReplenishments(persistedOrder);
+        returnItemsToInventory(persistedOrder);
+    }
+
+    private void cancelReplenishments(PersistedOrder persistedOrder) {
+        persistedOrder.getOrderItems().stream()
+                .map(item -> {
+                    try {
+                        return this.mapper.writeValueAsString(item.getTrackingId());
+                    } catch (JsonProcessingException e) {
+                        LOG.error("Error serializing trackingId", e);
+                        return null;
+                    }
+                })
+                .forEach(trackingId -> {
+                    try {
+                        if (trackingId != null) {
+                            LOG.info("Sending cancel message to inventory for trackingId {}", trackingId);
+                            this.bus.talkAsync(
+                                    this.exchangeName,
+                                    MessageRoutes.INVENTORY_CANCEL,
+                                    trackingId,
+                                    new CancelInventoryItemReceiver(persistedOrder, this.persistedOrderDAO));
+                        }
+                    } catch (IOException | InterruptedException e) {
+                        LOG.error("Error sending cancel message to inventory", e);
+                    }
+                });
+    }
+
+    private void returnItemsToInventory(PersistedOrder persistedOrder) {
+        List<OrderItemCreate> list = persistedOrder.getOrderItems().stream()
+                .map(item -> new OrderItemCreate(item.getProductId(), item.getQuantity()))
+                .toList();
+        InventoryUpdateItemsRequest request = new InventoryUpdateItemsRequest(list);
+        try {
+            String data = this.mapper.writeValueAsString(request);
+            LOG.info("Sending return message to inventory: {}", data);
+            this.bus.talkAsync(
+                    this.exchangeName,
+                    MessageRoutes.INVENTORY_ADD,
+                    data,
+                    new ReturnInventoryItemsReceiver(persistedOrder, this.persistedOrderDAO)
+            );
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Error sending return message to inventory", e);
         }
     }
 

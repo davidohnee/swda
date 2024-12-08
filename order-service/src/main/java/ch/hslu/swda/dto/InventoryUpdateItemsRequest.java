@@ -6,10 +6,10 @@ import ch.hslu.swda.common.entities.OrderItemCreate;
 import java.util.List;
 import java.util.Objects;
 
-public final class InventoryTakeItemsRequest {
+public final class InventoryUpdateItemsRequest {
     private final List<OrderItemCreate> items;
 
-    public InventoryTakeItemsRequest(List<OrderItemCreate> items) {
+    public InventoryUpdateItemsRequest(List<OrderItemCreate> items) {
         this.items = items;
     }
 
@@ -22,7 +22,7 @@ public final class InventoryTakeItemsRequest {
         if (object == this) {
             return true;
         }
-        return (object instanceof InventoryTakeItemsRequest that)
+        return (object instanceof InventoryUpdateItemsRequest that)
                 && Objects.equals(that.items, this.items);
     }
 

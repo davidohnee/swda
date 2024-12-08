@@ -103,12 +103,5 @@ public class OrderMessageListener {
                 MessageRoutes.ORDER_UPDATE_STATUS,
                 new OrderStatusUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO, this.orderDAO)
         );
-
-        this.bus.listenFor(
-                this.exchangeName,
-                "OrderService <- order.update.customer",
-                MessageRoutes.ORDER_UPDATE_CUSTOMER,
-                new OrderCustomerUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
-        );
     }
 }
