@@ -8,7 +8,6 @@ public final class MessageRoutes {
     public static final String ORDER_STATUS = "order.status";
     public static final String ORDER_UPDATE_ITEMS = "order.update.items";
     public static final String ORDER_UPDATE_STATUS = "order.update.status";
-    public static final String ORDER_UPDATE_CUSTOMER = "order.update.customer";
 
     public static final String CUSTOMER_GET_ENTITY = "customer.entity";
     public static final String CUSTOMER_GET_ENTITYSET = "customer.entityset";
