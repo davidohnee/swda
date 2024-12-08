@@ -73,7 +73,7 @@ public class Customer {
      * @return id
      */
     @NotNull
-    @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "customerId", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
     public UUID getCustomerId() {
