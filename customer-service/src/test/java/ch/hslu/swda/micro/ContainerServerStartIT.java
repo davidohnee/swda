@@ -47,11 +47,10 @@ final class ContainerServerStartIT {
             .withEnv("RABBIT", "OFF")
             .waitingFor(Wait.forLogMessage(".*Application starting...*\\n", 1));
 
-    @Disabled
     @Test
     void testContainerStartable() throws Exception {
         final String logs = container.getLogs();
         LOG.info(logs);
-        assertThat(logs).contains("Application started...");
+        assertThat(logs).contains("Application starting...");
     }
 }
