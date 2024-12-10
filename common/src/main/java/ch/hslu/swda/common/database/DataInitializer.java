@@ -49,7 +49,7 @@ public class DataInitializer {
         );
 
         for (Customer customer : predefinedCustomers) {
-            Customer existingCustomer = customerDAO.findByUUID(customer.getId());
+            Customer existingCustomer = customerDAO.read(customer.getId());
             if (existingCustomer == null) {
                 customerDAO.create(customer);
             }
