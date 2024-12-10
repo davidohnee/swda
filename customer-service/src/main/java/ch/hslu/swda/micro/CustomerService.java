@@ -3,75 +3,54 @@ package ch.hslu.swda.micro;
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;
 import ch.hslu.swda.common.database.CustomerDAO;
-import ch.hslu.swda.common.database.MongoDBConnectionManager;
-import ch.hslu.swda.common.config.ApplicationConfig;
-import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.micro.receivers.CustomerCreateReceiver;
-import ch.hslu.swda.micro.receivers.CustomerGetReceiver;
-import ch.hslu.swda.micro.receivers.CustomerUpdateReceiver;
-import ch.hslu.swda.micro.receivers.CustomerValidationReceiver;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public final class CustomerService implements AutoCloseable {
+public final class CustomerService {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerService.class);
-    private static final String RECEIVER_START_MSG = "Starting listening for message with routing [{}]" ;
     private final String exchangeName;
     private final BusConnector bus;
-    private final MongoDBConnectionManager mongoDBConnectionManager;
 
-    public CustomerService() throws IOException, TimeoutException {
-        String threadName = Thread.currentThread().getName();
-        LOG.debug("[Thread: {}] Service started", threadName);
+    private final CustomerDAO customerDAO;
 
-        // connect to rmq
+    private boolean running;
+
+    public CustomerService(MongoDatabase database) throws IOException, TimeoutException {
+        LOG.debug("Initializing CustomerService...");
         this.exchangeName = new RabbitMqConfig().getExchange();
         this.bus = new BusConnector();
-        this.bus.connect();
-
-        // connect to mongodb
-        this.mongoDBConnectionManager = MongoDBConnectionManager.getInstance(ApplicationConfig.getConnectionString(), ApplicationConfig.getDatabaseName());
-
-        //start msg receiver
-        this.receiveEntitysetRequest();
-        this.receiveEntityRequest();
-        this.receiveCreateRequest();
-        this.receiveValidationRequest();
-        this.receiveUpdateRequest();
+        this.customerDAO = new CustomerDAO(database);
+        this.running = false;
     }
 
-    private void receiveEntitysetRequest() throws IOException {
-        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_GET_ENTITYSET);
-        bus.listenFor(exchangeName, "CustomerService <- customer.get.entityset", MessageRoutes.CUSTOMER_GET_ENTITYSET, new CustomerGetReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
+    public void start() throws IOException, TimeoutException {
+        try {
+            this.bus.connect();
+            this.running = true;
+            LOG.info("CustomerService connected to RabbitMQ.");
+            CustomerMessageListener messageListener = new CustomerMessageListener(this.exchangeName, this.bus, this.customerDAO);
+            messageListener.start();
+        } catch (IOException e) {
+            this.running = false;
+            throw new IOException("Failed to start CustomerService.", e);
+        } catch (TimeoutException e) {
+            this.running = false;
+            throw new TimeoutException("Failed to start CustomerService." + e);
+        }
     }
 
-    private void receiveEntityRequest() throws IOException {
-        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_GET_ENTITY);
-        bus.listenFor(exchangeName, "CustomerService <- customer.get.entity", MessageRoutes.CUSTOMER_GET_ENTITY, new CustomerGetReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
+    public void stop() {
+        LOG.info("Stopping CustomerService and closing connections...");
+        this.running = false;
+        this.bus.close();
     }
 
-    private void receiveCreateRequest() throws IOException {
-        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_CREATE);
-        bus.listenFor(exchangeName, "CustomerService <- customer.create", MessageRoutes.CUSTOMER_CREATE, new CustomerCreateReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
-    }
-
-    private void receiveValidationRequest() throws IOException {
-        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_VALIDATE);
-        bus.listenFor(exchangeName, "CustomerService <- customer.validate", MessageRoutes.CUSTOMER_VALIDATE, new CustomerValidationReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
-    }
-
-    private void receiveUpdateRequest() throws IOException {
-        LOG.debug(RECEIVER_START_MSG, MessageRoutes.CUSTOMER_UPDATE);
-        bus.listenFor(exchangeName, "CustomerService <- customer.update", MessageRoutes.CUSTOMER_UPDATE, new CustomerUpdateReceiver(exchangeName, bus, new CustomerDAO(mongoDBConnectionManager.getDatabase())));
-    }
-
-    @Override
-    public void close() throws Exception {
-        bus.close();
-        mongoDBConnectionManager.close();
+    public boolean isRunning() {
+        return this.running;
     }
 }
