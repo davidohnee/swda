@@ -7,11 +7,11 @@ import ch.hslu.swda.common.entities.ContactInfo;
 import ch.hslu.swda.common.entities.Customer;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.common.entities.CustomerCreate;
+import ch.hslu.swda.micro.receivers.CustomerCreateReceiver;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
 import org.bson.types.ObjectId;
@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 

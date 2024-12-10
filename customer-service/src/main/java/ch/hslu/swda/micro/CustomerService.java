@@ -6,6 +6,10 @@ import ch.hslu.swda.common.database.CustomerDAO;
 import ch.hslu.swda.common.database.MongoDBConnectionManager;
 import ch.hslu.swda.common.config.ApplicationConfig;
 import ch.hslu.swda.common.routing.MessageRoutes;
+import ch.hslu.swda.micro.receivers.CustomerCreateReceiver;
+import ch.hslu.swda.micro.receivers.CustomerGetReceiver;
+import ch.hslu.swda.micro.receivers.CustomerUpdateReceiver;
+import ch.hslu.swda.micro.receivers.CustomerValidationReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
