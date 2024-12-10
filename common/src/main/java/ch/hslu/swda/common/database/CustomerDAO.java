@@ -2,6 +2,8 @@ package ch.hslu.swda.common.database;
 
 import ch.hslu.swda.common.entities.Customer;
 import com.mongodb.client.MongoDatabase;
+import org.bson.types.ObjectId;
+
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
@@ -19,5 +21,9 @@ public class CustomerDAO extends GenericDAO<Customer> {
 
     public List<Customer> findAll() {
         return collection.find().into(new ArrayList<>());
+    }
+
+    public void update(UUID id, Customer entity) {
+        collection.replaceOne(eq("_id", id), entity);
     }
 }
