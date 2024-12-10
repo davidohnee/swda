@@ -45,7 +45,7 @@ public class CustomerValidationReceiverTest {
     public void testOnMessageReceived_ValidationCustomer() throws IOException {
         //Arrange
         CustomerValidationRequest customerValidationRequest = new CustomerValidationRequest();
-        when(customerDAO.findByUUID(customerValidationRequest.getCustomerId())).thenReturn(customer);
+        when(customerDAO.read(customerValidationRequest.getCustomerId())).thenReturn(customer);
 
         //Act
         customerValidationReceiver.onMessageReceived(MessageRoutes.CUSTOMER_VALIDATE, "replyTo", "corrId", MAPPER.writeValueAsString(customerValidationRequest));
@@ -61,7 +61,7 @@ public class CustomerValidationReceiverTest {
     public void testOnMessageReceived_ValidationCustomer_NotFound() throws IOException {
         //Arrange
         CustomerValidationRequest customerValidationRequest = new CustomerValidationRequest();
-        when(customerDAO.findByUUID(customerValidationRequest.getCustomerId())).thenReturn(null);
+        when(customerDAO.read(customerValidationRequest.getCustomerId())).thenReturn(null);
 
         //Act
         customerValidationReceiver.onMessageReceived(MessageRoutes.CUSTOMER_VALIDATE, "replyTo", "corrId", MAPPER.writeValueAsString(customerValidationRequest));

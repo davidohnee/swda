@@ -51,7 +51,7 @@ public class CustomerValidationReceiver implements MessageReceiver {
     }
 
     private boolean isCustomerValid(final UUID customerId) {
-       var response = customerDAO.findByUUID(customerId);
+       var response = customerDAO.read(customerId);
        return response != null;
     }
 }

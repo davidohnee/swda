@@ -41,7 +41,7 @@ public class CustomerUpdateReceiver implements MessageReceiver {
         try {
             Customer customer = this.mapper.readValue(message, Customer.class);
             LOG.info("Received customer: {}", customer);
-            Customer persistedCustomer = this.customerDAO.findByUUID(customer.getCustomerId());
+            Customer persistedCustomer = this.customerDAO.read(customer.getId());
             if (persistedCustomer == null) {
                 LOG.error("Customer with id: {} not found", customer.getId());
                 return;

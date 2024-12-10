@@ -57,7 +57,7 @@ public class CustomerCreateReceiverTest {
 
         //Assert
         Customer responseCustomer = customerMapper.readValue(responseCaptor.getValue(), Customer.class);
-        Customer expectedCustomer = new Customer(responseCustomer.getCustomerId(),customerCreate.getFirstName(),customerCreate.getFamilyName(), customerCreate.getAddress(),customerCreate.getContactInfo(), new ObjectId());
+        Customer expectedCustomer = new Customer(responseCustomer.getId(),customerCreate.getFirstName(),customerCreate.getFamilyName(), customerCreate.getAddress(),customerCreate.getContactInfo());
         String expectedCustomerString = customerMapper.writeValueAsString(expectedCustomer);
         Assertions.assertThat(responseCaptor.getValue()).isEqualTo(expectedCustomerString);
     }

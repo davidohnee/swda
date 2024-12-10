@@ -39,7 +39,7 @@ public class CustomerGetReceiver implements MessageReceiver {
             String msg = switch (route) {
                 case MessageRoutes.CUSTOMER_GET_ENTITY -> {
                     var customerId = deserializeUUID(message);
-                    Customer customer = customerDAO.findByUUID(customerId);
+                    Customer customer = customerDAO.read(customerId);
                     yield (customer != null) ? MAPPER.writeValueAsString(customer) : "";
                 }
                 case MessageRoutes.CUSTOMER_GET_ENTITYSET -> {

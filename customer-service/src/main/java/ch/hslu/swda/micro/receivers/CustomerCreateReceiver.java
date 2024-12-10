@@ -38,8 +38,7 @@ public class CustomerCreateReceiver implements MessageReceiver {
         try {
             var createCustomer = MAPPER.readValue(message, CustomerCreate.class);
             var customer = new Customer()
-                    .id(new ObjectId())
-                    .customerId(UUID.randomUUID())
+                    .id(UUID.randomUUID())
                     .firstName(createCustomer.getFirstName())
                     .familyName(createCustomer.getFamilyName())
                     .address(createCustomer.getAddress())

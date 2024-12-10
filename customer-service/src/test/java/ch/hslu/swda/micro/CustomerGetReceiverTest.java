@@ -44,7 +44,7 @@ class CustomerGetReceiverTest {
     public void testOnMessageReceived_GetEntity() throws IOException {
         //Arrange
         UUID customerId = UUID.randomUUID();
-        when(customerDAO.findByUUID(customerId)).thenReturn(customer);
+        when(customerDAO.read(customerId)).thenReturn(customer);
 
         //Act
         customerGetReceiver.onMessageReceived(MessageRoutes.CUSTOMER_GET_ENTITY, "replyTo", "corrId", MAPPER.writeValueAsString(customerId));
@@ -60,7 +60,7 @@ class CustomerGetReceiverTest {
     public void testOnMessageReceived_GetEntity_NotFound() throws  IOException{
         //Arrange
         UUID customerId = UUID.randomUUID();
-        when(customerDAO.findByUUID(customerId)).thenReturn(null);
+        when(customerDAO.read(customerId)).thenReturn(null);
 
         //Act
         customerGetReceiver.onMessageReceived(MessageRoutes.CUSTOMER_GET_ENTITY, "replyTo", "corrId", MAPPER.writeValueAsString(customerId));
