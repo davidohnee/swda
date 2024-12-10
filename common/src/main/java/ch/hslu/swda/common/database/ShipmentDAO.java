@@ -40,7 +40,7 @@ public class ShipmentDAO extends GenericDAO<Shipment> {
         Shipment shipment = collection.find(eq("_id", shipmentId)).first();
         if (shipment != null) {
             Order order = orderDAO.findByUUID(shipment.getOrderId());
-            return order.getCustomer().getCustomerId();
+            return order.getCustomer().getId();
         }
 
         return null;

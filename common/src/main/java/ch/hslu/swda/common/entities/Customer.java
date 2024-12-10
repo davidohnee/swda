@@ -15,6 +15,7 @@ package ch.hslu.swda.common.entities;
 import com.fasterxml.jackson.annotation.*;
 import io.micronaut.core.annotation.Introspected;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
@@ -35,8 +36,9 @@ import java.util.UUID;
 @JsonTypeName("Customer")
 @Introspected
 public class Customer {
-    public static final String JSON_PROPERTY_ID = "customerId";
-    private UUID customerId;
+    public static final String JSON_PROPERTY_ID = "id";
+    @Id
+    private UUID id;
 
     public static final String JSON_PROPERTY_FIRST_NAME = "firstName";
     private String firstName;
@@ -50,21 +52,18 @@ public class Customer {
     public static final String JSON_PROPERTY_CONTACT_INFO = "contactInfo";
     private ContactInfo contactInfo;
 
-    private ObjectId id;
-
-    public Customer(UUID customerId, String firstName, String familyName, Address address, ContactInfo contactInfo, ObjectId id) {
-        this.customerId = customerId;
+    public Customer(UUID id, String firstName, String familyName, Address address, ContactInfo contactInfo) {
+        this.id = id;
         this.firstName = firstName;
         this.familyName = familyName;
         this.address = address;
         this.contactInfo = contactInfo;
-        this.id = id;
     }
 
     public Customer() {}
 
-    public Customer customerId(UUID id) {
-        this.customerId = id;
+    public Customer id(UUID id) {
+        this.id = id;
         return this;
     }
 
@@ -73,17 +72,17 @@ public class Customer {
      * @return id
      */
     @NotNull
-    @Schema(name = "customerId", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(name = "id", requiredMode = Schema.RequiredMode.REQUIRED)
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public UUID getCustomerId() {
-        return customerId;
+    public UUID getId() {
+        return id != null ? UUID.fromString(id.toString()) : null;
     }
 
     @JsonProperty(JSON_PROPERTY_ID)
     @JsonInclude(value = JsonInclude.Include.ALWAYS)
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
+    public void setId(UUID customerId) {
+        this.id = customerId;
     }
 
     public Customer firstName(String firstName) {
@@ -137,10 +136,6 @@ public class Customer {
         return this;
     }
 
-    /**
-     * Get address
-     * @return address
-     */
     @Valid
     @NotNull
     @Schema(name = "address", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -161,10 +156,6 @@ public class Customer {
         return this;
     }
 
-    /**
-     * Get contactInfo
-     * @return contactInfo
-     */
     @Valid
     @NotNull
     @Schema(name = "contactInfo", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -180,20 +171,6 @@ public class Customer {
         this.contactInfo = contactInfo;
     }
 
-    @JsonIgnore
-    public ObjectId getId() {
-        return this.id;
-    }
-
-    public void setId(ObjectId id) {
-        this.id = id;
-    }
-
-    public Customer id(ObjectId id) {
-        this.id = id;
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -203,29 +180,27 @@ public class Customer {
             return false;
         }
         Customer customer = (Customer) o;
-        return Objects.equals(this.customerId, customer.customerId) &&
+        return Objects.equals(this.id, customer.id) &&
                 Objects.equals(this.firstName, customer.firstName) &&
                 Objects.equals(this.familyName, customer.familyName) &&
                 Objects.equals(this.address, customer.address) &&
-                Objects.equals(this.contactInfo, customer.contactInfo) &&
-                Objects.equals(this.id, customer.id);
+                Objects.equals(this.contactInfo, customer.contactInfo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerId, firstName, familyName, address, contactInfo, id);
+        return Objects.hash(id, firstName, familyName, address, contactInfo);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Customer {\n");
-        sb.append("    id: ").append(toIndentedString(customerId)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
         sb.append("    familyName: ").append(toIndentedString(familyName)).append("\n");
         sb.append("    address: ").append(toIndentedString(address)).append("\n");
         sb.append("    contactInfo: ").append(toIndentedString(contactInfo)).append("\n");
-        sb.append("    objectId: ").append(toIndentedString(id)).append("\n");
         sb.append("}");
         return sb.toString();
     }
