@@ -15,8 +15,8 @@ public class CustomerDAO extends GenericDAO<Customer> {
         super(database, "customers", Customer.class);
     }
 
-    public Customer findByUUID(UUID uuid) {
-        return collection.find(eq("customerId", uuid)).first();
+    public Customer read(UUID uuid) {
+        return collection.find(eq("id", uuid)).first();
     }
 
     public List<Customer> findAll() {
