@@ -1,7 +1,9 @@
 <script setup lang="ts">
+    import { api } from "@/api";
     import ErrorLoader from "@/components/ErrorLoader.vue";
+    import LogComponent from "@/components/Log.vue";
     import { useOrderStore } from "@/stores/orders";
-    import type { Order } from "@/types";
+    import type { Log, Order } from "@/types";
     import { computed, onMounted, ref, watch } from "vue";
     import { useRoute } from "vue-router";
 
@@ -11,10 +13,12 @@
     const orderId = computed(() => {
         return String(route.params.id);
     });
+    const logs = ref<Log[]>();
 
     const updateOrder = async () => {
         console.log("Updating order", orderId.value);
         order.value = orders.getOrderById(orderId.value);
+        logs.value = (await api.logs.forOrder(orderId.value)).data ?? [];
         console.log("Order", order.value);
     };
 
@@ -88,6 +92,10 @@
                     </div>
                     <div class="card">
                         <h3>Timeline</h3>
+                        <LogComponent
+                            v-for="log in logs"
+                            :log="log"
+                        />
                     </div>
                 </main>
                 <aside>

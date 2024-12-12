@@ -106,3 +106,10 @@ export interface Notification {
     };
     sent: Date;
 }
+
+export interface Log {
+    id: string;
+    message: string;
+    level: "DEBUG" | "INFO" | "WARNING" | "ERROR";
+    timestamp: Date;
+}
