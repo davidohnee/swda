@@ -94,7 +94,7 @@ public class OrderMessageListener {
                 this.exchangeName,
                 "OrderService <- order.update.items",
                 MessageRoutes.ORDER_UPDATE_ITEMS,
-                new OrderItemsUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO)
+                new OrderItemsUpdateReceiver(this.exchangeName, this.bus, this.persistedOrderDAO, this.orderDAO)
         );
 
         this.bus.listenFor(
