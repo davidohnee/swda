@@ -64,16 +64,24 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
 
     private void cancelOrder(String replyTo, String corrId, OrderStatusUpdate orderStatusUpdate) throws IOException {
         PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderStatusUpdate.getOrderId());
-        if (persistedOrder != null && persistedOrder.getStatus() != Order.StatusEnum.CANCELLED) {
-            persistedOrder.setStatus(orderStatusUpdate.getStatus());
-            this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
-            Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
-            sendResponse(replyTo, corrId, order);
-            notifyInventory(persistedOrder);
-        } else {
+        LOG.info("Found order: {}", persistedOrder);
+        if (persistedOrder == null) {
             LOG.error("Order not found: {}", orderStatusUpdate.getOrderId());
             sendErrorResponse(replyTo, corrId, "Order not found");
+            return;
         }
+
+        if (persistedOrder.getStatus() == Order.StatusEnum.CANCELLED) {
+            LOG.error("Order is already cancelled: {}", orderStatusUpdate.getOrderId());
+            sendErrorResponse(replyTo, corrId, "Order is already cancelled");
+            return;
+        }
+
+        persistedOrder.setStatus(orderStatusUpdate.getStatus());
+        this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
+        Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
+        sendResponse(replyTo, corrId, order);
+        notifyInventory(persistedOrder);
     }
 
     private void notifyInventory(PersistedOrder persistedOrder) {
