@@ -32,6 +32,17 @@ export const orders = {
                 };
             });
     },
+    async cancel(orderId: string) {
+        return fetch(`/api/v1/orders/${orderId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                status: "CANCELLED",
+            }),
+        });
+    },
     async create(order: OrderCreate) {
         return fetch("/api/v1/orders", {
             method: "POST",

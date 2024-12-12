@@ -22,6 +22,11 @@
         console.log("Order", order.value);
     };
 
+    const cancelOrder = async () => {
+        await api.orders.cancel(orderId.value);
+        setTimeout(updateOrder, 500);
+    };
+
     onMounted(updateOrder);
     watch(orderId, updateOrder);
     watch(() => orders.orders, updateOrder);
@@ -36,6 +41,7 @@
                 :class="{
                     success: ['DONE', 'CONFIRMED'].includes(order.status),
                     info: order.status === 'PENDING',
+                    disabled: ['CANCELLED'].includes(order.status),
                 }"
             >
                 {{ order.status }}
@@ -89,6 +95,15 @@
                             <span>Paid by customer</span>
                             <span>$0.00</span>
                         </div>
+                        <button
+                            @click="cancelOrder"
+                            v-if="
+                                ['PENDING', 'CONFIRMED'].includes(order.status)
+                            "
+                            class="error cancel-order"
+                        >
+                            CANCEL
+                        </button>
                     </div>
                     <div class="card">
                         <h3>Timeline</h3>
@@ -197,6 +212,10 @@
 
         & h3 {
             margin: 0;
+        }
+
+        .cancel-order {
+            width: 100%;
         }
     }
 

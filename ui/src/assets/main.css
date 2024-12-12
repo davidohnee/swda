@@ -251,6 +251,11 @@ table {
     &.success {
         --color: var(--green);
     }
+
+    &.disabled {
+        color: black;
+        --color: lightgrey;
+    }
 }
 
 .gradient-text,

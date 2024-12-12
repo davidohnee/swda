@@ -60,7 +60,7 @@ export interface OrderCreate {
 
 export interface Order {
     id: string;
-    status: "PENDING" | "CONFIRMED" | "DONE";
+    status: "PENDING" | "CONFIRMED" | "DONE" | "CANCELLED";
     dateTime: Date;
     orderItems: OrderItem[];
     price: number;
