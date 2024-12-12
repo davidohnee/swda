@@ -30,7 +30,6 @@ public final class OrderService {
         this.bus = new BusConnector();
         this.persistedOrderDAO = new PersistedOrderDAO(database);
         this.orderDAO = new OrderDAO(database);
-//        new OrdersMemory().getAllOrders().forEach(orderDAO::create); // load dummy data into database
         this.running = false;
         this.orderProcessingPool = Executors.newCachedThreadPool();
     }
