@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 
@@ -26,26 +27,27 @@ import java.util.Objects;
 /**
  * Schema for updating order items
  */
-@Schema(name = "OrderItemUpdate", description = "Schema for updating order items")
+@Serdeable
+@Schema(name = "OrderUpdate", description = "Schema for updating order")
 @JsonPropertyOrder({
-        OrderItemUpdate.JSON_PROPERTY_ORDER_ITEM_CREATE,
+        OrderUpdate.JSON_PROPERTY_ORDER_ITEMS,
 })
-
 @Introspected
-public class OrderItemUpdate {
+public class OrderUpdate {
 
-    public static final String JSON_PROPERTY_ORDER_ITEM_CREATE = "orderItems";
+    public static final String JSON_PROPERTY_ORDER_ITEMS = "orderItems";
     private List<@Valid OrderItemCreate> orderItems = null;
+    private Order.StatusEnum status = null;
 
-    public OrderItemUpdate() {
+    public OrderUpdate() {
     }
 
-    public OrderItemUpdate orderItems(List<@Valid OrderItemCreate> orderItems) {
+    public OrderUpdate orderItems(List<@Valid OrderItemCreate> orderItems) {
         this.orderItems = orderItems;
         return this;
     }
 
-    public OrderItemUpdate addOrderItemsItem(OrderItemCreate orderItemsItem) {
+    public OrderUpdate addOrderItemsItem(OrderItemCreate orderItemsItem) {
         if (this.orderItems == null) {
             this.orderItems = new ArrayList<>();
         }
@@ -54,16 +56,34 @@ public class OrderItemUpdate {
     }
 
     @Schema(name = "orderItems", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty(JSON_PROPERTY_ORDER_ITEM_CREATE)
+    @JsonProperty(JSON_PROPERTY_ORDER_ITEMS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public List<@Valid OrderItemCreate> getOrderItems() {
         return orderItems;
     }
 
-    @JsonProperty(JSON_PROPERTY_ORDER_ITEM_CREATE)
+    @JsonProperty(JSON_PROPERTY_ORDER_ITEMS)
     @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
     public void setOrderItems(List<@Valid OrderItemCreate> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public OrderUpdate status(Order.StatusEnum status) {
+        this.status = status;
+        return this;
+    }
+
+    @Schema(name = "status", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("status")
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public Order.StatusEnum getStatus() {
+        return status;
+    }
+
+    @JsonProperty("status")
+    @JsonInclude(value = JsonInclude.Include.USE_DEFAULTS)
+    public void setStatus(Order.StatusEnum status) {
+        this.status = status;
     }
 
     @Override
@@ -71,7 +91,7 @@ public class OrderItemUpdate {
         if (object == this) {
             return true;
         }
-        return (object instanceof OrderItemUpdate that)
+        return (object instanceof OrderUpdate that)
                 && Objects.equals(that.orderItems, this.orderItems);
     }
 
@@ -82,7 +102,7 @@ public class OrderItemUpdate {
 
     @Override
     public String toString() {
-        return "OrderItemUpdate [" +
+        return "OrderUpdate [" +
                 "orderItems=" + orderItems +
                 ']';
     }

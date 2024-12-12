@@ -133,12 +133,12 @@ public class OrdersController {
      * Update order items
      *
      * @param orderId         (required)
-     * @param orderItemUpdate (required)
+     * @param orderUpdate (required)
      * @return Order
      */
     @Operation(
-            operationId = "ordersOrderIdPatchItems",
-            summary = "Update order item quantities",
+            operationId = "ordersOrderIdPatch",
+            summary = "Update order",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Order items updated", content = {
                             @Content(mediaType = "application/json", schema = @Schema(implementation = Order.class))
@@ -147,50 +147,34 @@ public class OrdersController {
             },
             parameters = {
                     @Parameter(name = "orderId", required = true),
-                    @Parameter(name = "orderItemUpdate", required = true)
+                    @Parameter(name = "orderUpdate", required = true)
             }
     )
-    @Patch(uri = "/orders/{orderId}/items")
+    @Patch(uri = "/orders/{orderId}")
     @Produces(value = {"application/json"})
     @Consumes(value = {"application/json"})
     public Mono<Order> updateOrderItems(
             @PathVariable(value = "orderId") @NotNull UUID orderId,
-            @Body @NotNull @Valid OrderItemUpdate orderItemUpdate
+            @Body @NotNull @Valid OrderUpdate orderUpdate
     ) {
-        return talkToBus(MessageRoutes.ORDER_UPDATE_ITEMS, orderItemUpdate, new TypeReference<Order>() {
-        }, "Error updating order items");
-    }
+        if (orderUpdate.getStatus() != null) {
+            // Can only cancel order.
+            // If the order is cancelled, then modifications to it are not allowed.
+            // Therefore, we can only return.
+            return talkToBus(MessageRoutes.ORDER_UPDATE_STATUS, new OrderStatusUpdate(orderId, orderUpdate.getStatus()), new TypeReference<Order>() {
+            }, "Error updating order status");
+        }
 
-    /**
-     * Update order status
-     *
-     * @param orderId           (required)
-     * @param orderStatusUpdate (required)
-     * @return Order
-     */
-    @Operation(
-            operationId = "ordersOrderIdPatchStatus",
-            summary = "Update order status",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Order status updated", content = {
-                            @Content(mediaType = "application/json", schema = @Schema(implementation = Order.class))
-                    }),
-                    @ApiResponse(responseCode = "404", description = "Order not found")
-            },
-            parameters = {
-                    @Parameter(name = "orderId", required = true),
-                    @Parameter(name = "status", required = true)
-            }
-    )
-    @Patch(uri = "/orders/{orderId}/status")
-    @Produces(value = {"application/json"})
-    @Consumes(value = {"application/json"})
-    public Mono<Order> updateOrderStatus(
-            @PathVariable(value = "orderId") @NotNull UUID orderId,
-            @Body @NotNull @Valid OrderStatusUpdate status
-    ) {
-        return talkToBus(MessageRoutes.ORDER_UPDATE_STATUS, new OrderStatusUpdate(orderId, status.getStatus()), new TypeReference<Order>() {
-        }, "Error updating order status");
+        if (orderUpdate.getOrderItems() != null) {
+            // No other update implemented, so we return here.
+            // If other modifications were allowed, we'd aggregate the responses.
+            return talkToBus(MessageRoutes.ORDER_UPDATE_ITEMS, orderUpdate, new TypeReference<Order>() {
+            }, "Error updating order items");
+        }
+
+        // nothing to modify; return the order
+        return talkToBus(MessageRoutes.ORDER_GET_ENTITY, orderId, new TypeReference<Order>() {
+        }, "Error retrieving order");
     }
 
     /**
