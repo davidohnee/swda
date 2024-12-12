@@ -10,6 +10,8 @@ import ch.hslu.swda.common.entities.OrderStatusUpdate;
 import ch.hslu.swda.common.entities.PersistedOrder;
 import ch.hslu.swda.common.routing.MessageRoutes;
 import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
+import ch.hslu.swda.micro.Application;
+import ch.hslu.swda.micro.logging.LoggerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -27,6 +29,7 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
     private final PersistedOrderDAO persistedOrderDAO;
     private final OrderDAO orderDAO;
     private final ObjectMapper mapper;
+    private final LoggerService loggerService;
 
     public OrderStatusUpdateReceiver(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO, OrderDAO orderDAO) {
         this.exchangeName = exchangeName;
@@ -34,6 +37,7 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         this.persistedOrderDAO = persistedOrderDAO;
         this.orderDAO = orderDAO;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        this.loggerService = new LoggerService(Application.SERVICE_NAME, exchangeName, bus);
     }
 
     /**
@@ -77,8 +81,9 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
             return;
         }
 
-        persistedOrder.setStatus(orderStatusUpdate.getStatus());
+        persistedOrder.setStatus(Order.StatusEnum.CANCELLED);
         this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
+        this.loggerService.info("Order status updated to CANCELLED", persistedOrder.getOrderId());
         Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
         sendResponse(replyTo, corrId, order);
         notifyInventory(persistedOrder);

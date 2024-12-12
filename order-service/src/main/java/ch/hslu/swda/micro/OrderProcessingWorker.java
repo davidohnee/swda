@@ -8,6 +8,7 @@ import ch.hslu.swda.micro.customer.CustomerServiceImpl;
 import ch.hslu.swda.micro.customer.CustomerValidateException;
 import ch.hslu.swda.micro.inventory.InventoryService;
 import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
+import ch.hslu.swda.micro.logging.LoggerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,17 +29,19 @@ public class OrderProcessingWorker {
     private final PersistedOrderDAO persistedOrderDAO;
     private final CustomerService customerService;
     private final InventoryService inventoryService;
+    private final LoggerService loggerService;
 
     public OrderProcessingWorker(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
         this.persistedOrderDAO = persistedOrderDAO;
         this.customerService = new CustomerServiceImpl(bus, exchangeName);
         this.inventoryService = new InventoryServiceImpl(bus, exchangeName);
+        this.loggerService = new LoggerService(Application.SERVICE_NAME, exchangeName, bus);
     }
 
     public void processOrder(PersistedOrder order) {
         UUID customerId = order.getCustomerId();
 
-        validateCustomer(customerId)
+        validateCustomer(customerId, order)
                 .thenCompose(isValid -> reserveInventory(order))
                 .thenAccept(orderInfos -> completeOrderProcessing(order, orderInfos))
                 .exceptionally(ex -> {
@@ -47,15 +50,17 @@ public class OrderProcessingWorker {
                 });
     }
 
-    private CompletableFuture<Boolean> validateCustomer(UUID customerId) {
+    private CompletableFuture<Boolean> validateCustomer(UUID customerId, PersistedOrder order) {
         return customerService.validateCustomer(customerId)
                 .orTimeout(TIMEOUT_CUSTOMER_VALIDATION, TimeUnit.SECONDS)
                 .thenApply(isValid -> {
                     if (!isValid) {
                         LOG.warn("Customer {} validation failed.", customerId);
+                        this.loggerService.warning("Customer validation failed", order.getOrderId(), customerId);
                         throw new CustomerValidateException("Customer validation failed");
                     }
                     LOG.info("Customer {} validated successfully.", customerId);
+                    this.loggerService.info("Customer successfully validated", order.getOrderId(), customerId);
                     return true;
                 });
     }
@@ -72,9 +77,11 @@ public class OrderProcessingWorker {
                 .thenCompose(orderInfos -> {
                     if (orderInfos == null) {
                         LOG.warn("Inventory reservation failed for order {}.", order.getOrderId());
+                        this.loggerService.warning("Inventory reservation failed", order.getOrderId());
                         return CompletableFuture.failedFuture(new RuntimeException("Inventory reservation failed"));
                     }
-                    LOG.info("Inventory reserved successfully for order {}.", order.getOrderId());
+                    LOG.info("Inventory items reserved successfully for order {}.", order.getOrderId());
+                    this.loggerService.info("Inventory items reserved successfully", order.getOrderId());
                     return CompletableFuture.completedFuture(orderInfos);
                 });
     }
@@ -121,6 +128,7 @@ public class OrderProcessingWorker {
         order.setStatus(status);
         persistedOrderDAO.update(order.getId(), order);
         LOG.info("Order {} status updated to {}.", order.getOrderId(), status);
+        this.loggerService.info("Order status updated to " + status, order.getOrderId());
     }
 
     private void handleOrderFailure(PersistedOrder order) {

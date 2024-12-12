@@ -7,6 +7,8 @@ import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemStatus;
 import ch.hslu.swda.common.entities.PersistedOrder;
+import ch.hslu.swda.micro.Application;
+import ch.hslu.swda.micro.logging.LoggerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -19,12 +21,14 @@ public class InventoryAvailableReceiver implements MessageReceiver {
     private final BusConnector bus;
     private final PersistedOrderDAO persistedOrderDAO;
     private final ObjectMapper mapper;
+    private final LoggerService loggerService;
 
     public InventoryAvailableReceiver(String exchangeName, BusConnector bus, PersistedOrderDAO persistedOrderDAO) {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.persistedOrderDAO = persistedOrderDAO;
         this.mapper = new ObjectMapper();
+        this.loggerService = new LoggerService(Application.SERVICE_NAME, exchangeName, bus);
     }
 
     /**
@@ -71,6 +75,7 @@ public class InventoryAvailableReceiver implements MessageReceiver {
                 .count();
         if (confirmedCount == order.getOrderItems().size()) {
             order.setStatus(Order.StatusEnum.CONFIRMED);
+            this.loggerService.info("Order status updated to CONFIRMED", order.getOrderId());
         }
     }
 }

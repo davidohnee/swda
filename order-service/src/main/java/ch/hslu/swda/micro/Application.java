@@ -17,6 +17,7 @@ public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
     private static final int RESTART_DELAY_MS = 5000;
+    public static final String SERVICE_NAME = "OrderService";
 
     private static ScheduledExecutorService executorService;
     private static OrderService orderService;

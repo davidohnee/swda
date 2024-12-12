@@ -25,7 +25,7 @@ public class OrderValidationReceiver implements MessageReceiver {
         this.exchangeName = exchangeName;
         this.bus = bus;
         this.persistedOrderDAO = persistedOrderDAO;
-        this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());;
+        this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @Override
