@@ -23,8 +23,14 @@
     };
 
     const cancelOrder = async () => {
-        await api.orders.cancel(orderId.value);
-        setTimeout(updateOrder, 500);
+        const response = await api.orders.cancel(orderId.value);
+
+        if (response.error) {
+            console.error(response.error);
+            return;
+        }
+
+        order.value = response.data;
     };
 
     onMounted(updateOrder);

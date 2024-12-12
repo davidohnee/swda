@@ -32,7 +32,7 @@ export const orders = {
                 };
             });
     },
-    async cancel(orderId: string) {
+    async cancel(orderId: string): Promise<ApiResponse<Order>> {
         return fetch(`/api/v1/orders/${orderId}`, {
             method: "PATCH",
             headers: {
@@ -41,7 +41,17 @@ export const orders = {
             body: JSON.stringify({
                 status: "CANCELLED",
             }),
-        });
+        })
+            .then(mapApiResponse<any>)
+            .then((item) => {
+                if (item.error) {
+                    return item;
+                }
+                return {
+                    ...item,
+                    data: this._mapOrderItem(item.data),
+                };
+            });
     },
     async create(order: OrderCreate) {
         return fetch("/api/v1/orders", {
