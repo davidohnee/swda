@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class OrderStatusUpdateReceiver implements MessageReceiver {
 
@@ -54,39 +55,60 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         LOG.info("Received message: {}", message);
         try {
             OrderStatusUpdate orderStatusUpdate = this.mapper.readValue(message, OrderStatusUpdate.class);
-            if (orderStatusUpdate.getStatus() != Order.StatusEnum.CANCELLED) {
-                LOG.error("Only status CANCELLED is supported");
-                sendErrorResponse(replyTo, corrId, "Only status CANCELLED is supported");
-                return;
+            if (orderStatusUpdate.getStatus() == Order.StatusEnum.CANCELLED || orderStatusUpdate.getStatus() == Order.StatusEnum.SHIPPED) {
+                LOG.info("Received order status update: {}", orderStatusUpdate);
+                processOrderStatusUpdate(replyTo, corrId, orderStatusUpdate);
+            } else {
+                LOG.error("Only status CANCELLED and SHIPPED are supported");
+                sendErrorResponse(replyTo, corrId, "Only status CANCELLED and SHIPPED are supported");
             }
-            cancelOrder(replyTo, corrId, orderStatusUpdate);
         } catch (IOException e) {
             LOG.error("Error while processing message", e);
             sendErrorResponse(replyTo, corrId, "Error processing request");
         }
     }
 
-    private void cancelOrder(String replyTo, String corrId, OrderStatusUpdate orderStatusUpdate) throws IOException {
-        PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderStatusUpdate.getOrderId());
-        LOG.info("Found order: {}", persistedOrder);
+    private void processOrderStatusUpdate(String replyTo, String corrId, OrderStatusUpdate orderStatusUpdate) throws IOException {
+        PersistedOrder persistedOrder = getPersistedOrder(orderStatusUpdate.getOrderId(), replyTo, corrId);
         if (persistedOrder == null) {
-            LOG.error("Order not found: {}", orderStatusUpdate.getOrderId());
-            sendErrorResponse(replyTo, corrId, "Order not found");
             return;
         }
 
+        if (orderStatusUpdate.getStatus() == Order.StatusEnum.CANCELLED) {
+            cancelOrder(replyTo, corrId, persistedOrder);
+        } else if (orderStatusUpdate.getStatus() == Order.StatusEnum.SHIPPED) {
+            updateOrderStatus(replyTo, corrId, persistedOrder, Order.StatusEnum.SHIPPED);
+        }
+    }
+
+    private void cancelOrder(String replyTo, String corrId, PersistedOrder persistedOrder) throws IOException {
         if (persistedOrder.getStatus() == Order.StatusEnum.CANCELLED) {
-            LOG.error("Order is already cancelled: {}", orderStatusUpdate.getOrderId());
             sendErrorResponse(replyTo, corrId, "Order is already cancelled");
             return;
         }
 
-        persistedOrder.setStatus(Order.StatusEnum.CANCELLED);
+        updateOrderStatus(replyTo, corrId, persistedOrder, Order.StatusEnum.CANCELLED);
+        notifyInventory(persistedOrder);
+    }
+
+    private void updateOrderStatus(String replyTo, String corrId, PersistedOrder persistedOrder, Order.StatusEnum newStatus) throws IOException {
+        persistedOrder.setStatus(newStatus);
         this.persistedOrderDAO.update(persistedOrder.getId(), persistedOrder);
-        this.loggerService.info("Order status updated to CANCELLED", persistedOrder.getOrderId());
+        this.loggerService.info("Order status updated to " + newStatus, persistedOrder.getOrderId());
+
         Order order = this.orderDAO.findByUUID(persistedOrder.getOrderId());
         sendResponse(replyTo, corrId, order);
-        notifyInventory(persistedOrder);
+    }
+
+    private PersistedOrder getPersistedOrder(UUID orderId, String replyTo, String corrId) throws IOException {
+        PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderId);
+        LOG.info("Found order: {}", persistedOrder);
+
+        if (persistedOrder == null) {
+            LOG.error("Order not found: {}", orderId);
+            sendErrorResponse(replyTo, corrId, "Order not found");
+        }
+        return persistedOrder;
     }
 
     private void notifyInventory(PersistedOrder persistedOrder) {
