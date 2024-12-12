@@ -20,7 +20,7 @@ export const logs = {
             });
     },
     async forOrder(orderId: string): Promise<ApiResponse<Log[]>> {
-        return fetch(`/api/v1/logs?orderId=${orderId}`)
+        return fetch(`/api/v1/logs?corrId=${orderId}`)
             .then(mapApiResponse<any[]>)
             .then((items) => {
                 if (items.error) {
