@@ -56,6 +56,7 @@ public final class CreateShipmentReceiver implements MessageReceiver {
             this.shipmentDAO.create(shipment);
 
             sendShipmentNotification(shipment);
+            setOrderStatusToShipped(shipmentCreate.getOrderId());
 
             sendResponse(replyTo, corrId, shipment);
         } catch (IOException | InterruptedException e) {
@@ -82,6 +83,16 @@ public final class CreateShipmentReceiver implements MessageReceiver {
 
         } catch (IOException e) {
             LOG.error("Error sending notification", e);
+        }
+    }
+
+    private void setOrderStatusToShipped(UUID orderId) {
+        try {
+            OrderStatusUpdate orderStatusUpdate = new OrderStatusUpdate(orderId, Order.StatusEnum.SHIPPED);
+            String data = this.mapper.writeValueAsString(orderStatusUpdate);
+            bus.talkAsync(exchangeName, MessageRoutes.ORDER_UPDATE_STATUS, data);
+        } catch (IOException e) {
+            LOG.error("Error updating order status to shipped", e);
         }
     }
 
