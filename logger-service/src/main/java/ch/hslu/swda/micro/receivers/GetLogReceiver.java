@@ -44,9 +44,13 @@ public class GetLogReceiver implements MessageReceiver {
                     yield (log != null) ? mapper.writeValueAsString(log) : "";
                 }
                 case MessageRoutes.LOGGER_GET_ENTITYSET -> {
-                    //TODO implement logic
-                    LOG.debug("Not implemented yet!");
-                    yield  "";
+                    if (message.isEmpty()){
+                      var logs = logDAO.findAll();
+                      yield mapper.writeValueAsString(logs);
+                    }
+                    var corrUUID = deserializeUUID(message);
+                    var logs = logDAO.findByCorrelationId(corrUUID);
+                    yield mapper.writeValueAsString(logs);
                 }
                 default -> {
                     LOG.warn("Unknown route: {}", route);

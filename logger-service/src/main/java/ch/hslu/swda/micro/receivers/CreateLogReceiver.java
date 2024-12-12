@@ -38,12 +38,8 @@ public class CreateLogReceiver implements MessageReceiver {
             var log = mapper.readValue(message, Log.class);
             logDAO.create(log);
             String response = mapper.writeValueAsString(log);
-            bus.reply(exchangeName, replyTo, corrId, response);
         } catch(JsonProcessingException e){
             LOG.error("Failed to persist log Cause: {}", e.getMessage(), e);
-        }
-        catch (IOException ioe) {
-            LOG.error("Unable to communicate over buss. Cause: {}", ioe.getMessage(), ioe);
         }
     }
 }
