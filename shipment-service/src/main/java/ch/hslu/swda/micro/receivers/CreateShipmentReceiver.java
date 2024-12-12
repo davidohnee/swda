@@ -90,8 +90,10 @@ public final class CreateShipmentReceiver implements MessageReceiver {
         try {
             OrderStatusUpdate orderStatusUpdate = new OrderStatusUpdate(orderId, Order.StatusEnum.SHIPPED);
             String data = this.mapper.writeValueAsString(orderStatusUpdate);
-            bus.talkAsync(exchangeName, MessageRoutes.ORDER_UPDATE_STATUS, data);
-        } catch (IOException e) {
+            LOG.info("Updating order status to shipped: {}", data);
+            String response = bus.talkSync(exchangeName, MessageRoutes.ORDER_UPDATE_STATUS, data);
+            LOG.info("Received response: {}", response);
+        } catch (IOException | InterruptedException e) {
             LOG.error("Error updating order status to shipped", e);
         }
     }
