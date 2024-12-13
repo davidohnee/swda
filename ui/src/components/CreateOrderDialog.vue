@@ -13,8 +13,8 @@
         dateTime: new Date(),
         orderItems: [],
         customerId: "",
-        sellerId: "",
-        destinationId: "",
+        sellerId: crypto.randomUUID(),
+        destinationId: crypto.randomUUID(),
         orderType: "CUSTOMER_ORDER",
     });
 

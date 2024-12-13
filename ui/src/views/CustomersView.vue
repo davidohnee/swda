@@ -27,11 +27,28 @@
                             <td>{{ item.id }}</td>
                             <td>{{ item.firstName }}</td>
                             <td>{{ item.familyName }}</td>
-                            <td>{{ item.address }}</td>
+                            <td>
+                                <div class="address">
+                                    <span title="Street Name">
+                                        {{ item.address.streetName }}
+                                    </span>
+                                    <span title="Street Number">
+                                        {{ item.address.streetNumber }}
+                                    </span>
+                                </div>
+                                <div class="address">
+                                    <span title="Zip Code">
+                                        {{ item.address.plz }}
+                                    </span>
+                                    <span title="Town Name">
+                                        {{ item.address.townName }}
+                                    </span>
+                                </div>
+                            </td>
                             <td>
                                 <ul>
                                     <li>Email: {{ item.contactInfo.email }}</li>
-                                    <li>Phone {{ item.contactInfo.phone }}</li>
+                                    <li>Phone: {{ item.contactInfo.phone }}</li>
                                 </ul>
                             </td>
                         </tr>
@@ -47,3 +64,16 @@
         </ErrorLoader>
     </div>
 </template>
+
+<style scoped>
+    .address {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1ch;
+
+        & span {
+            max-width: max-content;
+        }
+    }
+</style>

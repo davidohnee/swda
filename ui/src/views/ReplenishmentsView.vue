@@ -25,7 +25,13 @@
                             :key="item.trackingId"
                         >
                             <td>{{ item.trackingId }}</td>
-                            <td>{{ item.product.name }}</td>
+                            <td>
+                                <RouterLink
+                                    :to="`/inventory/${item.product.id}`"
+                                >
+                                    {{ item.product.name }}
+                                </RouterLink>
+                            </td>
                             <td>{{ item.quantity }}</td>
                             <td>
                                 {{

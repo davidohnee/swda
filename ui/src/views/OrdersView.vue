@@ -67,19 +67,25 @@
                                         v-for="orderItem in item.orderItems"
                                         :key="orderItem.product.id"
                                     >
-                                        {{ orderItem.product.name }} x{{
-                                            orderItem.quantity
-                                        }}
+                                        <RouterLink
+                                            :to="`/inventory/${orderItem.product.id}`"
+                                        >
+                                            {{ orderItem.product.name }} x{{
+                                                orderItem.quantity
+                                            }}
+                                        </RouterLink>
                                     </li>
                                 </ul>
                             </td>
-                            <td>{{ item.price }}</td>
+                            <td>${{ item.price }}</td>
                             <td>
-                                {{
-                                    item.customer.firstName +
-                                    " " +
-                                    item.customer.familyName
-                                }}
+                                <RouterLink to="/customers">
+                                    {{
+                                        item.customer.firstName +
+                                        " " +
+                                        item.customer.familyName
+                                    }}
+                                </RouterLink>
                             </td>
                             <td>
                                 {{
@@ -96,6 +102,9 @@
                                             item.status
                                         ),
                                         info: item.status === 'PENDING',
+                                        disabled: ['CANCELLED'].includes(
+                                            item.status
+                                        ),
                                     }"
                                 >
                                     {{ item.status }}
