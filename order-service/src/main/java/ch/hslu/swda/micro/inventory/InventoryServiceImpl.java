@@ -1,27 +1,32 @@
 package ch.hslu.swda.micro.inventory;
 
 import ch.hslu.swda.bus.BusConnector;
+import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
-import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
 import ch.hslu.swda.common.routing.MessageRoutes;
+import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class InventoryServiceImpl implements InventoryService {
     private static final Logger LOG = LoggerFactory.getLogger(InventoryServiceImpl.class);
     private final BusConnector bus;
     private final String exchangeName;
+    private final ObjectMapper mapper;
 
     public InventoryServiceImpl(BusConnector bus, String exchangeName) {
         this.bus = bus;
         this.exchangeName = exchangeName;
+        this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @Override
@@ -29,20 +34,58 @@ public class InventoryServiceImpl implements InventoryService {
         CompletableFuture<OrderInfo[]> future = new CompletableFuture<>();
         LOG.info("Taking items from inventory");
         String request = createTakeItemsRequest(new InventoryUpdateItemsRequest(orderItems));
-        return sendRequest(request, future);
+        return sendTakeItemsRequest(request, future);
+    }
+
+    @Override
+    public void returnItems(List<OrderItemCreate> orderItems, MessageReceiver receiver) {
+        InventoryUpdateItemsRequest request = new InventoryUpdateItemsRequest(orderItems);
+        try {
+            String data = this.mapper.writeValueAsString(request);
+            LOG.info("Sending return message to inventory: {}", data);
+            this.bus.talkAsync(
+                    this.exchangeName,
+                    MessageRoutes.INVENTORY_ADD,
+                    data,
+                    receiver
+            );
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Error sending return message to inventory", e);
+        }
+    }
+
+    /**
+     * Cancels a replenishment.
+     *
+     * @param trackingId The tracking ID.
+     * @param receiver   The message receiver.
+     */
+    @Override
+    public void cancelReplenishment(UUID trackingId, MessageReceiver receiver) {
+        try {
+            String data = this.mapper.writeValueAsString(trackingId);
+            LOG.info("Sending cancel replenishment message to inventory: {}", data);
+            this.bus.talkAsync(
+                    this.exchangeName,
+                    MessageRoutes.INVENTORY_CANCEL,
+                    data,
+                    receiver
+            );
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Error sending cancel replenishment message to inventory", e);
+        }
     }
 
     private String createTakeItemsRequest(InventoryUpdateItemsRequest request) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(request);
+            return this.mapper.writeValueAsString(request);
         } catch (JsonProcessingException e) {
             LOG.error("Error while creating take items request", e);
             throw new InventoryTakeItemsException("Error while creating take items request", e);
         }
     }
 
-    private CompletableFuture<OrderInfo[]> sendRequest(String request, CompletableFuture<OrderInfo[]> future) {
+    private CompletableFuture<OrderInfo[]> sendTakeItemsRequest(String request, CompletableFuture<OrderInfo[]> future) {
         try {
             bus.talkAsync(
                     this.exchangeName,

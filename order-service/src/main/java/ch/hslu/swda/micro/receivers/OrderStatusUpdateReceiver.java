@@ -4,15 +4,10 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
-import ch.hslu.swda.common.entities.Order;
-import ch.hslu.swda.common.entities.OrderItemCreate;
-import ch.hslu.swda.common.entities.OrderStatusUpdate;
-import ch.hslu.swda.common.entities.PersistedOrder;
-import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
+import ch.hslu.swda.common.entities.*;
 import ch.hslu.swda.micro.Application;
+import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
 import ch.hslu.swda.micro.logging.LoggerService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
@@ -100,7 +95,7 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         sendResponse(replyTo, corrId, order);
     }
 
-    private PersistedOrder getPersistedOrder(UUID orderId, String replyTo, String corrId) throws IOException {
+    private PersistedOrder getPersistedOrder(UUID orderId, String replyTo, String corrId) {
         PersistedOrder persistedOrder = this.persistedOrderDAO.findByUUID(orderId);
         LOG.info("Found order: {}", persistedOrder);
 
@@ -118,27 +113,11 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
 
     private void cancelReplenishments(PersistedOrder persistedOrder) {
         persistedOrder.getOrderItems().stream()
-                .map(item -> {
-                    try {
-                        return this.mapper.writeValueAsString(item.getTrackingId());
-                    } catch (JsonProcessingException e) {
-                        LOG.error("Error serializing trackingId", e);
-                        return null;
-                    }
-                })
-                .forEach(trackingId -> {
-                    try {
-                        if (trackingId != null) {
-                            LOG.info("Sending cancel message to inventory for trackingId {}", trackingId);
-                            this.bus.talkAsync(
-                                    this.exchangeName,
-                                    MessageRoutes.INVENTORY_CANCEL,
-                                    trackingId,
-                                    new CancelInventoryItemReceiver(persistedOrder, this.persistedOrderDAO));
-                        }
-                    } catch (IOException | InterruptedException e) {
-                        LOG.error("Error sending cancel message to inventory", e);
-                    }
+                .filter(item -> item.getStatus() == OrderItemStatus.PENDING)
+                .forEach(item -> {
+                    this.loggerService.info("Cancelling replenishment for item " + item.getProductId(), persistedOrder.getOrderId());
+                    MessageReceiver receiver = new CancelInventoryItemReceiver(persistedOrder, this.persistedOrderDAO);
+                    new InventoryServiceImpl(this.bus, this.exchangeName).cancelReplenishment(item.getTrackingId(), receiver);
                 });
     }
 
@@ -146,19 +125,8 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         List<OrderItemCreate> list = persistedOrder.getOrderItems().stream()
                 .map(item -> new OrderItemCreate(item.getProductId(), item.getQuantity()))
                 .toList();
-        InventoryUpdateItemsRequest request = new InventoryUpdateItemsRequest(list);
-        try {
-            String data = this.mapper.writeValueAsString(request);
-            LOG.info("Sending return message to inventory: {}", data);
-            this.bus.talkAsync(
-                    this.exchangeName,
-                    MessageRoutes.INVENTORY_ADD,
-                    data,
-                    new ReturnInventoryItemsReceiver(persistedOrder, this.persistedOrderDAO)
-            );
-        } catch (IOException | InterruptedException e) {
-            LOG.error("Error sending return message to inventory", e);
-        }
+        MessageReceiver receiver = new ReturnInventoryItemsReceiver(persistedOrder, this.persistedOrderDAO);
+        new InventoryServiceImpl(this.bus, this.exchangeName).returnItems(list, receiver);
     }
 
     private void sendResponse(String replyTo, String corrId, Order order) throws IOException {

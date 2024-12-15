@@ -1,10 +1,12 @@
 package ch.hslu.swda.micro.inventory;
 
 
+import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -19,4 +21,20 @@ public interface InventoryService {
      * @return An array of {@link OrderInfo} objects.
      */
     CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems);
+
+    /**
+     * Returns items to the inventory.
+     *
+     * @param orderItems The order items.
+     * @param receiver   The message receiver.
+     */
+    void returnItems(List<OrderItemCreate> orderItems, MessageReceiver receiver);
+
+    /**
+     * Cancels a replenishment.
+     *
+     * @param trackingId The tracking ID.
+     * @param receiver   The message receiver.
+     */
+    void cancelReplenishment(UUID trackingId, MessageReceiver receiver);
 }
