@@ -1,4 +1,4 @@
-package ch.hslu.swda.dto;
+package ch.hslu.swda.micro.inventory.dto;
 
 
 import ch.hslu.swda.common.entities.OrderItemCreate;

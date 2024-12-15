@@ -1,8 +1,7 @@
-package ch.hslu.swda.micro.receivers;
+package ch.hslu.swda.micro.order.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.Order;
 import com.fasterxml.jackson.databind.ObjectMapper;

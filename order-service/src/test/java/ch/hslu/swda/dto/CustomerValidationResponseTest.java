@@ -1,5 +1,6 @@
 package ch.hslu.swda.dto;
 
+import ch.hslu.swda.micro.customer.dto.CustomerValidationResponse;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

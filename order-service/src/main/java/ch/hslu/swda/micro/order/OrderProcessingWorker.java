@@ -1,8 +1,9 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.order;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.*;
+import ch.hslu.swda.micro.Application;
 import ch.hslu.swda.micro.customer.CustomerService;
 import ch.hslu.swda.micro.customer.CustomerServiceImpl;
 import ch.hslu.swda.micro.customer.CustomerValidateException;

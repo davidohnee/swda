@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.order;
 
 
 import ch.hslu.swda.common.entities.PersistedOrder;

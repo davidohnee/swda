@@ -23,12 +23,28 @@ public interface InventoryService {
     CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems);
 
     /**
+     * Takes an item from the inventory.
+     *
+     * @param orderItem The order item.
+     * @param receiver  The message receiver.
+     */
+    void takeItem(OrderItemCreate orderItem, MessageReceiver receiver);
+
+    /**
      * Returns items to the inventory.
      *
      * @param orderItems The order items.
      * @param receiver   The message receiver.
      */
     void returnItems(List<OrderItemCreate> orderItems, MessageReceiver receiver);
+
+    /**
+     * Returns an item to the inventory.
+     *
+     * @param orderItem The order item.
+     * @param receiver  The message receiver.
+     */
+    void returnItem(OrderItemCreate orderItem, MessageReceiver receiver);
 
     /**
      * Cancels a replenishment.

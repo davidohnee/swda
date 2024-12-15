@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro.receivers;
+package ch.hslu.swda.micro.order.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
@@ -7,6 +7,8 @@ import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.*;
 import ch.hslu.swda.micro.Application;
 import ch.hslu.swda.micro.inventory.InventoryServiceImpl;
+import ch.hslu.swda.micro.inventory.receivers.InventoryCancelReplenishmentReceiver;
+import ch.hslu.swda.micro.inventory.receivers.InventoryReturnResponseReceiver;
 import ch.hslu.swda.micro.logging.LoggerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -116,7 +118,7 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
                 .filter(item -> item.getStatus() == OrderItemStatus.PENDING)
                 .forEach(item -> {
                     this.loggerService.info("Cancelling replenishment for item " + item.getProductId(), persistedOrder.getOrderId());
-                    MessageReceiver receiver = new CancelInventoryItemReceiver(persistedOrder, this.persistedOrderDAO);
+                    MessageReceiver receiver = new InventoryCancelReplenishmentReceiver(persistedOrder, this.persistedOrderDAO);
                     new InventoryServiceImpl(this.bus, this.exchangeName).cancelReplenishment(item.getTrackingId(), receiver);
                 });
     }
@@ -125,7 +127,7 @@ public class OrderStatusUpdateReceiver implements MessageReceiver {
         List<OrderItemCreate> list = persistedOrder.getOrderItems().stream()
                 .map(item -> new OrderItemCreate(item.getProductId(), item.getQuantity()))
                 .toList();
-        MessageReceiver receiver = new ReturnInventoryItemsReceiver(persistedOrder, this.persistedOrderDAO);
+        MessageReceiver receiver = new InventoryReturnResponseReceiver(persistedOrder, this.persistedOrderDAO);
         new InventoryServiceImpl(this.bus, this.exchangeName).returnItems(list, receiver);
     }
 

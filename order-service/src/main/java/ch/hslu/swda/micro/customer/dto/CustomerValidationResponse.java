@@ -1,4 +1,4 @@
-package ch.hslu.swda.dto;
+package ch.hslu.swda.micro.customer.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

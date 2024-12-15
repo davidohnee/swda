@@ -1,5 +1,6 @@
 package ch.hslu.swda.micro;
 
+import ch.hslu.swda.micro.order.OrderService;
 import com.mongodb.client.MongoDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

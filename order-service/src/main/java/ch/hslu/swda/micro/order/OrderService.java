@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.order;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.RabbitMqConfig;

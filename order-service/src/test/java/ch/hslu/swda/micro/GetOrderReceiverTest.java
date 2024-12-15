@@ -4,7 +4,7 @@ import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.entities.Order;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.micro.receivers.GetOrderReceiver;
+import ch.hslu.swda.micro.order.receivers.GetOrderReceiver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.assertj.core.api.Assertions;

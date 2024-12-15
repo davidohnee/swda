@@ -1,7 +1,8 @@
-package ch.hslu.swda.micro.customer;
+package ch.hslu.swda.micro.customer.receiver;
 
 import ch.hslu.swda.bus.MessageReceiver;
-import ch.hslu.swda.dto.CustomerValidationResponse;
+import ch.hslu.swda.micro.customer.dto.CustomerValidationResponse;
+import ch.hslu.swda.micro.customer.CustomerValidateException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

@@ -5,7 +5,7 @@ import ch.hslu.swda.bus.MessageReceiver;
 import ch.hslu.swda.common.entities.OrderInfo;
 import ch.hslu.swda.common.entities.OrderItemCreate;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.dto.InventoryUpdateItemsRequest;
+import ch.hslu.swda.micro.inventory.dto.InventoryUpdateItemsRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -32,9 +32,32 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public CompletableFuture<OrderInfo[]> takeItems(List<OrderItemCreate> orderItems) {
         CompletableFuture<OrderInfo[]> future = new CompletableFuture<>();
-        LOG.info("Taking items from inventory");
         String request = createTakeItemsRequest(new InventoryUpdateItemsRequest(orderItems));
+        LOG.info("Taking items from inventory {}", request);
         return sendTakeItemsRequest(request, future);
+    }
+
+    /**
+     * Takes an item from the inventory.
+     *
+     * @param orderItem The order item.
+     * @param receiver  The message receiver.
+     */
+    @Override
+    public void takeItem(OrderItemCreate orderItem, MessageReceiver receiver) {
+        InventoryUpdateItemsRequest request = new InventoryUpdateItemsRequest(List.of(orderItem));
+        try {
+            String data = this.mapper.writeValueAsString(request);
+            LOG.info("Sending take message to inventory: {}", data);
+            this.bus.talkAsync(
+                    this.exchangeName,
+                    MessageRoutes.INVENTORY_TAKE,
+                    data,
+                    receiver
+            );
+        } catch (IOException | InterruptedException e) {
+            LOG.error("Error sending take message to inventory", e);
+        }
     }
 
     @Override
@@ -52,6 +75,17 @@ public class InventoryServiceImpl implements InventoryService {
         } catch (IOException | InterruptedException e) {
             LOG.error("Error sending return message to inventory", e);
         }
+    }
+
+    /**
+     * Returns an item to the inventory.
+     *
+     * @param orderItem The order item.
+     * @param receiver  The message receiver.
+     */
+    @Override
+    public void returnItem(OrderItemCreate orderItem, MessageReceiver receiver) {
+        returnItems(List.of(orderItem), receiver);
     }
 
     /**

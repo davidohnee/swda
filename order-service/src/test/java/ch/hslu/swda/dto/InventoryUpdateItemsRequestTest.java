@@ -1,6 +1,7 @@
 package ch.hslu.swda.dto;
 
 import ch.hslu.swda.common.entities.OrderItemCreate;
+import ch.hslu.swda.micro.inventory.dto.InventoryUpdateItemsRequest;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

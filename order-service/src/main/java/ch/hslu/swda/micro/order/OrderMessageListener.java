@@ -1,11 +1,12 @@
-package ch.hslu.swda.micro;
+package ch.hslu.swda.micro.order;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.common.database.OrderDAO;
 import ch.hslu.swda.common.database.PersistedOrderDAO;
 import ch.hslu.swda.common.entities.PersistedOrder;
 import ch.hslu.swda.common.routing.MessageRoutes;
-import ch.hslu.swda.micro.receivers.*;
+import ch.hslu.swda.micro.inventory.receivers.InventoryAvailableReceiver;
+import ch.hslu.swda.micro.order.receivers.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

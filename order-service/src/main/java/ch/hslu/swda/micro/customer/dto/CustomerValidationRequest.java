@@ -1,4 +1,4 @@
-package ch.hslu.swda.dto;
+package ch.hslu.swda.micro.customer.dto;
 
 import java.util.Objects;
 import java.util.UUID;

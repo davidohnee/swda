@@ -1,4 +1,4 @@
-package ch.hslu.swda.micro.receivers;
+package ch.hslu.swda.micro.inventory.receivers;
 
 import ch.hslu.swda.bus.BusConnector;
 import ch.hslu.swda.bus.MessageReceiver;
