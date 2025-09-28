@@ -1,0 +1,18 @@
+networks:
+  bus:
+    name: bus
+    external: true
+  internal:
+    name: internal
+    external: true
+
+services:
+  app:
+    image: $CICD_IMAGE_ID
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - bus
+      - internal
+    deploy:
+      replicas: 1
