@@ -1,0 +1,20 @@
+version: '3.5'
+
+services:
+  app:
+    image: $CICD_IMAGE_ID
+    build:
+      context: .
+      args:
+        CI_GIT_VERSION: $CICD_GIT_VERSION
+        CI_GIT_DATE: $CICD_GIT_DATE
+    environment:
+      - RMQ_HOST=bus
+      - MONGODB_CONNECTION=mongodb://mongodb:27017
+    networks:
+      - backbone
+
+networks:
+  backbone:
+    external:
+      name: g09-backbone_backbone
