@@ -1,0 +1,22 @@
+networks:
+  ingress:
+    name: traefik-public
+    external: true
+  bus:
+    name: bus
+    external: true
+  internal:
+    name: internal
+    external: true
+
+services:
+  app:
+    image: $CICD_IMAGE_ID
+    environment:
+      - RMQ_HOST=bus
+      - MONGODB_CONNECTION=mongodb://mongodb:27017
+    networks:
+      - bus
+      - internal
+    deploy:
+      replicas: 1
