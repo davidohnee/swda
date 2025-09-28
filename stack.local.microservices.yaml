@@ -1,0 +1,94 @@
+networks:
+  backbone:
+  demo:
+
+services:
+  
+  bus:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/rabbitmq:3.13.7-management-alpine
+    restart: always
+    ports:
+      - "8082:15672"
+      - "5672:5672"
+    networks:
+      - backbone
+
+  portainer:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/portainer-ce:2.19.1-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+    ports:
+      - "8083:9000"
+    networks:
+      - backbone
+
+  mongodb:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/bitnami/mongodb:4.2.19
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./mongo-init/:/docker-entrypoint-initdb.d/
+    networks:
+      - backbone
+
+  mongo-viewer:
+    image: cr.gitlab.switch.ch/hslu/shared/devops/docker-cache/mongo-express:0.54
+    restart: always
+    ports:
+      - "8084:8081"
+    networks:
+      - backbone
+    links:
+      - "mongodb:mongo"
+  
+  gateway:
+    image: swda-24hs/gateway-custom:latest
+    restart: always
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8090:8090'
+  
+  order-service:
+    image: swda-24hs/order-service:latest
+    restart: always
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8091:8091'
+
+  inventory-service:
+    image: swda-24hs/inventory-service:latest
+    restart: always
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8092:8092'
+
+  replenishment-service:
+    image: swda-24hs/replenishment-service:latest
+    restart: always
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8093:8093'
+  
+  customer-service:
+    image: swda-24hs/customer-service:latest
+    restart: always
+    environment:
+      - RMQ_HOST=bus
+    networks:
+      - backbone
+    ports:
+      - '8094:8094'
