@@ -1,0 +1,10 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-solution-strategy]]
+== Lösungsstrategie
+
+In diesem Abschnitt werden die wesentlichen Entscheidungen und Ansätze beschrieben, die die Entwurfs- und Implementierungsphase des Filialbestellsystem prägten. Diese Entscheidungen wurden getroffen, um sowohl technologische Aspekte als auch die Erfüllung der Qualitätsanforderungen sicherzustellen.
+
+=== Technologieentscheidungen
+
+

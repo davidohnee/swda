@@ -1,0 +1,1603 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Order Service G09</title>
+    <style type="text/css">
+      body {
+	font-family: Trebuchet MS, sans-serif;
+	font-size: 15px;
+	color: #444;
+	margin-right: 24px;
+}
+
+h1	{
+	font-size: 25px;
+}
+h2	{
+	font-size: 20px;
+}
+h3	{
+	font-size: 16px;
+	font-weight: bold;
+}
+hr	{
+	height: 1px;
+	border: 0;
+	color: #ddd;
+	background-color: #ddd;
+}
+
+.app-desc {
+  clear: both;
+  margin-left: 20px;
+}
+.param-name {
+  width: 100%;
+}
+.license-info {
+  margin-left: 20px;
+}
+
+.license-url {
+  margin-left: 20px;
+}
+
+.model {
+  margin: 0 0 0px 20px;
+}
+
+.method {
+  margin-left: 20px;
+}
+
+.method-notes	{
+	margin: 10px 0 20px 0;
+	font-size: 90%;
+	color: #555;
+}
+
+pre {
+  padding: 10px;
+  margin-bottom: 2px;
+}
+
+.http-method {
+ text-transform: uppercase;
+}
+
+pre.get {
+  background-color: #0f6ab4;
+}
+
+pre.post {
+  background-color: #10a54a;
+}
+
+pre.put {
+  background-color: #c5862b;
+}
+
+pre.delete {
+  background-color: #a41e22;
+}
+
+.huge	{
+	color: #fff;
+}
+
+pre.example {
+  background-color: #f3f3f3;
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+code {
+  white-space: pre;
+}
+
+.nickname {
+  font-weight: bold;
+}
+
+.method-path {
+  font-size: 1.5em;
+  background-color: #0f6ab4;
+}
+
+.up {
+  float:right;
+}
+
+.parameter {
+  width: 500px;
+}
+
+.param {
+  width: 500px;
+  padding: 10px 0 0 20px;
+  font-weight: bold;
+}
+
+.param-desc {
+  width: 700px;
+  padding: 0 0 0 20px;
+  color: #777;
+}
+
+.param-type {
+  font-style: italic;
+}
+
+.param-enum-header {
+width: 700px;
+padding: 0 0 0 60px;
+color: #777;
+font-weight: bold;
+}
+
+.param-enum {
+width: 700px;
+padding: 0 0 0 80px;
+color: #777;
+font-style: italic;
+}
+
+.field-label {
+  padding: 0;
+  margin: 0;
+  clear: both;
+}
+
+.field-items	{
+	padding: 0 0 15px 0;
+	margin-bottom: 15px;
+}
+
+.return-type {
+  clear: both;
+  padding-bottom: 10px;
+}
+
+.param-header {
+  font-weight: bold;
+}
+
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
+
+    </style>
+  </head>
+  <body>
+  <h1>Order Service G09</h1>
+    <div class="app-desc">API designed by team G09 for the HS24 SWDA course at HSLU</div>
+    <div class="app-desc">More information: <a href="https://openapi-generator.tech">https://openapi-generator.tech</a></div>
+    <div class="app-desc">Contact Info: <a href="team@openapitools.org">team@openapitools.org</a></div>
+    <div class="app-desc">Version: 1.0.0</div>
+    <div class="app-desc">BasePath:/api/v1</div>
+    <div class="license-info">All rights reserved</div>
+    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+  <h2>Access</h2>
+
+  <h2><a name="__Methods">Methods</a></h2>
+  [ Jump to <a href="#__Models">Models</a> ]
+
+  <h3>Table of Contents </h3>
+  <div class="method-summary"></div>
+  <h4><a href="#Customers">Customers</a></h4>
+  <ul>
+  <li><a href="#customersCustomerIdGet"><code><span class="http-method">get</span> /customers/{customerId}</code></a></li>
+  <li><a href="#customersGet"><code><span class="http-method">get</span> /customers</code></a></li>
+  </ul>
+  <h4><a href="#Inventory">Inventory</a></h4>
+  <ul>
+  <li><a href="#inventoryGet"><code><span class="http-method">get</span> /inventory</code></a></li>
+  <li><a href="#inventoryProductIdPatch"><code><span class="http-method">patch</span> /inventory/{productId}</code></a></li>
+  </ul>
+  <h4><a href="#Orders">Orders</a></h4>
+  <ul>
+  <li><a href="#ordersGet"><code><span class="http-method">get</span> /orders</code></a></li>
+  <li><a href="#ordersOrderIdGet"><code><span class="http-method">get</span> /orders/{orderId}</code></a></li>
+  <li><a href="#ordersOrderIdPut"><code><span class="http-method">put</span> /orders/{orderId}</code></a></li>
+  <li><a href="#ordersPost"><code><span class="http-method">post</span> /orders</code></a></li>
+  </ul>
+  <h4><a href="#Replenishments">Replenishments</a></h4>
+  <ul>
+  <li><a href="#replenishmentsGet"><code><span class="http-method">get</span> /replenishments</code></a></li>
+  <li><a href="#replenishmentsReplenishmentIdGet"><code><span class="http-method">get</span> /replenishments/{replenishmentId}</code></a></li>
+  </ul>
+  <h4><a href="#Shipments">Shipments</a></h4>
+  <ul>
+  <li><a href="#shipmentsGet"><code><span class="http-method">get</span> /shipments</code></a></li>
+  <li><a href="#shipmentsShipmentIdGet"><code><span class="http-method">get</span> /shipments/{shipmentId}</code></a></li>
+  </ul>
+
+  <h1><a name="Customers">Customers</a></h1>
+  <div class="method"><a name="customersCustomerIdGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /customers/{customerId}</code></pre></div>
+    <div class="method-summary">Get a specific customer (<span class="nickname">customersCustomerIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">customerId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Customer">Customer</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "firstName" : "firstName",
+  "address" : {
+    "streetName" : "streetName",
+    "townName" : "townName",
+    "streetNumber" : "streetNumber",
+    "plz" : "plz"
+  },
+  "contactInfo" : {
+    "phone" : "phone",
+    "email" : "email"
+  },
+  "familyName" : "familyName",
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Customer details
+        <a href="#Customer">Customer</a>
+    <h4 class="field-label">404</h4>
+    Customer not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="customersGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /customers</code></pre></div>
+    <div class="method-summary">Get all customers (<span class="nickname">customersGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Customer">Customer</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "firstName" : "firstName",
+  "address" : {
+    "streetName" : "streetName",
+    "townName" : "townName",
+    "streetNumber" : "streetNumber",
+    "plz" : "plz"
+  },
+  "contactInfo" : {
+    "phone" : "phone",
+    "email" : "email"
+  },
+  "familyName" : "familyName",
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+}, {
+  "firstName" : "firstName",
+  "address" : {
+    "streetName" : "streetName",
+    "townName" : "townName",
+    "streetNumber" : "streetNumber",
+    "plz" : "plz"
+  },
+  "contactInfo" : {
+    "phone" : "phone",
+    "email" : "email"
+  },
+  "familyName" : "familyName",
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    List of customers
+        
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Inventory">Inventory</a></h1>
+  <div class="method"><a name="inventoryGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /inventory</code></pre></div>
+    <div class="method-summary">Get inventory (<span class="nickname">inventoryGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#InventoryItem">InventoryItem</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "product" : {
+    "price" : 0.8008281904610115,
+    "name" : "name",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "count" : 0
+}, {
+  "product" : {
+    "price" : 0.8008281904610115,
+    "name" : "name",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "count" : 0
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Inventory details
+        
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="inventoryProductIdPatch"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="patch"><code class="huge"><span class="http-method">patch</span> /inventory/{productId}</code></pre></div>
+    <div class="method-summary">Update product count in inventory (<span class="nickname">inventoryProductIdPatch</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">productId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">_inventory__productId__patch_request <a href="#_inventory__productId__patch_request">_inventory__productId__patch_request</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#InventoryItem">InventoryItem</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "product" : {
+    "price" : 0.8008281904610115,
+    "name" : "name",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "count" : 0
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Inventory updated
+        <a href="#InventoryItem">InventoryItem</a>
+    <h4 class="field-label">404</h4>
+    Product not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Orders">Orders</a></h1>
+  <div class="method"><a name="ordersGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /orders</code></pre></div>
+    <div class="method-summary">Get list of orders (<span class="nickname">ordersGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Order">Order</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "dateTime" : "2000-01-23T04:56:07.000+00:00",
+  "seller" : {
+    "firstName" : "firstName",
+    "role" : "SALES",
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "orderType" : "customerOrder",
+  "price" : 1.4658129805029452,
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "orderItems" : [ {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  }, {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  } ],
+  "status" : "PENDING",
+  "customer" : {
+    "firstName" : "firstName",
+    "address" : {
+      "streetName" : "streetName",
+      "townName" : "townName",
+      "streetNumber" : "streetNumber",
+      "plz" : "plz"
+    },
+    "contactInfo" : {
+      "phone" : "phone",
+      "email" : "email"
+    },
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  }
+}, {
+  "dateTime" : "2000-01-23T04:56:07.000+00:00",
+  "seller" : {
+    "firstName" : "firstName",
+    "role" : "SALES",
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "orderType" : "customerOrder",
+  "price" : 1.4658129805029452,
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "orderItems" : [ {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  }, {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  } ],
+  "status" : "PENDING",
+  "customer" : {
+    "firstName" : "firstName",
+    "address" : {
+      "streetName" : "streetName",
+      "townName" : "townName",
+      "streetNumber" : "streetNumber",
+      "plz" : "plz"
+    },
+    "contactInfo" : {
+      "phone" : "phone",
+      "email" : "email"
+    },
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  }
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    A list of orders
+        
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="ordersOrderIdGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /orders/{orderId}</code></pre></div>
+    <div class="method-summary">Get an order by ID (<span class="nickname">ordersOrderIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">orderId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Order">Order</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "dateTime" : "2000-01-23T04:56:07.000+00:00",
+  "seller" : {
+    "firstName" : "firstName",
+    "role" : "SALES",
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "orderType" : "customerOrder",
+  "price" : 1.4658129805029452,
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "orderItems" : [ {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  }, {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  } ],
+  "status" : "PENDING",
+  "customer" : {
+    "firstName" : "firstName",
+    "address" : {
+      "streetName" : "streetName",
+      "townName" : "townName",
+      "streetNumber" : "streetNumber",
+      "plz" : "plz"
+    },
+    "contactInfo" : {
+      "phone" : "phone",
+      "email" : "email"
+    },
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Order details
+        <a href="#Order">Order</a>
+    <h4 class="field-label">404</h4>
+    Order not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="ordersOrderIdPut"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="put"><code class="huge"><span class="http-method">put</span> /orders/{orderId}</code></pre></div>
+    <div class="method-summary">Update an order (<span class="nickname">ordersOrderIdPut</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">orderId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">OrderUpdate <a href="#OrderUpdate">OrderUpdate</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Order">Order</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "dateTime" : "2000-01-23T04:56:07.000+00:00",
+  "seller" : {
+    "firstName" : "firstName",
+    "role" : "SALES",
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "orderType" : "customerOrder",
+  "price" : 1.4658129805029452,
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "orderItems" : [ {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  }, {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  } ],
+  "status" : "PENDING",
+  "customer" : {
+    "firstName" : "firstName",
+    "address" : {
+      "streetName" : "streetName",
+      "townName" : "townName",
+      "streetNumber" : "streetNumber",
+      "plz" : "plz"
+    },
+    "contactInfo" : {
+      "phone" : "phone",
+      "email" : "email"
+    },
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Order updated
+        <a href="#Order">Order</a>
+    <h4 class="field-label">404</h4>
+    Order not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="ordersPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /orders</code></pre></div>
+    <div class="method-summary">Create an order (<span class="nickname">ordersPost</span>)</div>
+    <div class="method-notes"></div>
+
+
+    <h3 class="field-label">Consumes</h3>
+    This API call consumes the following media types via the <span class="header">Content-Type</span> request header:
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">OrderCreate <a href="#OrderCreate">OrderCreate</a> (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash;  </div>
+
+    </div>  <!-- field-items -->
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Order">Order</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "dateTime" : "2000-01-23T04:56:07.000+00:00",
+  "seller" : {
+    "firstName" : "firstName",
+    "role" : "SALES",
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  },
+  "orderType" : "customerOrder",
+  "price" : 1.4658129805029452,
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "orderItems" : [ {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  }, {
+    "product" : {
+      "price" : 0.8008281904610115,
+      "name" : "name",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "quantity" : 6
+  } ],
+  "status" : "PENDING",
+  "customer" : {
+    "firstName" : "firstName",
+    "address" : {
+      "streetName" : "streetName",
+      "townName" : "townName",
+      "streetNumber" : "streetNumber",
+      "plz" : "plz"
+    },
+    "contactInfo" : {
+      "phone" : "phone",
+      "email" : "email"
+    },
+    "familyName" : "familyName",
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">201</h4>
+    Order created
+        <a href="#Order">Order</a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Replenishments">Replenishments</a></h1>
+  <div class="method"><a name="replenishmentsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /replenishments</code></pre></div>
+    <div class="method-summary">Get all replenishments (<span class="nickname">replenishmentsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Replenishment">Replenishment</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "replenishmentOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "orderType" : "replenishmentOrder",
+    "price" : 0.8008281904610115,
+    "destination" : {
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+      "type" : "central"
+    },
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING"
+  }
+}, {
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "replenishmentOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "orderType" : "replenishmentOrder",
+    "price" : 0.8008281904610115,
+    "destination" : {
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+      "type" : "central"
+    },
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING"
+  }
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    List of replenishments
+        
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="replenishmentsReplenishmentIdGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /replenishments/{replenishmentId}</code></pre></div>
+    <div class="method-summary">Get a specific replenishment (<span class="nickname">replenishmentsReplenishmentIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">replenishmentId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Replenishment">Replenishment</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+  "replenishmentOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "orderType" : "replenishmentOrder",
+    "price" : 0.8008281904610115,
+    "destination" : {
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+      "type" : "central"
+    },
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING"
+  }
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Replenishment details
+        <a href="#Replenishment">Replenishment</a>
+    <h4 class="field-label">404</h4>
+    Replenishment not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+  <h1><a name="Shipments">Shipments</a></h1>
+  <div class="method"><a name="shipmentsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /shipments</code></pre></div>
+    <div class="method-summary">Get all shipments (<span class="nickname">shipmentsGet</span>)</div>
+    <div class="method-notes"></div>
+
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      array[<a href="#Shipment">Shipment</a>]
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  "customerOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "seller" : {
+      "firstName" : "firstName",
+      "role" : "SALES",
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "orderType" : "customerOrder",
+    "price" : 1.4658129805029452,
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING",
+    "customer" : {
+      "firstName" : "firstName",
+      "address" : {
+        "streetName" : "streetName",
+        "townName" : "townName",
+        "streetNumber" : "streetNumber",
+        "plz" : "plz"
+      },
+      "contactInfo" : {
+        "phone" : "phone",
+        "email" : "email"
+      },
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    }
+  },
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+}, {
+  "customerOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "seller" : {
+      "firstName" : "firstName",
+      "role" : "SALES",
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "orderType" : "customerOrder",
+    "price" : 1.4658129805029452,
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING",
+    "customer" : {
+      "firstName" : "firstName",
+      "address" : {
+        "streetName" : "streetName",
+        "townName" : "townName",
+        "streetNumber" : "streetNumber",
+        "plz" : "plz"
+      },
+      "contactInfo" : {
+        "phone" : "phone",
+        "email" : "email"
+      },
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    }
+  },
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+} ]</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    List of shipments
+        
+  </div> <!-- method -->
+  <hr/>
+  <div class="method"><a name="shipmentsShipmentIdGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /shipments/{shipmentId}</code></pre></div>
+    <div class="method-summary">Get a specific shipment (<span class="nickname">shipmentsShipmentIdGet</span>)</div>
+    <div class="method-notes"></div>
+
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">shipmentId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash;  default: null format: uuid</div>
+    </div>  <!-- field-items -->
+
+
+
+
+
+
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type">
+      <a href="#Shipment">Shipment</a>
+      
+    </div>
+
+    <!--Todo: process Response Object and its headers, schema, examples -->
+
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  "customerOrder" : {
+    "dateTime" : "2000-01-23T04:56:07.000+00:00",
+    "seller" : {
+      "firstName" : "firstName",
+      "role" : "SALES",
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    },
+    "orderType" : "customerOrder",
+    "price" : 1.4658129805029452,
+    "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
+    "orderItems" : [ {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    }, {
+      "product" : {
+        "price" : 0.8008281904610115,
+        "name" : "name",
+        "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+      },
+      "quantity" : 6
+    } ],
+    "status" : "PENDING",
+    "customer" : {
+      "firstName" : "firstName",
+      "address" : {
+        "streetName" : "streetName",
+        "townName" : "townName",
+        "streetNumber" : "streetNumber",
+        "plz" : "plz"
+      },
+      "contactInfo" : {
+        "phone" : "phone",
+        "email" : "email"
+      },
+      "familyName" : "familyName",
+      "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    }
+  },
+  "id" : "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+}</code></pre>
+
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="header">Content-Type</span> response header.
+    <ul>
+      <li><code>application/json</code></li>
+    </ul>
+
+    <h3 class="field-label">Responses</h3>
+    <h4 class="field-label">200</h4>
+    Shipment details
+        <a href="#Shipment">Shipment</a>
+    <h4 class="field-label">404</h4>
+    Shipment not found
+        <a href="#"></a>
+  </div> <!-- method -->
+  <hr/>
+
+  <h2><a name="__Models">Models</a></h2>
+  [ Jump to <a href="#__Methods">Methods</a> ]
+
+  <h3>Table of Contents</h3>
+  <ol>
+    <li><a href="#Address"><code>Address</code> - </a></li>
+    <li><a href="#BaseOrder"><code>BaseOrder</code> - </a></li>
+    <li><a href="#BaseOrderCreate"><code>BaseOrderCreate</code> - </a></li>
+    <li><a href="#BaseOrderUpdate"><code>BaseOrderUpdate</code> - </a></li>
+    <li><a href="#ContactInfo"><code>ContactInfo</code> - </a></li>
+    <li><a href="#Customer"><code>Customer</code> - </a></li>
+    <li><a href="#CustomerOrder"><code>CustomerOrder</code> - </a></li>
+    <li><a href="#CustomerOrderCreate"><code>CustomerOrderCreate</code> - </a></li>
+    <li><a href="#CustomerOrderUpdate"><code>CustomerOrderUpdate</code> - </a></li>
+    <li><a href="#Employee"><code>Employee</code> - </a></li>
+    <li><a href="#InventoryItem"><code>InventoryItem</code> - </a></li>
+    <li><a href="#Order"><code>Order</code> - </a></li>
+    <li><a href="#OrderCreate"><code>OrderCreate</code> - </a></li>
+    <li><a href="#OrderItem"><code>OrderItem</code> - </a></li>
+    <li><a href="#OrderItemCreate"><code>OrderItemCreate</code> - </a></li>
+    <li><a href="#OrderUpdate"><code>OrderUpdate</code> - </a></li>
+    <li><a href="#Person"><code>Person</code> - </a></li>
+    <li><a href="#Product"><code>Product</code> - </a></li>
+    <li><a href="#Replenishment"><code>Replenishment</code> - </a></li>
+    <li><a href="#ReplenishmentOrder"><code>ReplenishmentOrder</code> - </a></li>
+    <li><a href="#ReplenishmentOrderCreate"><code>ReplenishmentOrderCreate</code> - </a></li>
+    <li><a href="#ReplenishmentOrderUpdate"><code>ReplenishmentOrderUpdate</code> - </a></li>
+    <li><a href="#Shipment"><code>Shipment</code> - </a></li>
+    <li><a href="#Warehouse"><code>Warehouse</code> - </a></li>
+    <li><a href="#_inventory__productId__patch_request"><code>_inventory__productId__patch_request</code> - </a></li>
+  </ol>
+
+  <div class="model">
+    <h3><a name="Address"><code>Address</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">streetName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">streetNumber </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">plz </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">townName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BaseOrder"><code>BaseOrder</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItem">array[OrderItem]</a></span>  </div>
+<div class="param">price </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  format: decimal</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BaseOrderCreate"><code>BaseOrderCreate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="BaseOrderUpdate"><code>BaseOrderUpdate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems (optional)</div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ContactInfo"><code>ContactInfo</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'>Contact information (to be defined)</div>
+    <div class="field-items">
+      <div class="param">email (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  format: email</div>
+<div class="param">phone (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Customer"><code>Customer</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">firstName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">familyName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">address </div><div class="param-desc"><span class="param-type"><a href="#Address">Address</a></span>  </div>
+<div class="param">contactInfo </div><div class="param-desc"><span class="param-type"><a href="#ContactInfo">ContactInfo</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CustomerOrder"><code>CustomerOrder</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItem">array[OrderItem]</a></span>  </div>
+<div class="param">price </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  format: decimal</div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">customerOrder</div>
+<div class="param">customer </div><div class="param-desc"><span class="param-type"><a href="#Customer">Customer</a></span>  </div>
+<div class="param">seller </div><div class="param-desc"><span class="param-type"><a href="#Employee">Employee</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CustomerOrderCreate"><code>CustomerOrderCreate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">customerOrder</div>
+<div class="param">customerId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">sellerId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="CustomerOrderUpdate"><code>CustomerOrderUpdate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems (optional)</div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">customerOrder</div>
+<div class="param">customerId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">sellerId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Employee"><code>Employee</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">firstName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">familyName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">role </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">SALES</div><div class="param-enum">MANAGER</div><div class="param-enum">DATA_TYPIST</div><div class="param-enum">SYSTEM_ADMIN</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="InventoryItem"><code>InventoryItem</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">product </div><div class="param-desc"><span class="param-type"><a href="#Product">Product</a></span>  </div>
+<div class="param">count </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Order"><code>Order</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItem">array[OrderItem]</a></span>  </div>
+<div class="param">price </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  format: decimal</div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">customer </div><div class="param-desc"><span class="param-type"><a href="#Customer">Customer</a></span>  </div>
+<div class="param">seller </div><div class="param-desc"><span class="param-type"><a href="#Employee">Employee</a></span>  </div>
+<div class="param">destination </div><div class="param-desc"><span class="param-type"><a href="#Warehouse">Warehouse</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="OrderCreate"><code>OrderCreate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">customerId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">sellerId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">destinationId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="OrderItem"><code>OrderItem</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">product </div><div class="param-desc"><span class="param-type"><a href="#Product">Product</a></span>  </div>
+<div class="param">quantity </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="OrderItemCreate"><code>OrderItemCreate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">productId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">quantity </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="OrderUpdate"><code>OrderUpdate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'>Schema for updating an order</div>
+    <div class="field-items">
+      <div class="param">dateTime (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems (optional)</div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">customerId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">sellerId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">destinationId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Person"><code>Person</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">firstName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">familyName </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Product"><code>Product</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">name </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+<div class="param">price </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  format: decimal</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Replenishment"><code>Replenishment</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">replenishmentOrder </div><div class="param-desc"><span class="param-type"><a href="#ReplenishmentOrder">ReplenishmentOrder</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ReplenishmentOrder"><code>ReplenishmentOrder</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItem">array[OrderItem]</a></span>  </div>
+<div class="param">price </div><div class="param-desc"><span class="param-type"><a href="#number">BigDecimal</a></span>  format: decimal</div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">destination </div><div class="param-desc"><span class="param-type"><a href="#Warehouse">Warehouse</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ReplenishmentOrderCreate"><code>ReplenishmentOrderCreate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime </div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems </div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">destinationId </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="ReplenishmentOrderUpdate"><code>ReplenishmentOrderUpdate</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">dateTime (optional)</div><div class="param-desc"><span class="param-type"><a href="#DateTime">Date</a></span>  format: date-time</div>
+<div class="param">status (optional)</div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">PENDING</div><div class="param-enum">CONFIRMED</div><div class="param-enum">AWAITING_PAYMENT</div><div class="param-enum">DONE</div>
+<div class="param">orderItems (optional)</div><div class="param-desc"><span class="param-type"><a href="#OrderItemCreate">array[OrderItemCreate]</a></span>  </div>
+<div class="param">orderType </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">replenishmentOrder</div>
+<div class="param">destinationId (optional)</div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Shipment"><code>Shipment</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">customerOrder </div><div class="param-desc"><span class="param-type"><a href="#CustomerOrder">CustomerOrder</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="Warehouse"><code>Warehouse</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type"><a href="#UUID">UUID</a></span>  format: uuid</div>
+<div class="param">type </div><div class="param-desc"><span class="param-type"><a href="#string">String</a></span>  </div>
+        <div class="param-enum-header">Enum:</div>
+        <div class="param-enum">central</div><div class="param-enum">local</div>
+    </div>  <!-- field-items -->
+  </div>
+  <div class="model">
+    <h3><a name="_inventory__productId__patch_request"><code>_inventory__productId__patch_request</code> - </a> <a class="up" href="#__Models">Up</a></h3>
+    <div class='model-description'></div>
+    <div class="field-items">
+      <div class="param">count </div><div class="param-desc"><span class="param-type"><a href="#integer">Integer</a></span>  </div>
+    </div>  <!-- field-items -->
+  </div>
+  </body>
+</html>

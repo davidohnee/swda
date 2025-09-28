@@ -1,0 +1,25 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-concepts]]
+== Querschnittliche Konzepte
+=== Teststrategie
+Das Projekt verfolgt den Ansatz des kontinuierlichen testen.
+Mit Abschluss jedes Sprints soll ein lauffähiges, getestetes Inkrement der Software zur Verfügung gestellt werden, welches den gestellten Qualitätsanforderungen Rechnung trägt.
+
+==== Verwendete Testarten
+Um die definierten Ziele zu erreichen werden folgende Testarten durchgeführt:
+
+* Unit-Tests mittels JUnit 5 & Mockito
+* Integrations Testing mittles JUnit 5 & Mockito
+* Manuelles Systemtesting, ausgewählter UseCases
+* Regressions Testing - Unit-Tests und Integrations-Test sind automatisiert und werden kontinuierlich auf der Gitlab CI Pipeline ausgeführt.
+
+Die Testfälle ergeben sich abgeleitet aus den Anforderungen und User-Stories des Projekts.
+
+==== Testing Tools
+Die verwendeten Testing-Frameworks sind als Maven Dependencies eingebunden und erfordern keine weitere manuelle Konfiguration seitens Entwickler:in.
+
+==== Test Reporting
+Die Rückmeldung zu automatiserten Tests erfolgt über das maven-surfire-plugin (lokal) und des Gitlab Test-Reports im Versionskontrollsystem.
+
+

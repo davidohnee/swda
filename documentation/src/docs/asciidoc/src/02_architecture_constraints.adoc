@@ -1,0 +1,25 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-architecture-constraints]]
+== Randbedingungen
+
+=== Technische Randbedingungen
+
+[cols="1,1,2",options="header"]
+|===
+| Randbedingung | Beschreibung | Auswirkung
+| Programmiersprache | Java | Die gesamte Implementierung muss in Java Standard Edition erfolgen.
+| Betriebssystem | Plattformunabhängig | Die Anwendung muss auf allen gängigen Betriebssystemen lauffähig sein.
+| Externe Bibliotheken | Erlaubt | Es dürfen externe Bibliotheken verwendet werden.
+|===
+
+=== Organisatorische Randbedingungen
+
+[cols="1,1,2",options="header"]
+|===
+| Randbedingung | Beschreibung | Auswirkung
+| Projektmanagement | Scrum | Die Entwicklung des Systems erfolgt nach der Scrum-Methodik.
+| Versionsverwaltung | GitLab| Der Quellcode muss in GitLab verwaltet werden.
+| Continuos Integration | GitLab CI | Der Programmcode auf dem Buildserver laufend integriert werden.
+| Dokumentation | AsciiDoc | Die Dokumentation der Umsetzung sowie Entwurfsentscheidungen erfolgt in AsciiDoc.
+|===

@@ -1,0 +1,55 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-system-scope-and-context]]
+== Kontextabgrenzung
+
+=== Fachlicher Kontext
+==== Bestellprozess
+Nachfolgend wird der Bestellprozess für das Filialbestellsystem beschrieben mit Hilfe mehrerer BPMN-Diagramme beschrieben:
+
+image::order_process_bpmn.png[title="Order process"]
+
+image::check_customers_bpmn.png[title="Check customer"]
+
+image::update_inventory_bpmn.png[title="Update inventory"]
+
+image::order_replenishment_bpmn.png[title="Order replenishment"]
+
+
+==== Domänenmodell
+
+image::domain-model.png[title="Domain model"]
+
+
+==== Kommunikationsbeziehungen
+Das Filialbestellsystem interagiert mit verschiedenen Benutzer:innen. Hier sind die Hauptkommunikationsbeziehungen:
+
+[cols="3,2,2",options="header"]
+|===
+| Kommunikationsbeziehung | Eingabe | Ausgabe
+|===
+
+=== Technischer Kontext
+
+Das Filialbestellsystem verwendet verschiedene technische Schnittstellen, um die Kommunikation zwischen den Services zu gewährleisten:
+
+[cols="3,2,2",options="header"]
+|===
+| Kommunikationsbeziehung | Kanal/Protokoll | Beschreibung
+|===
+
+=== OpenAPI Spezifikation
+Die OpenAPI-Spezifikation für die API des Filialbestellsystems ist unter folgendem Link verfügbar:
+
+link:https://hslu.pages.switch.ch/edu/bachelor-computer-science/swda/24hs01/g09/g09-documentation/asciidoc/order.html[OpenAPI-Spezifikation]
+
+=== Externe Schnittstellen
+
+Das Filialbestellsystem interagiert mit externen Schnittstellen. Folgend sind die wichtigsten Schnittstellen aufgeführt:
+
+[cols="3,2,2",options="header"]
+|===
+| Schnittstelle | Version | Repository
+
+|===
+

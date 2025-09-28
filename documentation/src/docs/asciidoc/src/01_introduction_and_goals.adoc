@@ -1,0 +1,38 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-introduction-and-goals]]
+==	Einführung und Ziele
+
+=== Einleitung
+
+Dieses Dokument beschreibt die Architektur eines Filialbestellsystem, das im Rahmen des Moduls "Software Development and Architecture" an der Hochschule Luzern entwickelt wurde.
+
+=== Aufgabenstellung
+
+==== Projektziel
+
+
+==== Weitere Informationen
+
+Weitere Details und konkrete Anforderungen sind im Projektbeschrieb zu finden.
+
+=== Qualitätsziele
+
+[cols="1,4,1",options="header"]
+|===
+|Ziel |Beschreibung |Priorität
+
+
+|===
+
+=== Stakeholder
+
+Die folgenden Stakeholder sind an dem System interessiert:
+
+[cols="1,2" options="header"]
+|===
+|Rolle |Erwartungshaltung
+
+|===
+
+Die Erfüllung der Erwartungen dieser Stakeholder ist für den Erfolg des Projekts entscheidend.

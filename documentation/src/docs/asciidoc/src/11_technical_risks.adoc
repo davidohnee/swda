@@ -1,0 +1,22 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-technical-risks]]
+== Risiken und technische Schulden
+
+
+=== Risiken
+
+[cols="1,2,2,2",options="header"]
+|===
+| Priorität | Risiko | Beschreibung | Massnahme
+|===
+
+=== Technische Schulden
+
+[cols="1,2,2,2",options="header"]
+|===
+| Priorität | Technische Schuld | Beschreibung | Massnahme
+|===
+
+=== Massnahmen zur Risikominimierung und Abbau technischer Schulden
+
