@@ -1,0 +1,14 @@
+services:
+    app:
+        image: swda-24hs/ui:latest
+        build:
+            context: .
+        networks:
+            - backbone
+        ports:
+            - "8081:80"
+
+networks:
+    backbone:
+        name: g09-backbone_backbone
+        external: true
