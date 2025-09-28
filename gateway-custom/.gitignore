@@ -1,0 +1,12 @@
+/target/
+/.settings/
+**/*.log
+/.idea/
+/.vscode/
+*.iml
+/.classpath
+/.project
+/dependency-reduced-pom.xml
+.direnv/
+.envrc
+shell.nix
